@@ -1,0 +1,43 @@
+{
+  "regulation": {
+    "id": "simats",
+    "name": "SIMATS Academic Regulations",
+    "status": "draft",
+    "sources": [
+      {
+        "url": "https://www.saveetha.com/",
+        "clauses": ["academic regulations"],
+        "retrievedDate": "2026-10-24",
+        "note": "Saveetha School of Engineering (SIMATS) Academic Regulations - primary regulation PDF not located in this pass; grade scale and percentage formula taken from verified facts. Pending primary PDF verification."
+      }
+    ],
+    "gradeTable": [
+      { "letter": "O", "gradePoint": 10 },
+      { "letter": "A+", "gradePoint": 9 },
+      { "letter": "A", "gradePoint": 8 },
+      { "letter": "B+", "gradePoint": 7 },
+      { "letter": "B", "gradePoint": 6 },
+      { "letter": "C", "gradePoint": 5 },
+      { "letter": "P", "gradePoint": 4 },
+      { "letter": "F", "gradePoint": 0 }
+    ],
+    "gradeScale": { "O": 10, "A+": 9, "A": 8, "B+": 7, "B": 6, "C": 5, "P": 4, "F": 0 },
+    "formulaType": "credit-weighted",
+    "cgpaToPercentage": { "multiplier": 10, "formula": "CGPA * 10" },
+    "lateralEntry": { "skipFirstNSemesters": "unverified" },
+    "totalCredits": { "regular": "unverified", "lateral": "unverified" },
+    "cgpaStartSemester": { "regular": 1, "lateral": "unverified" },
+    "backlogPolicy": {
+      "failedCreditsRemainInDenominator": "unverified",
+      "failedGradeLetters": ["F"],
+      "notes": "SIMATS backlog/failed-course denominator policy not stated in verified facts. Marked unverified pending primary PDF."
+    },
+    "nonComputableCourses": [],
+    "classThresholds": [],
+    "passGrades": ["O", "A+", "A", "B+", "B", "C", "P"],
+    "failedGrades": ["F"],
+    "rounding": "unverified",
+    "sourceUrl": "https://www.saveetha.com/",
+    "lastVerified": "2026-10-24"
+  }
+}

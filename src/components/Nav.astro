@@ -1,21 +1,29 @@
 ---
 ---
 
+<div class="sunset-bar"></div>
 <nav class="nav-bar" aria-label="Main navigation">
   <div class="nav-container">
-    <a href="/" class="logo-link">CGPA Calculator AI</a>
+    <a href="/" class="logo-link">
+      <span class="brand-mark" aria-hidden="true">Σ</span>
+      <span>
+        <span class="logo-title">CGPA Studio</span>
+        <span class="logo-sub">Calculator AI</span>
+      </span>
+    </a>
     <button type="button" id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </button>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
     <div class="nav-links" id="nav-links">
-      <a href="#about" class="nav-link">About</a>
-      <a href="#contact" class="nav-link">Contact</a>
-      <a href="#privacy" class="nav-link">Privacy</a>
-      <a href="#terms" class="nav-link">Terms</a>
-      <a href="#disclaimer" class="nav-link">Disclaimer</a>
-      <a href="/tools/scanner" class="button-primary-sm">Scanner</a>
-      <a href="/tools/ask" class="button-ghost-sm">Ask AI</a>
-      <a href="/universities" class="button-ghost-sm">Universities</a>
+      <a href="/" class="nav-link">Home</a>
+      <a href="/vtu/2022/cse/sgpa" class="nav-link">SGPA</a>
+      <a href="/vtu/2022/cse/cgpa" class="nav-link">CGPA</a>
+      <a href="/my-results" class="nav-link">My Results</a>
+      <a href="/tools/planner" class="nav-link">Planner</a>
+      <a href="/universities" class="nav-link">Universities</a>
+      <a href="/tools/ask" class="nav-link">Ask AI</a>
+      <a href="/vtu/2022/cse/sgpa" class="button-primary-sm">Open calculator</a>
     </div>
   </div>
 </nav>
@@ -24,28 +32,79 @@
   (() => {
     const toggle = document.getElementById('nav-toggle');
     const links = document.getElementById('nav-links');
+    const themeToggle = document.getElementById('theme-toggle');
     if (!toggle || !links) return;
+
     toggle.addEventListener('click', () => {
       const open = links.classList.toggle('open');
       toggle.setAttribute('aria-expanded', String(open));
+    });
+
+    // Dark mode persistence
+    const savedTheme = localStorage.getItem('cgpa-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const shouldDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    if (shouldDark) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeToggle.textContent = '☀️';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('cgpa-theme', 'light');
+        themeToggle.textContent = '🌙';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('cgpa-theme', 'dark');
+        themeToggle.textContent = '☀️';
+      }
     });
   })();
 </script>
 
 <style>
-  .nav-bar { }
-  .nav-container { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-md); flex-wrap: wrap; max-width: 1200px; margin: 0 auto; padding: 0 var(--spacing-lg); }
-  .logo-link { font-weight: 600; font-size: var(--font-size-heading-md); letter-spacing: var(--letter-spacing-heading-md); color: var(--color-ink); text-decoration: none; display: flex; align-items: center; gap: var(--spacing-xs); }
+  .nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+  }
+  .logo-link {
+    color: var(--color-ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-title {
+    display: block;
+    font-family: var(--font-family-serif);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+  .logo-sub {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-mute);
+  }
   .nav-toggle { display: none; background: none; border: none; color: var(--color-ink); cursor: pointer; padding: var(--spacing-xs); }
-  .nav-links { display: flex; gap: var(--spacing-xs); flex-wrap: wrap; align-items: center; margin-left: auto; }
-  .nav-link { color: var(--color-body); }
-  .nav-link[href="/"] { color: var(--color-ink); }
+  .nav-links { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; margin-left: auto; }
+  .theme-toggle { margin-left: 8px; }
 
   @media (max-width: 768px) {
     .nav-toggle { display: block; }
-    .nav-links { display: none; width: 100%; flex-direction: column; align-items: stretch; gap: var(--spacing-xxs); margin-left: 0; }
+    .nav-links { display: none; width: 100%; flex-direction: column; align-items: stretch; gap: 4px; margin-left: 0; padding-top: 8px; }
     .nav-links.open { display: flex; }
-    .nav-link, .button-primary-sm, .button-ghost-sm { width: 100%; text-align: center; padding: var(--spacing-xs); }
+    .nav-link, .button-primary-sm { width: 100%; text-align: center; }
   }
 </style>
-

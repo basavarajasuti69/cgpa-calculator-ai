@@ -7,9 +7,9 @@ import { getUniversities, getVerifiedSchemes, getBranch, DEFAULT_BRANCH } from '
   <section class="section">
     <div class="container" style="max-width: 800px;">
       <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">University picker</p>
-      <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Choose your university</h1>
+      <h1 class="heading-lg" style="margin-bottom: 12px;">Which campus are you on?</h1>
       <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 64ch;">
-        Select your university and scheme. Verified schemes have complete, checked data; draft schemes are placeholders pending official verification.
+        Select your university and scheme. Verified schemes have complete, checked data.
       </p>
 
       <div style="display: grid; gap: var(--spacing-lg);">
@@ -20,9 +20,6 @@ import { getUniversities, getVerifiedSchemes, getBranch, DEFAULT_BRANCH } from '
                 <h2 class="heading-md" style="margin: 0 0 var(--spacing-xs) 0;">{uni.name}</h2>
                 <p class="body-sm" style="margin: 0; color: var(--color-mute);">{uni.domain} • {uni.schemes.length} scheme(s)</p>
               </div>
-              <span class="button-ghost-sm" style={uni.status === 'verified' ? 'color: var(--color-link); border-color: var(--color-link);' : 'color: var(--color-mute); border-color: var(--color-mute);'}>
-                {uni.status === 'verified' ? 'Verified' : 'Draft'}
-              </span>
             </div>
             <div style="display: grid; gap: var(--spacing-xs); margin-bottom: var(--spacing-lg);">
               {uni.schemes.map((scheme) => {
@@ -37,9 +34,6 @@ import { getUniversities, getVerifiedSchemes, getBranch, DEFAULT_BRANCH } from '
                 );
               })}
             </div>
-            {uni.status !== 'verified' && (
-              <p class="body-sm mute" style="margin: 0;">Data for this university/scheme is a draft. <a href="/request-college" class="link-color">Request your college</a> to prioritize verification.</p>
-            )}
           </section>
         ))}
       </div>

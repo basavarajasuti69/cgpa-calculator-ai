@@ -39,28 +39,161 @@ if (!sc || !br || !['sgpa', 'cgpa', 'percentage'].includes(tool)) {
 
 const branches = sc.branches.map(b => ({ id: b.id, short: b.short, name: b.name }));
 
-const title = `${br.short} ${tool.toUpperCase()} Calculator — ${uni.name} ${sc.name}`;
-const description = `Calculate ${tool.toUpperCase()} for ${br.name} (${sc.name}) at ${uni.name}. Free, accurate, real-time results.`;
+const firstSem = br.semesters[0];
+const semName = firstSem ? firstSem.name : 'Semester 1';
+
+const title = `${br.short} ${tool.toUpperCase()} Calculator — Semester 1 — ${uni.name} ${sc.name}`;
+const description = `Calculate ${tool.toUpperCase()} for ${br.name} Semester 1 (${sc.name}) at ${uni.name}. Credits pre-filled per VTU 2022 scheme. Free, accurate, real-time results.`;
 
 const semesters = br.semesters.map((s) => ({
   semester: s.semester,
   name: s.name,
   subjects: s.subjects.map((sub) => ({ code: sub.code, name: sub.name, credits: sub.credits, type: sub.type })),
 }));
+
+const breadcrumb = [
+  { label: 'VTU', href: '/universities' },
+  { label: sc.name, href: `/vtu/${schemeId}` },
+  { label: br.name, href: `/vtu/${schemeId}/${branchId}` },
+  { label: semName, href: `/vtu/${schemeId}/${branchId}/${tool}` },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": breadcrumb.map((b, i) => ({
+        "@type": "ListItem",
+        "position": i + 1,
+        "name": b.label,
+        "item": `https://cgpacalculatorai.com${b.href}`,
+      })),
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": `${br.short} ${tool.toUpperCase()} Calculator`,
+      "applicationCategory": "Education",
+      "applicationSubCategory": "Calculator",
+      "operatingSystem": "Web",
+      "url": `https://cgpacalculatorai.com/vtu/${schemeId}/${branchId}/${tool}/`,
+      "description": description,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "audience": { "@type": "Audience", "audienceType": "University students" },
+    },
+  ],
+};
 ---
 
 <Layout title={title} description={description} pathname={Astro.url.pathname}>
-  <a href="/" style="text-decoration: none; color: inherit;">&larr; Back to home</a>
-  <Calculator
-    schemeId={schemeId}
-    branchId={branchId}
-    branches={branches}
-    tool={tool}
-    semesters={semesters}
-    gradeTable={sc.gradeTable}
-    cgpaToPercentage={sc.cgpaToPercentage}
-    lateralEntry={sc.lateralEntry}
-    excludedGradeLetters={sc.excludedGradeLetters ?? []}
-    cgpaFormulaNote={sc.cgpaFormulaNote ?? null}
-  />
+  <section class="calc-page">
+    <div class="container calc-shell">
+      <nav class="breadcrumbs" aria-label="Breadcrumb" style="margin-bottom: 12px;">
+        <ol class="breadcrumb-list" style="display:flex; gap:6px; flex-wrap:wrap; list-style:none; padding:0; margin:0; font-size:13px; color:var(--color-mute);">
+          {breadcrumb.map((b, i) => (
+            <li style="display:inline-flex; align-items:center;">
+              {i > 0 && <span style="margin-right:6px; color:var(--color-muted);">›</span>}
+              <a href={b.href} style="color:var(--color-link); text-decoration:none; font-weight:600;">{b.label}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      <div>
+        <a href="/" class="body-sm" style="font-weight:700;">← Home</a>
+        <p class="eyebrow" style="margin: 10px 0 6px;">{uni.name} · {sc.name}</p>
+        <h1 class="heading-lg">{br.short} {tool.toUpperCase()} Calculator — {semName}</h1>
+        <p class="body-md" style="margin: 8px 0 0; max-width: 56ch;">Tap grades on a marks-card layout. Credits stay filled per the VTU {sc.name}. Your class (distinction / first / second) updates live. Semester credit total: {firstSem?.subjects?.reduce((a, b) => a + b.credits, 0)} cr.</p>
+
+      <Calculator
+        schemeId={schemeId}
+        branchId={branchId}
+        branches={branches}
+        tool={tool}
+        semesters={semesters}
+        gradeTable={sc.gradeTable}
+        cgpaToPercentage={sc.cgpaToPercentage}
+        lateralEntry={sc.lateralEntry}
+        excludedGradeLetters={sc.excludedGradeLetters ?? []}
+        cgpaFormulaNote={sc.cgpaFormulaNote ?? null}
+      />
+      </div>
+
+      {/* SEO content */}
+      <section class="seo-content" style="margin-top: 40px; padding: 24px; border: 1px solid var(--color-hairline); border-radius: 12px; background: var(--color-surface-card);">
+        <h2 style="font-size: 18px; margin-top: 0;">{br.short} {tool.toUpperCase()} — {semName} — VTU {sc.name}</h2>
+        <p style="margin: 8px 0 16px; color: var(--color-body);">
+          This calculator helps {br.name} students at {uni.name} compute their {tool.toUpperCase()} for {semName} under the {sc.name}. Credits are pre-filled from the official VTU scheme. Select your grade for each course and the result updates instantly.
+        </p>
+
+        <div class="formula-box" style="margin: 20px 0; padding: 16px; border-radius: 8px; border: 1px solid var(--color-hairline);">
+          <div style="font-size: 13px; color: var(--color-mute); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em;">Formula</div>
+          <div style="font-family: var(--font-family-mono); font-size: 14px; color: var(--color-primary);">
+            {tool === 'sgpa' ? 'SGPA = Σ (credits × grade point) ÷ Σ credits' : tool === 'cgpa' ? 'CGPA = Σ (credit points) ÷ Σ (credits)' : 'Percentage = CGPA × 10'}
+          </div>
+          {sc.cgpaFormulaNote && (
+            <p style="font-size: 12px; color: var(--color-mute); margin-top: 8px;">{sc.cgpaFormulaNote}</p>
+          )}
+        </div>
+
+        <h3 style="font-size: 16px; margin: 24px 0 12px;">Frequently Asked Questions</h3>
+        <div class="faqs" style="display:grid; gap: 12px;">
+          <div style="border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: 8px;">
+            <div style="font-weight: 600; color: var(--color-ink);">Does F count in the SGPA denominator?</div>
+            <div style="font-size: 13px; color: var(--color-mute); margin-top: 4px;">Yes. Under VTU rules, F and Absent grades earn 0 grade points but their credits remain in the SGPA denominator until the course is cleared.</div>
+          </div>
+          <div style="border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: 8px;">
+            <div style="font-weight: 600; color: var(--color-ink);">What is the credit total for Semester 1?</div>
+            <div style="font-size: 13px; color: var(--color-mute); margin-top: 4px;">Semester 1 under the VTU {sc.name} carries {firstSem?.subjects?.reduce((a, b) => a + b.credits, 0)} credits (Physics Group). Students in the Chemistry Group take Chemistry instead of Physics in Sem 1 — the credit total is the same.</div>
+          </div>
+          <div style="border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: 8px;">
+            <div style="font-weight: 600; color: var(--color-ink);">How is percentage calculated from CGPA?</div>
+            <div style="font-size: 13px; color: var(--color-mute); margin-top: 4px;">VTU uses Percentage = CGPA × 10. For example, a CGPA of 8.20 equals 82.0%. Some schemes may use alternative formulas — check with your college.</div>
+          </div>
+          <div style="border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: 8px;">
+            <div style="font-weight: 600; color: var(--color-ink);">Can I calculate CGPA across multiple semesters?</div>
+            <div style="font-size: 13px; color: var(--color-mute); margin-top: 4px;">Yes. Switch to the CGPA tab and enter each semester's SGPA. Lateral entry students can skip the first two semesters.</div>
+          </div>
+          <div style="border-bottom: 1px solid var(--color-hairline-soft); padding-bottom: 8px;">
+            <div style="font-weight: 600; color: var(--color-ink);">Is this official VTU data?</div>
+            <div style="font-size: 13px; color: var(--color-mute); margin-top: 4px;">Subject data follows the VTU {sc.name} scheme. Grade and percentage rules reflect verified VTU regulations.</div>
+          </div>
+        </div>
+
+        <div class="related-links" style="margin-top: 24px; display:grid; gap: 8px;">
+          <div style="font-size: 12px; color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;">Related calculators</div>
+          <a href={`/vtu/${schemeId}/${branchId}/sgpa`} style="color: var(--color-link); text-decoration: none; font-weight: 600;">Semester 1 SGPA</a>
+          <a href={`/vtu/${schemeId}/${branchId}/cgpa`} style="color: var(--color-link); text-decoration: none; font-weight: 600;">{br.short} CGPA Calculator</a>
+          <a href={`/vtu/${schemeId}/${branchId}/percentage`} style="color: var(--color-link); text-decoration: none; font-weight: 600;">CGPA → Percentage Converter</a>
+          <a href="/vtu/2021/cse/sgpa" style="color: var(--color-link); text-decoration: none; font-weight: 600;">VTU 2021 Scheme Calculator</a>
+        </div>
+      </section>
+
+      {/* Saved results */}
+      {tool === 'sgpa' && (
+        <section class="section" style="padding-top: 16px;">
+          <div class="container">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+              <p class="eyebrow">My saved results</p>
+              <span class="body-sm mute">Stored in your browser only</span>
+            </div>
+            <div id="saved-sgpa-results" class="my-results-list" style="margin-top:12px;"></div>
+          </div>
+        </section>
+      )}
+      {tool === 'cgpa' && (
+        <section class="section" style="padding-top: 16px;">
+          <div class="container">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+              <p class="eyebrow">My saved results</p>
+              <span class="body-sm mute">Stored in your browser only</span>
+            </div>
+            <div id="saved-cgpa-results" class="my-results-list" style="margin-top:12px;"></div>
+          </div>
+        </section>
+      )}
+    </div>
+  </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 </Layout>

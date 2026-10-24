@@ -1,0 +1,53 @@
+{
+  "regulation": {
+    "id": "ordinance11",
+    "name": "IPU Ordinance 11 (Semester System, 2015-16 onwards)",
+    "status": "draft",
+    "sources": [
+      {
+        "url": "https://www.ipu.ac.in/norms/Ordinance/ordinanc11020815.pdf",
+        "clauses": ["4.4", "11.5", "13"],
+        "retrievedDate": "2026-10-24",
+        "note": "Official Ordinance 11 PDF - Conduct and Evaluation of Examinations, B.Tech semester system"
+      }
+    ],
+    "gradeTable": [
+      { "letter": "O", "gradePoint": 10, "minMarks": 90, "maxMarks": 100 },
+      { "letter": "A+", "gradePoint": 9, "minMarks": 75, "maxMarks": 89 },
+      { "letter": "A", "gradePoint": 8, "minMarks": 65, "maxMarks": 74 },
+      { "letter": "B+", "gradePoint": 7, "minMarks": 55, "maxMarks": 64 },
+      { "letter": "B", "gradePoint": 6, "minMarks": 50, "maxMarks": 54 },
+      { "letter": "C", "gradePoint": 5, "minMarks": 45, "maxMarks": 49 },
+      { "letter": "P", "gradePoint": 4, "minMarks": 40, "maxMarks": 44 },
+      { "letter": "F", "gradePoint": 0, "minMarks": null, "maxMarks": 39 },
+      { "letter": "Absent", "gradePoint": 0, "minMarks": null, "maxMarks": null }
+    ],
+    "gradeScale": { "O": 10, "A+": 9, "A": 8, "B+": 7, "B": 6, "C": 5, "P": 4, "F": 0, "Absent": 0 },
+    "formulaType": "credit-weighted",
+    "cgpaToPercentage": { "multiplier": 10, "formula": "CGPA * 10" },
+    "lateralEntry": { "skipFirstNSemesters": "unverified" },
+    "totalCredits": { "regular": "unverified", "lateral": "unverified" },
+    "cgpaStartSemester": { "regular": 1, "lateral": "unverified" },
+    "backlogPolicy": {
+      "failedCreditsRemainInDenominator": "unverified",
+      "failedGradeLetters": ["F"],
+      "notes": "Ordinance 11 does not explicitly state whether failed course credits remain in the SGPA/CGPA denominator. Marked unverified."
+    },
+    "nonComputableCourses": ["audit papers"],
+    "auditExcludedFromCGPA": true,
+    "classThresholds": [
+      { "class": "TD", "minCGPA": 4.00, "maxCGPA": 4.99, "label": "Third Division", "conditions": "CGPA 4.00 - 4.99 (clause 13)" },
+      { "class": "SD", "minCGPA": 5.00, "maxCGPA": 6.49, "label": "Second Division", "conditions": "CGPA 5.00 - 6.49 (clause 13)" },
+      { "class": "FD", "minCGPA": 6.50, "maxCGPA": 9.99, "label": "First Division", "conditions": "CGPA >= 6.50 (clause 13)" },
+      { "class": "EP", "minCGPA": 10.00, "label": "Exemplary Performance", "conditions": "CGPA = 10.00, all courses passed in first attempt, no academic break (clause 13)" }
+    ],
+    "passGrades": ["O", "A+", "A", "B+", "B", "C", "P"],
+    "failedGrades": ["F", "Absent"],
+    "rounding": "two decimal digits",
+    "percentageAlternatives": [
+      { "formula": "(CGPA - 0.75) * 10", "source": "task-stated alternative", "note": "NOT found in Ordinance 11. Official ordinance states CGPA x 10 only. Keep as alternative with visible note." }
+    ],
+    "sourceUrl": "https://www.ipu.ac.in/norms/Ordinance/ordinanc11020815.pdf",
+    "lastVerified": "2026-10-24"
+  }
+}

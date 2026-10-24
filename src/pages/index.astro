@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getUniversities, getVerifiedSchemes, DEFAULT_UNIVERSITY, DEFAULT_SCHEME } from '../lib/data.ts';
+import { getUniversities } from '../lib/data.ts';
 
 const homeTitle = 'CGPA Calculator — Free VTU SGPA, CGPA & Percentage Tool';
 const homeDescription = 'Free CGPA calculator for VTU, Anna University, KTU, SRM, VIT, IPU & Saveetha. Convert SGPA to CGPA, CGPA to percentage, percentage to CGPA. VTU 2022 scheme, 2021, 2018, 2025. No signup, no data stored.';
@@ -8,45 +8,86 @@ const homeDescription = 'Free CGPA calculator for VTU, Anna University, KTU, SRM
 
 <Layout title={homeTitle} description={homeDescription} pathname="/">
   <section class="hero-band" style="position: relative; overflow: hidden;">
-    <div style="position: absolute; inset: -20%; opacity: 0.35; pointer-events: none; z-index: 0;" class="mesh-gradient"></div>
-    <div class="container" style="position: relative; z-index: 1; display: grid; gap: var(--spacing-lg); align-items: start;">
-      <div style="max-width: 720px;">
-        <p class="eyebrow" style="margin: 0;">CGPA Calculator AI</p>
-        <h1 class="display-xl" style="margin: var(--spacing-xs) 0 var(--spacing-md) 0;">Free CGPA Calculator — SGPA, CGPA &amp; Percentage</h1>
-        <p class="body-lg" style="margin-bottom: var(--spacing-lg); max-width: 64ch;">A free, transparent CGPA calculator for university students. Credits pre-filled for every subject, semester and branch. Enter grades and watch your SGPA, CGPA and percentage recalculate in real time. No account, no personal data stored on a server.</p>
-        <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
-          <a href="/vtu/2022/cse/sgpa" class="button-primary">Start VTU SGPA Calculator</a>
-          <a href="/universities" class="button-secondary">Choose your university</a>
+    <div style="position: absolute; inset: -10%; opacity: 0.9; pointer-events: none; z-index: 0;" class="mesh-gradient"></div>
+    <div class="container" style="position: relative; z-index: 1;">
+      <div class="hero-copy">
+        <p class="eyebrow" style="margin: 0;">No ads · No login · Credits pre-filled</p>
+        <h1 class="display-xl" style="margin: 10px 0 16px;">Your marks card, without the panic.</h1>
+        <p class="body-lg" style="margin: 0 0 20px; max-width: 58ch;">Tap grades. Watch SGPA, CGPA and percentage update live. Built for VTU students first — and for Anna, KTU, SRM, VIT, IPU and Saveetha too.</p>
+        <div class="trust-row" style="margin-bottom: 22px;">
+          <span class="trust-chip">Tap-to-grade, not dropdown hell</span>
+          <span class="trust-chip">Formulas shown, not hidden</span>
+          <span class="trust-chip">Lives only in your browser</span>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <a href="/vtu/2022/cse/sgpa" class="button-primary">Start VTU SGPA</a>
+          <a href="/universities" class="button-secondary">Pick university</a>
         </div>
       </div>
-      <div style="max-width: 440px;" class="feature-card" style="padding: var(--spacing-lg);">
-        <p class="eyebrow" style="margin: 0 0 var(--spacing-sm) 0;">Quick start</p>
-        <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-body);">
-          <li style="margin-bottom: var(--spacing-xs);">Pick your university and scheme</li>
-          <li style="margin-bottom: var(--spacing-xs);">Pick your branch and semester</li>
-          <li style="margin-bottom: var(--spacing-xs);">Choose a grade per subject (credits pre-filled)</li>
-          <li style="margin-bottom: var(--spacing-xs);">SGPA, CGPA and percentage recalculate instantly</li>
-        </ul>
+
+      <div class="grid-tools" style="margin-top: 36px;">
+        <a href="/vtu/2022/cse/sgpa" class="tool-tile">
+          <span class="kicker">Semester</span>
+          <h2 class="heading-md" style="margin:0;">SGPA calculator</h2>
+          <p class="body-sm" style="margin:0;">Tap S / A / B on each subject. Credits are already filled for your branch.</p>
+        </a>
+        <a href="/vtu/2022/cse/cgpa" class="tool-tile">
+          <span class="kicker">Whole degree</span>
+          <h2 class="heading-md" style="margin:0;">CGPA calculator</h2>
+          <p class="body-sm" style="margin:0;">Drop in each semester’s SGPA. Lateral entry skips 1–2 automatically.</p>
+        </a>
+        <a href="/vtu/2022/cse/percentage" class="tool-tile">
+          <span class="kicker">Convert</span>
+          <h2 class="heading-md" style="margin:0;">Percentage</h2>
+          <p class="body-sm" style="margin:0;">CGPA × 9.5 for VTU — plus class/division as you type.</p>
+        </a>
       </div>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" style="padding-top: 24px;">
+    <div class="container">
+      <div style="display:grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+        <div class="feature-card">
+          <div class="step-num">1</div>
+          <h3 class="heading-md" style="margin: 12px 0 6px;">Pick scheme &amp; branch</h3>
+          <p class="body-sm" style="margin:0;">2025 / 2022 / 2021 / 2018. CSE, ECE, ME and the rest — subjects load instantly.</p>
+        </div>
+        <div class="feature-card">
+          <div class="step-num">2</div>
+          <h3 class="heading-md" style="margin: 12px 0 6px;">Tap the grade chips</h3>
+          <p class="body-sm" style="margin:0;">No hunting through dropdowns. One tap per subject, phone-friendly.</p>
+        </div>
+        <div class="feature-card">
+          <div class="step-num">3</div>
+          <h3 class="heading-md" style="margin: 12px 0 6px;">See class, not just a number</h3>
+          <p class="body-sm" style="margin:0;">SGPA, credits, points and distinction / first class update as you go.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 24px;">
     <div class="container">
       <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Supported universities</p>
-      <h2 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Multi-university CGPA calculator</h2>
-      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 60ch;">University, scheme, branch, semester, subjects, credits, grade table and formulas live in JSON data. Adding a new university is a data-only change — no code edits.</p>
+      <h2 class="heading-lg" style="margin-bottom: 8px;">One calculator. Many campuses.</h2>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 60ch;">University, scheme, branch, subjects and credits live in data — so your calculator matches your syllabus, not a generic spreadsheet.</p>
       <div style="display: grid; gap: var(--spacing-lg); grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
         {getUniversities().map((uni) => (
-          <div class="feature-card" style="padding: var(--spacing-lg);">
-            <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs) 0;">{uni.name}</h3>
-            <p class="body-sm" style="margin: 0 0 var(--spacing-sm) 0; color: var(--color-body);">{uni.domain}</p>
-            <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-mute); font-size: var(--font-size-body-sm);">
+          <div class="feature-card uni-card">
+            <div style="display:flex; gap:12px; align-items:flex-start; margin-bottom: 12px;">
+              <div class="uni-badge">{uni.id.slice(0,3).toUpperCase()}</div>
+              <div>
+                <h3 class="heading-md" style="margin: 0 0 4px 0;">{uni.name}</h3>
+                <p class="body-sm mute" style="margin:0;">{uni.domain}</p>
+              </div>
+            </div>
+            <ul style="margin: 0 0 16px; padding-left: 18px; color: var(--color-mute); font-size: var(--font-size-body-sm);">
               {uni.schemes.map((s) => (
-                <li style="margin-bottom: var(--spacing-xs);">✓ {s.name}</li>
+                <li style="margin-bottom: 4px;">{s.name}</li>
               ))}
             </ul>
-            <a href={`/${uni.id}/${uni.schemes.find(s => s.status === 'verified')?.id ?? uni.schemes[0]?.id}/cse/sgpa`} class="button-primary-sm" style="margin-top: var(--spacing-sm); display: inline-block;">Open calculator</a>
+            <a href={`/${uni.id}/${uni.schemes.find(s => s.status === 'verified')?.id ?? uni.schemes[0]?.id}/cse/sgpa`} class="button-primary-sm">Open {uni.id.toUpperCase()} calculator</a>
           </div>
         ))}
       </div>
@@ -79,7 +120,7 @@ const homeDescription = 'Free CGPA calculator for VTU, Anna University, KTU, SRM
 
         <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">VTU CGPA Calculator (2025, 2022, 2021, 2018 Scheme)</h2>
         <p class="body-md" style="margin-bottom: var(--spacing-md);">
-          The <strong>VTU CGPA calculator</strong> is our most-used tool. VTU (Visvesvaraya Technological University) follows a 10-point grading system with grades S (10), A (9), B (8), C (7), D (6), E (5), F (0). Credits are pre-filled for every subject, semester and branch, so you only enter grades. We support the <strong>VTU CGPA calculator 2022 scheme</strong> (verified), plus 2025, 2021 and 2018 schemes (draft, being verified). The <strong>VTU CGPA to percentage</strong> conversion uses the official multiplier of 9.5. Whether you need a <strong>VTU CGPA calculator</strong> for CSE, ECE, ME, CE, EEE or ISE, our tool has credits pre-filled for all branches and semesters.
+          The <strong>VTU CGPA calculator</strong> is our most-used tool. VTU (Visvesvaraya Technological University) follows a 10-point grading system with grades S (10), A (9), B (8), C (7), D (6), E (5), F (0). Credits are pre-filled for every subject, semester and branch, so you only enter grades. We support VTU CGPA calculators across all schemes. The <strong>VTU CGPA to percentage</strong> conversion uses the official multiplier of 9.5.
         </p>
 
         <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">VIT CGPA Calculator and CGPA Calculator VIT</h2>
@@ -330,9 +371,13 @@ const homeDescription = 'Free CGPA calculator for VTU, Anna University, KTU, SRM
     </div>
   </section>
 
-  <section class="cta-band" style="padding: var(--spacing-4xl) var(--spacing-lg); text-align: center;">
-    <h2 class="display-xl" style="margin: 0 0 var(--spacing-lg) 0;">Start calculating your CGPA</h2>
-    <a href="/vtu/2022/cse/sgpa" class="button-primary">VTU SGPA Calculator</a>
+  <section class="cta-band">
+    <div class="container">
+      <p class="eyebrow" style="color:var(--color-primary); margin:0 0 10px;">Ready in under a minute</p>
+      <h2 class="display-xl" style="margin: 0 0 16px;">Skip the ad maze. Just calculate.</h2>
+      <p class="body-md" style="color:var(--color-body); max-width: 48ch; margin: 0 auto 24px;">Open the VTU SGPA tool, tap your grades, and walk away with a number you can trust — plus the formula if anyone asks.</p>
+      <a href="/vtu/2022/cse/sgpa" class="button-primary" style="background:#f4c430; color:#171c2b; box-shadow:none;">Open VTU SGPA</a>
+    </div>
   </section>
 </Layout>
 

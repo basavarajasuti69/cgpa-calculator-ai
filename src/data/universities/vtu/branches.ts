@@ -30,35 +30,56 @@ function buildBranch(id: string, name: string, short: string, semesters: Semeste
   };
 }
 
-/* Common first-year (semesters 1-2) shared across branches and schemes. */
+/* Common first-year (semesters 1-2) shared across branches and schemes.
+   VTU uses Physics Group / Chemistry Group cycles for Sem I & II.
+   A student takes Physics in one semester and Chemistry in the other —
+   never both in the same semester. Per-semester credit total = 20. */
 function firstYear(tag: string, branchPrefix: string): SemesterInput[] {
+  const isCse = branchPrefix === 'cs' || branchPrefix === 'is';
+  const escI = isCse
+    ? { code: 'BESCK104C', name: 'Introduction to Electronics Communication', credits: 3, type: 'core' as const }
+    : { code: `BESCK104${branchPrefix.toUpperCase() === 'me' ? 'D' : 'A'}`, name: 'Engineering Science Course-I', credits: 3, type: 'core' as const };
+  const etcI = { code: `BETCK105H`, name: 'Introduction to Internet of Things (IoT)', credits: 3, type: 'elective' as const };
+  const plcI = { code: `BPLCK105B`, name: 'Introduction to Python Programming', credits: 3, type: 'elective' as const };
+  const eng = { code: `BPWSK106`, name: 'Professional Writing Skills in English', credits: 1, type: 'core' as const };
+  const hum = { code: `BICOK107`, name: 'Indian Constitution', credits: 1, type: 'core' as const };
+  const sda = { code: `BIDTK158`, name: 'Innovation and Design Thinking', credits: 1, type: 'core' as const };
+  const cad = { code: `BCEDK103`, name: 'Computer-Aided Engineering Drawing', credits: 3, type: 'core' as const };
+  const escII = isCse
+    ? { code: 'BESCK204D', name: 'Introduction to Mechanical Engineering', credits: 3, type: 'core' as const }
+    : { code: `BESCK204${branchPrefix.toUpperCase() === 'me' ? 'A' : 'D'}`, name: 'Engineering Science Course-II', credits: 3, type: 'core' as const };
+  const plcII = { code: `BPLCK205B`, name: 'Introduction to Python Programming', credits: 3, type: 'elective' as const };
+  const engII = { code: `BPWSK206`, name: 'Professional Writing Skills in English', credits: 1, type: 'core' as const };
+  const humII = { code: `BICOK207`, name: 'Indian Constitution', credits: 1, type: 'core' as const };
+  const sdaII = { code: `BSFHK258`, name: 'Scientific Foundations of Health', credits: 1, type: 'core' as const };
+
   return [
     {
       semester: 1,
-      name: 'Semester 1',
+      name: 'Semester 1 (Physics Group)',
       subjects: [
-        { code: `MAT${tag}1`, name: 'Engineering Mathematics I', credits: 4, type: 'core' },
-        { code: `PHY${tag}2`, name: 'Engineering Physics', credits: 3, type: 'core' },
-        { code: `CYC${tag}3`, name: 'Engineering Chemistry', credits: 3, type: 'core' },
-        { code: `CIV${tag}4`, name: 'Elements of Civil Engineering', credits: 3, type: 'core' },
-        { code: `MEE${tag}5`, name: 'Elements of Mechanical Engineering', credits: 3, type: 'core' },
-        { code: `PHYL${tag}6`, name: 'Engineering Physics Lab', credits: 1, type: 'lab' },
-        { code: `CYCL${tag}7`, name: 'Engineering Chemistry Lab', credits: 1, type: 'lab' },
-        { code: `WSL${tag}8`, name: 'Workshop Practice', credits: 1, type: 'lab' },
+        { code: `BMATS101`, name: 'Mathematics-I for CSE Stream', credits: 4, type: 'core' },
+        { code: `BPHYS102`, name: 'Applied Physics for CSE Stream', credits: 4, type: 'core' },
+        ...(isCse ? [{ code: 'BPOPS103', name: 'Principles of Programming Using C', credits: 3, type: 'core' }] : []),
+        escI,
+        etcI,
+        eng,
+        hum,
+        sda,
       ],
     },
     {
       semester: 2,
-      name: 'Semester 2',
+      name: 'Semester 2 (Chemistry Group)',
       subjects: [
-        { code: `MAT${tag}9`, name: 'Engineering Mathematics II', credits: 4, type: 'core' },
-        { code: `PHY${tag}10`, name: 'Engineering Physics', credits: 3, type: 'core' },
-        { code: `CYC${tag}11`, name: 'Engineering Chemistry', credits: 3, type: 'core' },
-        { code: `CIV${tag}12`, name: 'Elements of Civil Engineering', credits: 3, type: 'core' },
-        { code: `MEE${tag}13`, name: 'Elements of Mechanical Engineering', credits: 3, type: 'core' },
-        { code: `PHYL${tag}14`, name: 'Engineering Physics Lab', credits: 1, type: 'lab' },
-        { code: `CYCL${tag}15`, name: 'Engineering Chemistry Lab', credits: 1, type: 'lab' },
-        { code: `WSL${tag}16`, name: 'Workshop Practice', credits: 1, type: 'lab' },
+        { code: `BMATS201`, name: 'Mathematics-II for CSE Stream', credits: 4, type: 'core' },
+        { code: `BCHES202`, name: 'Applied Chemistry for CSE Stream', credits: 4, type: 'core' },
+        ...(isCse ? [cad] : []),
+        escII,
+        plcII,
+        engII,
+        humII,
+        sdaII,
       ],
     },
   ];

@@ -48,17 +48,25 @@ const semesters = br.semesters.map((s) => ({
 ---
 
 <Layout title={title} description={description} pathname={Astro.url.pathname}>
-  <a href="/" style="text-decoration: none; color: inherit;">&larr; Back to home</a>
-  <Calculator
-    schemeId={schemeId}
-    branchId={DEFAULT_BRANCH}
-    branches={sc.branches.map(b => ({ id: b.id, short: b.short, name: b.name }))}
-    tool={tool}
-    semesters={semesters}
-    gradeTable={sc.gradeTable}
-    cgpaToPercentage={sc.cgpaToPercentage}
-    lateralEntry={sc.lateralEntry}
-    excludedGradeLetters={sc.excludedGradeLetters ?? []}
-    cgpaFormulaNote={sc.cgpaFormulaNote ?? null}
-  />
+  <section class="calc-page">
+    <div class="container calc-shell">
+      <div>
+        <a href="/" class="body-sm" style="font-weight:700;">← Home</a>
+        <p class="eyebrow" style="margin: 10px 0 6px;">{uni.name} · {sc.name}</p>
+        <h1 class="heading-lg">{tool.toUpperCase()} calculator</h1>
+      </div>
+      <Calculator
+        schemeId={schemeId}
+        branchId={DEFAULT_BRANCH}
+        branches={sc.branches.map(b => ({ id: b.id, short: b.short, name: b.name }))}
+        tool={tool}
+        semesters={semesters}
+        gradeTable={sc.gradeTable}
+        cgpaToPercentage={sc.cgpaToPercentage}
+        lateralEntry={sc.lateralEntry}
+        excludedGradeLetters={sc.excludedGradeLetters ?? []}
+        cgpaFormulaNote={sc.cgpaFormulaNote ?? null}
+      />
+    </div>
+  </section>
 </Layout>

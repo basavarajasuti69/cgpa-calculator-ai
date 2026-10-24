@@ -1,14 +1,14 @@
 ---
 const { schemeId, branchId, branches = [], tool = 'sgpa', semesters = [], gradeTable = {}, cgpaToPercentage = { multiplier: 9.5 }, lateralEntry = { skipFirstNSemesters: 2 }, excludedGradeLetters = [], cgpaFormulaNote = null } = Astro.props;
 
-const gradeOptions = Object.keys(gradeTable).sort((a, b) => (gradeTable[b] || 0) - (gradeTable[a] || 0));
 const gradeJson = JSON.stringify(gradeTable);
 const semestersJson = JSON.stringify(semesters);
 const branchesJson = JSON.stringify(branches.map(b => ({ id: b.id, short: b.short })));
 const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry, excludedGradeLetters, cgpaFormulaNote });
+const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
 ---
 
-<section id="calculator" aria-label="CGPA calculator" style="display: grid; gap: var(--spacing-md);"
+<section id="calculator" aria-label="CGPA calculator" class="calc-root"
   data-grade-table={gradeJson}
   data-semesters={semestersJson}
   data-scheme={schemeId}
@@ -19,20 +19,19 @@ const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry, excluded
   data-excluded-grades={JSON.stringify(excludedGradeLetters)}
   data-cgpa-formula-note={cgpaFormulaNote ?? ''}>
 
-  {/* Top selectors */}
-  <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap; align-items: flex-end;">
-    <div style="flex: 1; min-width: 120px;">
-      <label style="display: block; margin-bottom: 4px; color: var(--color-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Scheme</label>
-      <select id="scheme-select" style="width: 100%; padding: 10px 12px; background: var(--color-canvas); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;">
+  <div class="calc-toolbar">
+    <div>
+      <label class="field-label" for="scheme-select">Scheme</label>
+      <select id="scheme-select" class="select-plain">
         {['2025','2022','2021','2018'].map(s => (
           <option value={s} selected={s === schemeId}>{s} Scheme</option>
         ))}
       </select>
     </div>
     {branches && branches.length > 0 && (
-      <div style="flex: 1; min-width: 120px;">
-        <label style="display: block; margin-bottom: 4px; color: var(--color-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Branch</label>
-        <select id="branch-select" style="width: 100%; padding: 10px 12px; background: var(--color-canvas); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;">
+      <div>
+        <label class="field-label" for="branch-select">Branch</label>
+        <select id="branch-select" class="select-plain">
           {branches.map(b => (
             <option value={b.id} selected={b.id === branchId}>{b.short}</option>
           ))}
@@ -40,79 +39,76 @@ const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry, excluded
       </div>
     )}
     {tool === 'sgpa' && (
-      <div style="flex: 1; min-width: 120px;">
-        <label style="display: block; margin-bottom: 4px; color: var(--color-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Semester</label>
-        <select id="semester-select" style="width: 100%; padding: 10px 12px; background: var(--color-canvas); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;">
+      <div class="sem-wrap">
+        <span class="field-label">Semester</span>
+        <select id="semester-select" class="sr-only">
           {semesters.map((s) => (
             <option value={s.semester}>{s.name || `Semester ${s.semester}`}</option>
           ))}
         </select>
+        <div class="sem-pills" id="sem-pills" role="tablist">
+          {semesters.map((s, i) => (
+            <button type="button" class:list={['sem-pill', i === 0 && 'is-active']} data-sem={s.semester}>
+              Sem {s.semester}
+            </button>
+          ))}
+        </div>
       </div>
     )}
   </div>
 
-  {/* Tool tabs */}
-  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-    {branchId ? (
-      <>
-        <a href={`/vtu/${schemeId}/${branchId}/sgpa`} style={`padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid ${tool === 'sgpa' ? 'var(--color-primary)' : 'var(--color-hairline)'}; background: ${tool === 'sgpa' ? 'var(--color-primary)' : 'var(--color-canvas)'}; color: ${tool === 'sgpa' ? '#fff' : 'var(--color-ink)'};`}>SGPA</a>
-        <a href={`/vtu/${schemeId}/${branchId}/cgpa`} style={`padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid ${tool === 'cgpa' ? 'var(--color-primary)' : 'var(--color-hairline)'}; background: ${tool === 'cgpa' ? 'var(--color-primary)' : 'var(--color-canvas)'}; color: ${tool === 'cgpa' ? '#fff' : 'var(--color-ink)'};`}>CGPA</a>
-        <a href={`/vtu/${schemeId}/${branchId}/percentage`} style={`padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid ${tool === 'percentage' ? 'var(--color-primary)' : 'var(--color-hairline)'}; background: ${tool === 'percentage' ? 'var(--color-primary)' : 'var(--color-canvas)'}; color: ${tool === 'percentage' ? '#fff' : 'var(--color-ink)'};`}>Percentage</a>
-      </>
-    ) : (
-      <>
-        <a href={`/vtu/${schemeId}/sgpa`} style={`padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid ${tool === 'sgpa' ? 'var(--color-primary)' : 'var(--color-hairline)'}; background: ${tool === 'sgpa' ? 'var(--color-primary)' : 'var(--color-canvas)'}; color: ${tool === 'sgpa' ? '#fff' : 'var(--color-ink)'};`}>SGPA</a>
-        <a href={`/vtu/${schemeId}/cgpa`} style={`padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid ${tool === 'cgpa' ? 'var(--color-primary)' : 'var(--color-hairline)'}; background: ${tool === 'cgpa' ? 'var(--color-primary)' : 'var(--color-canvas)'}; color: ${tool === 'cgpa' ? '#fff' : 'var(--color-ink)'};`}>CGPA</a>
-        <a href={`/vtu/${schemeId}/percentage`} style={`padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid ${tool === 'percentage' ? 'var(--color-primary)' : 'var(--color-hairline)'}; background: ${tool === 'percentage' ? 'var(--color-primary)' : 'var(--color-canvas)'}; color: ${tool === 'percentage' ? '#fff' : 'var(--color-ink)'};`}>Percentage</a>
-      </>
-    )}
+  <div class="seg-tabs" role="tablist">
+    <a href={`${pathBase}/sgpa`} class:list={['seg-tab', tool === 'sgpa' && 'is-active']}>SGPA</a>
+    <a href={`${pathBase}/cgpa`} class:list={['seg-tab', tool === 'cgpa' && 'is-active']}>CGPA</a>
+    <a href={`${pathBase}/percentage`} class:list={['seg-tab', tool === 'percentage' && 'is-active']}>Percentage</a>
   </div>
 
   {tool === 'sgpa' && (
     <>
-      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; color: var(--color-body);">
-        <input type="checkbox" id="lateral-entry" style="width: 16px; height: 16px; accent-color: var(--color-primary);" />
-        Lateral entry (skip semesters 1–2)
-      </label>
+      {semesters.length > 1 && (
+        <label class="lateral">
+          <input type="checkbox" id="lateral-entry" />
+          Lateral entry — skip semesters 1–2
+        </label>
+      )}
 
-      <div style="background: var(--color-canvas); border: 1px solid var(--color-hairline); border-radius: 12px; overflow: hidden;">
-        <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-hairline); background: var(--color-surface);">
-          <span style="font-weight: 600; color: var(--color-ink); font-size: 15px;">Subjects &amp; Grades</span>
-          <span style="color: var(--color-muted); font-size: 13px; margin-left: 8px;">Credits are pre-filled per scheme</span>
-        </div>
-        <div style="overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse;">
-            <thead>
-              <tr style="background: var(--color-surface);">
-                <th style="padding: 10px 16px; text-align: left; color: var(--color-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-hairline);">Subject</th>
-                <th style="padding: 10px 16px; text-align: center; color: var(--color-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-hairline); width: 80px;">Credits</th>
-                <th style="padding: 10px 16px; text-align: center; color: var(--color-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-hairline); width: 120px;">Grade</th>
-              </tr>
-            </thead>
-            <tbody id="subjects-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div style="background: var(--color-canvas); border: 2px solid var(--color-primary); border-radius: 12px; padding: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
-        <div>
-          <div style="color: var(--color-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">SGPA</div>
-          <div id="sgpa-display" style="font-weight: 700; font-size: 2.5rem; color: var(--color-primary); line-height: 1;">0.00</div>
-        </div>
-        <div style="display: grid; gap: 4px; text-align: right;">
-          <div style="font-size: 14px; color: var(--color-muted);">Credits: <span id="credits-display" style="color: var(--color-ink); font-weight: 600;">0</span></div>
-          <div style="font-size: 14px; color: var(--color-muted);">Points: <span id="points-display" style="color: var(--color-ink); font-weight: 600;">0</span></div>
-        </div>
-      </div>
-
-      <details style="background: var(--color-canvas); border: 1px solid var(--color-hairline); border-radius: 12px; padding: 16px;">
-        <summary style="cursor: pointer; font-weight: 600; color: var(--color-ink); font-size: 14px;">Show formula & breakdown</summary>
-        <div style="margin-top: 12px; display: grid; gap: 8px;">
-          <div style="background: var(--color-surface-code); color: var(--color-on-dark); border-radius: 8px; padding: 12px; font-family: var(--font-family-mono); font-size: 13px;">
-            <div style="color: var(--color-muted); margin-bottom: 4px;">SGPA = Σ (credits × grade point) ÷ Σ credits</div>
-            <div style="color: #fff; white-space: pre-wrap;" id="breakdown">—</div>
+      <div class="marksheet">
+        <div class="marksheet-head">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <strong class="ink" style="flex:1;">Tap a grade or enter marks. Credits are already filled.</strong>
+            <div class="seg-tabs" style="width:auto;">
+              <button type="button" class="seg-tab is-active" id="mode-grade">Grade</button>
+              <button type="button" class="seg-tab" id="mode-marks">Marks</button>
+            </div>
           </div>
-          <p style="margin: 0; color: var(--color-muted); font-size: 13px;">Grade points are not rounded before the formula. Credits are pre-filled per scheme.</p>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button type="button" id="save-result-btn" class="button-primary-sm" style="padding:6px 12px; font-size:12px;">Save result</button>
+            <button type="button" id="clear-btn" class="button-ghost-sm" style="padding:6px 12px; font-size:12px;">Clear all</button>
+          </div>
+        </div>
+        <div id="subjects-tbody"></div>
+      </div>
+
+      <div class="score-dock">
+        <div>
+          <div class="label">This semester · SGPA</div>
+          <div id="sgpa-display" class="score-num">0.00</div>
+          <div id="sgpa-class" class="class-badge">Pick grades</div>
+        </div>
+        <div class="score-meta">
+          <div>Credits used <strong id="credits-display">0</strong></div>
+          <div>Credit points <strong id="points-display">0</strong></div>
+        </div>
+      </div>
+
+      <details class="feature-card">
+        <summary class="label-sm" style="cursor:pointer;">Show formula &amp; subject breakdown</summary>
+        <div style="margin-top: 12px; display: grid; gap: 8px;">
+          <div class="code-block">
+            <div style="color: var(--color-on-dark-muted); margin-bottom: 4px;">SGPA = Σ (credits × grade point) ÷ Σ credits</div>
+            <div id="breakdown" style="color:var(--color-on-dark); white-space:pre-wrap;">—</div>
+          </div>
+          <p class="body-sm mute" style="margin:0;">Grade points are not rounded before the formula.</p>
         </div>
       </details>
     </>
@@ -120,84 +116,76 @@ const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry, excluded
 
   {tool === 'cgpa' && (
     <>
-      <div style="background: var(--color-canvas); border: 1px solid var(--color-hairline); border-radius: 12px; overflow: hidden;">
-        <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-hairline); background: var(--color-surface);">
-          <span style="font-weight: 600; color: var(--color-ink); font-size: 15px;">Enter SGPA for each semester</span>
-          <span style="color: var(--color-muted); font-size: 13px; margin-left: 8px;">(Leave blank if not applicable)</span>
+      <div class="marksheet">
+        <div class="marksheet-head">
+          <div>
+            <strong class="ink">Enter each semester’s SGPA</strong>
+            <div class="body-sm mute">Credits come from your scheme. Leave a row blank to skip it.</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button type="button" id="save-cgpa-btn" class="button-primary-sm" style="padding:6px 12px; font-size:12px;">Save result</button>
+            <button type="button" id="clear-cgpa-btn" class="button-ghost-sm" style="padding:6px 12px; font-size:12px;">Clear all</button>
+          </div>
         </div>
-        <div style="overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse;">
-            <thead>
-              <tr style="background: var(--color-surface);">
-                <th style="padding: 10px 16px; text-align: left; color: var(--color-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-hairline);">Semester</th>
-                <th style="padding: 10px 16px; text-align: center; color: var(--color-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-hairline); width: 120px;">Credits</th>
-                <th style="padding: 10px 16px; text-align: center; color: var(--color-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-hairline); width: 180px;">SGPA</th>
-              </tr>
-            </thead>
-            <tbody id="cgpa-tbody">
-              {semesters.map((s) => {
-                const credits = s.subjects?.reduce((a: number, b: any) => a + (b.credits || 0), 0) || 0;
-                return (
-                  <tr style="border-bottom: 1px solid var(--color-hairline);">
-                    <td style="padding: 10px 16px;">
-                      <div style="color: var(--color-ink); font-weight: 500; font-size: 14px;">{s.name || `Semester ${s.semester}`}</div>
-                      <div style="font-family: var(--font-family-mono); font-size: 12px; color: var(--color-muted);">Sem {s.semester}</div>
-                    </td>
-                    <td style="padding: 10px 16px; text-align: center;">
-                      <span style="color: var(--color-ink); font-weight: 600; font-size: 14px; background: var(--color-surface); padding: 2px 10px; border-radius: 6px;">{credits}</span>
-                    </td>
-                    <td style="padding: 10px 16px; text-align: center;">
-                      <input type="number" step="0.01" min="0" max="10" data-sem={s.semester} data-credits={credits} class="cgpa-sgpa-input" style="width: 100%; padding: 8px 10px; background: var(--color-canvas); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 6px; font-size: 14px;" placeholder="e.g. 8.75" />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div>
+          {semesters.map((s) => {
+            const credits = s.subjects?.reduce((a: number, b: any) => a + (b.credits || 0), 0) || 0;
+            return (
+              <div class="subject-row cgpa-row">
+                <div class="sub-meta">
+                  <div class="ink" style="font-weight:700;">{s.name || `Semester ${s.semester}`}</div>
+                  <div class="mute" style="font-size:12px;">Sem {s.semester}</div>
+                </div>
+                <div class="sub-credits"><span class="credit-pill">{credits} cr</span></div>
+                <input type="number" step="0.01" min="0" max="10" data-sem={s.semester} data-credits={credits} class="cgpa-sgpa-input text-input" placeholder="SGPA e.g. 8.75" />
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; color: var(--color-body);">
-        <input type="checkbox" id="cgpa-lateral" style="width: 16px; height: 16px; accent-color: var(--color-primary);" />
-        Lateral entry (skip first two semesters)
-      </label>
+      {semesters.length > 1 && (
+        <label class="lateral">
+          <input type="checkbox" id="cgpa-lateral" />
+          Lateral entry — skip first two semesters
+        </label>
+      )}
 
-      <div style="background: var(--color-canvas); border: 2px solid var(--color-primary); border-radius: 12px; padding: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+      <div class="score-dock">
         <div>
-          <div style="color: var(--color-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">CGPA</div>
-          <div id="cgpa-display" style="font-weight: 700; font-size: 2.5rem; color: var(--color-primary); line-height: 1;">0.00</div>
+          <div class="label">Overall · CGPA</div>
+          <div id="cgpa-display" class="score-num">0.00</div>
+          <div id="cgpa-class" class="class-badge">Enter SGPAs</div>
         </div>
-        <div style="display: grid; gap: 4px; text-align: right;">
-          <div style="font-size: 14px; color: var(--color-muted);">Total Credits: <span id="cgpa-credits" style="color: var(--color-ink); font-weight: 600;">0</span></div>
-          <div style="font-size: 14px; color: var(--color-muted);">Total Points: <span id="cgpa-points" style="color: var(--color-ink); font-weight: 600;">0</span></div>
+        <div class="score-meta">
+          <div>Total credits <strong id="cgpa-credits">0</strong></div>
+          <div>Total points <strong id="cgpa-points">0</strong></div>
         </div>
       </div>
     </>
   )}
 
   {tool === 'percentage' && (
-    <>
-      <div style="background: var(--color-canvas); border: 1px solid var(--color-hairline); border-radius: 12px; padding: 20px; display: grid; gap: 16px;">
+    <div class="marksheet" style="padding: 24px; display:grid; gap: 16px;">
+      <div>
+        <label class="field-label" for="percentage-cgpa">Enter CGPA</label>
+        <input type="number" id="percentage-cgpa" class="text-input" step="0.01" min="0" max="10" placeholder="e.g. 8.75" style="max-width:280px;" />
+        <p class="body-sm mute" style="margin:8px 0 0;">Percentage = CGPA × {(cgpaToPercentage.multiplier || 9.5)}</p>
+      </div>
+      <div class="score-dock">
         <div>
-          <label style="display: block; margin-bottom: 6px; color: var(--color-ink); font-weight: 600; font-size: 14px;">Enter CGPA</label>
-          <input type="number" id="percentage-cgpa" step="0.01" min="0" max="10" style="width: 100%; max-width: 300px; padding: 10px 12px; background: var(--color-canvas); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 8px; font-size: 15px;" placeholder="e.g. 8.75" />
-          <p style="margin: 6px 0 0 0; color: var(--color-muted); font-size: 13px;">VTU usually uses Percentage = CGPA × {(cgpaToPercentage.multiplier || 9.5)}</p>
-        </div>
-        <div style="background: var(--color-surface); padding: 16px; border-radius: 10px;">
-          <div style="color: var(--color-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Percentage</div>
-          <div id="percentage-display" style="font-weight: 700; font-size: 2.5rem; color: var(--color-primary); line-height: 1;">0.00 %</div>
+          <div class="label">Equivalent percentage</div>
+          <div id="percentage-display" class="score-num">0.00%</div>
         </div>
       </div>
-    </>
+    </div>
   )}
 
-  {/* Actions */}
-  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-    <button type="button" id="print-btn" style="flex: 1; min-width: 100px; padding: 10px 16px; background: var(--color-primary); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Print / Save</button>
-    <button type="button" id="clear-btn" style="flex: 1; min-width: 100px; padding: 10px 16px; background: var(--color-surface); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Clear All</button>
+  <div class="calc-actions">
+    <button type="button" id="print-btn" class="button-primary">Print / save</button>
+    <button type="button" id="clear-all-btn" class="button-secondary">Clear all</button>
   </div>
-
-  <p style="margin: 0; color: var(--color-muted); text-align: center; font-size: 12px;">No personal data is stored. Results live in your browser only.</p>
+  <p class="body-sm mute" style="margin:0; text-align:center;">No personal data is stored. Results live in your browser only.</p>
 </section>
 
 <script is:inline>
@@ -209,7 +197,6 @@ const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry, excluded
     const tool = calcRoot.dataset.tool || 'sgpa';
     const cgpaConfig = JSON.parse(calcRoot.dataset.cgpaConfig ?? '{"cgpaToPercentage":{"multiplier":9.5},"lateralEntry":{"skipFirstNSemesters":2}}');
     const excludedGrades = JSON.parse(calcRoot.dataset.excludedGrades ?? '[]');
-    const cgpaFormulaNote = calcRoot.dataset.cgpaFormulaNote ?? '';
     const schemeId = calcRoot.dataset.scheme;
     const branchId = calcRoot.dataset.branch;
     const multiplier = cgpaConfig?.cgpaToPercentage?.multiplier || 9.5;
@@ -219,46 +206,105 @@ const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry, excluded
     const branchSelect = document.getElementById('branch-select');
     const printBtn = document.getElementById('print-btn');
     const clearBtn = document.getElementById('clear-btn');
+    const clearAllBtn = document.getElementById('clear-all-btn');
+    const saveResultBtn = document.getElementById('save-result-btn');
+    const saveCgpaBtn = document.getElementById('save-cgpa-btn');
+    const clearCgpaBtn = document.getElementById('clear-cgpa-btn');
+
+    function classLabel(n) {
+      if (n >= 7.75) return 'First class with distinction';
+      if (n >= 6.75) return 'First class';
+      if (n >= 5.75) return 'Second class';
+      if (n > 0) return 'Pass class';
+      return 'Pick grades';
+    }
 
     function buildBasePath() {
       if (branchId && branches && branches.length > 0) {
         return `/vtu/${schemeSelect?.value || schemeId}/${branchSelect?.value || branchId}`;
-      } else {
-        return `/vtu/${schemeSelect?.value || schemeId}`;
       }
+      return `/vtu/${schemeSelect?.value || schemeId}`;
     }
 
-    schemeSelect?.addEventListener('change', () => {
-      window.location.href = `${buildBasePath()}/${tool}/`;
-    });
-    branchSelect?.addEventListener('change', () => {
-      window.location.href = `${buildBasePath()}/${tool}/`;
-    });
+    schemeSelect?.addEventListener('change', () => { window.location.href = `${buildBasePath()}/${tool}/`; });
+    branchSelect?.addEventListener('change', () => { window.location.href = `${buildBasePath()}/${tool}/`; });
+
+    // --- My Results: save / load ---
+    function resultsKey(kind) {
+      return `cgpa-results-${kind}-${schemeId}-${branchId || 'na'}`;
+    }
+    function loadResults(kind) {
+      try { return JSON.parse(localStorage.getItem(resultsKey(kind)) ?? '[]'); } catch { return []; }
+    }
+    function saveResult(kind, entry) {
+      const arr = loadResults(kind);
+      arr.unshift(entry);
+      if (arr.length > 50) arr.pop();
+      try { localStorage.setItem(resultsKey(kind), JSON.stringify(arr)); } catch {}
+    }
+    function renderSavedResults(kind, containerId) {
+      const arr = loadResults(kind);
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      if (arr.length === 0) {
+        container.innerHTML = '<p class="body-sm mute">No saved results yet. Calculate something and tap "Save result".</p>';
+        return;
+      }
+      container.innerHTML = arr.map((e, i) => `
+        <div class="result-item">
+          <div class="result-info">
+            <div class="result-title">${e.label}</div>
+            <div class="result-meta">${e.scheme} · ${e.branch} · ${e.date}</div>
+          </div>
+          <div class="result-value">${e.value}</div>
+          <button type="button" class="delete-btn" data-index="${i}" data-kind="${kind}">Delete</button>
+        </div>
+      `).join('');
+      container.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.getAttribute('data-index'), 10);
+          const kind = btn.getAttribute('data-kind');
+          const arr = loadResults(kind);
+          arr.splice(idx, 1);
+          try { localStorage.setItem(resultsKey(kind), JSON.stringify(arr)); } catch {}
+          renderSavedResults(kind, containerId);
+        });
+      });
+    }
 
     if (tool === 'sgpa') {
       const tbody = document.getElementById('subjects-tbody');
       const sgpaDisplay = document.getElementById('sgpa-display');
+      const classEl = document.getElementById('sgpa-class');
       const creditsDisplay = document.getElementById('credits-display');
       const pointsDisplay = document.getElementById('points-display');
       const breakdown = document.getElementById('breakdown');
       const lateralCheckbox = document.getElementById('lateral-entry');
       const semesterSelect = document.getElementById('semester-select');
+      const pills = document.getElementById('sem-pills');
+      const modeGradeBtn = document.getElementById('mode-grade');
+      const modeMarksBtn = document.getElementById('mode-marks');
 
       function storageKey(semester) {
         return `cgpa-calc-${schemeId}-${branchId || 'na'}-sem${semester}`;
       }
-
-      function loadGrades(semester) {
+      function loadEntry(semester) {
         try {
           const raw = localStorage.getItem(storageKey(semester));
-          return raw ? JSON.parse(raw) : {};
-        } catch { return {}; }
+          return raw ? JSON.parse(raw) : { mode: 'grade', grades: {} };
+        } catch { return { mode: 'grade', grades: {} }; }
       }
-
-      function saveGrades(semester, grades) {
-        try { localStorage.setItem(storageKey(semester), JSON.stringify(grades)); } catch {}
+      function saveEntry(semester, entry) {
+        try { localStorage.setItem(storageKey(semester), JSON.stringify(entry)); } catch {}
       }
-
+      function marksToGP(marks) {
+        for (const e of Object.values(gradeTable)) {
+          if (e.minMarks !== undefined && e.maxMarks !== undefined) {
+            if (marks >= e.minMarks && marks <= e.maxMarks) return e.gradePoint;
+          }
+        }
+        return 0;
+      }
       function resolveGP(input) {
         if (input === undefined || input === null || input === '') return null;
         const key = String(input).trim();
@@ -266,81 +312,187 @@ const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry, excluded
         return gradeTable[key.toUpperCase()] ?? null;
       }
 
+      let currentMode = 'grade';
+
       function renderSubjects(semObj) {
-        const saved = loadGrades(semObj.semester);
-        tbody.innerHTML = '';
-        for (const sub of semObj.subjects) {
-          const tr = document.createElement('tr');
-          tr.style.borderBottom = '1px solid var(--color-hairline)';
-          const opts = Object.keys(gradeTable).sort((a, b) => (gradeTable[b] || 0) - (gradeTable[a] || 0)).map(g => {
-            const selected = saved[sub.code] === g ? ' selected' : '';
-            return `<option value="${g}"${selected}>${g} (${gradeTable[g]})</option>`;
+        const saved = loadEntry(semObj.semester);
+        currentMode = saved.mode || 'grade';
+        modeGradeBtn.classList.toggle('is-active', currentMode === 'grade');
+        modeMarksBtn.classList.toggle('is-active', currentMode === 'marks');
+
+        const grades = Object.keys(gradeTable).sort((a, b) => (gradeTable[b] || 0) - (gradeTable[a] || 0));
+        tbody.innerHTML = semObj.subjects.map((sub) => {
+          const savedVal = saved.grades[sub.code] ?? '';
+          if (currentMode === 'marks') {
+            return `<div class="subject-row" data-code="${sub.code || ''}" data-credits="${sub.credits}" data-marks="${savedVal}" data-grade="">
+              <div class="sub-meta">
+                <div class="mute" style="font-size:11px; font-weight:700; letter-spacing:0.04em;">${sub.code || ''}</div>
+                <div class="ink" style="font-weight:700; font-size:14px;">${sub.name}</div>
+              </div>
+              <div class="sub-credits"><span class="credit-pill">${sub.credits} cr</span></div>
+              <input type="number" step="0.5" min="0" max="100" data-code="${sub.code || ''}" data-credits="${sub.credits}" value="${savedVal}" class="marks-input text-input" style="max-width:90px;" placeholder="marks" />
+            </div>`;
+          }
+          const chips = grades.map((g) => {
+            const active = savedVal === g ? ' is-active' : '';
+            return `<button type="button" class="grade-chip${active}" data-code="${sub.code || ''}" data-credits="${sub.credits}" data-grade="${g}" aria-pressed="${savedVal === g}">${g}</button>`;
           }).join('');
-          tr.innerHTML = `
-            <td style="padding: 10px 16px;">
-              <div style="font-family: var(--font-family-mono); font-size: 12px; color: var(--color-muted);">${sub.code || ''}</div>
-              <div style="color: var(--color-ink); font-weight: 500; font-size: 14px;">${sub.name}</div>
-            </td>
-            <td style="padding: 10px 16px; text-align: center;">
-              <span style="color: var(--color-ink); font-weight: 600; font-size: 14px; background: var(--color-surface); padding: 2px 10px; border-radius: 6px;">${sub.credits}</span>
-            </td>
-            <td style="padding: 10px 16px; text-align: center;">
-              <select data-credits="${sub.credits}" data-code="${sub.code || ''}" style="width: 100%; padding: 6px 8px; background: var(--color-canvas); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
-                <option value="">-- Select --</option>${opts}
-              </select>
-            </td>`;
-          tbody.appendChild(tr);
-        }
+          return `<div class="subject-row" data-code="${sub.code || ''}" data-credits="${sub.credits}" data-marks="" data-grade="${savedVal}">
+            <div class="sub-meta">
+              <div class="mute" style="font-size:11px; font-weight:700; letter-spacing:0.04em;">${sub.code || ''}</div>
+              <div class="ink" style="font-weight:700; font-size:14px;">${sub.name}</div>
+            </div>
+            <div class="sub-credits"><span class="credit-pill">${sub.credits} cr</span></div>
+            <div class="grade-chips">${chips}</div>
+          </div>`;
+        }).join('');
       }
 
       function recompute() {
         const selected = parseInt(semesterSelect.value, 10);
-        const semObj = semesters.find((s) => s.semester === selected);
-        if (!semObj) return;
-        renderSubjects(semObj);
-      const excludedSet = new Set(excludedGrades.map(g => g.toUpperCase()));
-      let credits = 0, points = 0;
-      const lines = [];
-      const selects = tbody.querySelectorAll('select[data-credits]');
-      selects.forEach((sel) => {
-        const c = parseInt(sel.getAttribute('data-credits'), 10);
-        const g = sel.value;
-        const gp = resolveGP(g);
-        const isExcluded = g && excludedSet.has(g.toUpperCase());
-        if (gp !== null && !isExcluded) {
-          credits += c;
-          points += c * gp;
-          lines.push(`${sel.getAttribute('data-code') || 'SUB'}: ${c} cr × ${gp} = ${c * gp} pts`);
-        }
-      });
+        const excludedSet = new Set(excludedGrades.map(g => g.toUpperCase()));
+        let credits = 0, points = 0;
+        const lines = [];
+        const grades = {};
+        const marks = {};
+
+        tbody.querySelectorAll('.subject-row').forEach((row) => {
+          const code = row.getAttribute('data-code') || 'SUB';
+          const c = parseInt(row.getAttribute('data-credits'), 10);
+          const g = row.getAttribute('data-grade') || '';
+          const m = row.getAttribute('data-marks') || '';
+          const gp = currentMode === 'marks' && m !== '' ? marksToGP(parseFloat(m)) : resolveGP(g);
+          const isExcluded = g && excludedSet.has(g.toUpperCase());
+          if (currentMode === 'marks' && m !== '') marks[code] = m;
+          if (currentMode === 'grade' && g) grades[code] = g;
+          if (gp !== null && !isExcluded) {
+            credits += c;
+            points += c * gp;
+            const label = currentMode === 'marks' && m !== '' ? `${m} marks → ${gp} GP` : `${g}`;
+            lines.push(`${code}: ${c} cr × ${gp} = ${c * gp} pts (${label})`);
+          }
+        });
         const sgpa = credits > 0 ? points / credits : 0;
         sgpaDisplay.textContent = sgpa.toFixed(2);
-        creditsDisplay.textContent = credits;
+        classEl.textContent = credits > 0 ? classLabel(sgpa) : currentMode === 'marks' ? 'Enter marks' : 'Pick grades';
+        creditsDisplay.textContent = String(credits);
         pointsDisplay.textContent = points.toFixed(2);
-        breakdown.textContent = lines.length ? lines.join('\n') : 'Select grades above to see the breakdown.';
-        const grades = {};
-        selects.forEach((sel) => { if (sel.value) grades[sel.getAttribute('data-code')] = sel.value; });
-        saveGrades(selected, grades);
+        breakdown.textContent = lines.length ? lines.join('\n') : `Enter ${currentMode === 'marks' ? 'marks' : 'grades'} above to see the breakdown.`;
+        saveEntry(selected, { mode: currentMode, ...(currentMode === 'grade' ? { grades } : { marks }) });
       }
 
-      semesterSelect?.addEventListener('change', recompute);
-      tbody?.addEventListener('change', recompute);
+      function setSemester(n) {
+        semesterSelect.value = String(n);
+        pills.querySelectorAll('.sem-pill').forEach((p) => {
+          p.classList.toggle('is-active', p.getAttribute('data-sem') === String(n));
+        });
+        const semObj = semesters.find((s) => s.semester === n);
+        if (semObj) { renderSubjects(semObj); recompute(); }
+      }
+
+      pills?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.sem-pill');
+        if (!btn) return;
+        setSemester(parseInt(btn.getAttribute('data-sem'), 10));
+      });
+
+      // Mode toggle
+      modeGradeBtn?.addEventListener('click', () => {
+        if (currentMode === 'grade') return;
+        currentMode = 'grade';
+        modeGradeBtn.classList.add('is-active');
+        modeMarksBtn.classList.remove('is-active');
+        const selected = parseInt(semesterSelect.value, 10);
+        const saved = loadEntry(selected);
+        renderSubjects(semesters.find((s) => s.semester === selected));
+        recompute();
+      });
+      modeMarksBtn?.addEventListener('click', () => {
+        if (currentMode === 'marks') return;
+        currentMode = 'marks';
+        modeGradeBtn.classList.remove('is-active');
+        modeMarksBtn.classList.add('is-active');
+        const selected = parseInt(semesterSelect.value, 10);
+        renderSubjects(semesters.find((s) => s.semester === selected));
+        recompute();
+      });
+
+      tbody?.addEventListener('click', (e) => {
+        if (currentMode !== 'grade') return;
+        const btn = e.target.closest('.grade-chip');
+        if (!btn) return;
+        const row = btn.closest('.subject-row');
+        const grade = btn.getAttribute('data-grade');
+        const already = row.getAttribute('data-grade') === grade;
+        row.querySelectorAll('.grade-chip').forEach((c) => {
+          c.classList.remove('is-active');
+          c.setAttribute('aria-pressed', 'false');
+        });
+        if (already) {
+          row.setAttribute('data-grade', '');
+        } else {
+          btn.classList.add('is-active');
+          btn.setAttribute('aria-pressed', 'true');
+          row.setAttribute('data-grade', grade);
+        }
+        recompute();
+      });
+
+      tbody?.addEventListener('input', (e) => {
+        if (currentMode !== 'marks') return;
+        const inp = e.target.closest('.marks-input');
+        if (!inp) return;
+        const row = inp.closest('.subject-row');
+        row.setAttribute('data-marks', inp.value);
+        recompute();
+      });
+
       lateralCheckbox?.addEventListener('change', recompute);
       const initial = semesters.find((s) => s.semester === parseInt(semesterSelect?.value || '1', 10)) || semesters[0];
-      if (initial) { renderSubjects(initial); recompute(); }
+      if (initial) setSemester(initial.semester);
+
+      // Save result
+      saveResultBtn?.addEventListener('click', () => {
+        const selected = parseInt(semesterSelect.value, 10);
+        const sgpa = parseFloat(sgpaDisplay.textContent);
+        const semObj = semesters.find((s) => s.semester === selected);
+        const entry = {
+          label: semObj ? semObj.name : `Semester ${selected}`,
+          value: sgpa.toFixed(2),
+          scheme: schemeId,
+          branch: branchId || 'na',
+          date: new Date().toLocaleDateString(),
+        };
+        saveResult('sgpa', entry);
+        renderSavedResults('sgpa', 'saved-sgpa-results');
+        saveResultBtn.textContent = 'Saved!';
+        setTimeout(() => { saveResultBtn.textContent = 'Save result'; }, 1200);
+      });
+
+      clearBtn?.addEventListener('click', () => {
+        const semesterSelect = document.getElementById('semester-select');
+        const selected = parseInt(semesterSelect?.value || '1', 10);
+        try { localStorage.removeItem(`cgpa-calc-${schemeId}-${branchId || 'na'}-sem${selected}`); } catch {}
+        document.getElementById('lateral-entry').checked = false;
+        const semObj = semesters.find((s) => s.semester === selected) || semesters[0];
+        if (semObj) {
+          setSemester(semObj.semester);
+        }
+      });
     }
 
     if (tool === 'cgpa') {
       const inputs = document.querySelectorAll('.cgpa-sgpa-input');
       const cgpaDisplay = document.getElementById('cgpa-display');
+      const classEl = document.getElementById('cgpa-class');
       const cgpaCredits = document.getElementById('cgpa-credits');
       const cgpaPoints = document.getElementById('cgpa-points');
       const lateral = document.getElementById('cgpa-lateral');
 
       function recomputeCgpa() {
         let totalCredits = 0, totalPoints = 0;
-        let skip = lateral?.checked ? lateralSkip : 0;
-        inputs.forEach((inp, idx) => {
+        const skip = lateral?.checked ? lateralSkip : 0;
+        inputs.forEach((inp) => {
           const semNum = parseInt(inp.getAttribute('data-sem') || '0', 10);
           if (skip > 0 && semNum <= skip) return;
           const c = parseFloat(inp.getAttribute('data-credits') || '0');
@@ -352,13 +504,35 @@ const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry, excluded
         });
         const cgpa = totalCredits > 0 ? totalPoints / totalCredits : 0;
         cgpaDisplay.textContent = cgpa.toFixed(2);
-        cgpaCredits.textContent = totalCredits;
+        classEl.textContent = totalCredits > 0 ? classLabel(cgpa) : 'Enter SGPAs';
+        cgpaCredits.textContent = String(totalCredits);
         cgpaPoints.textContent = totalPoints.toFixed(2);
       }
 
       inputs.forEach(inp => inp.addEventListener('input', recomputeCgpa));
       lateral?.addEventListener('change', recomputeCgpa);
       recomputeCgpa();
+
+      saveCgpaBtn?.addEventListener('click', () => {
+        const cgpa = parseFloat(cgpaDisplay.textContent);
+        const entry = {
+          label: 'Overall CGPA',
+          value: cgpa.toFixed(2),
+          scheme: schemeId,
+          branch: branchId || 'na',
+          date: new Date().toLocaleDateString(),
+        };
+        saveResult('cgpa', entry);
+        renderSavedResults('cgpa', 'saved-cgpa-results');
+        saveCgpaBtn.textContent = 'Saved!';
+        setTimeout(() => { saveCgpaBtn.textContent = 'Save result'; }, 1200);
+      });
+
+      clearCgpaBtn?.addEventListener('click', () => {
+        document.querySelectorAll('.cgpa-sgpa-input').forEach(i => { i.value = ''; });
+        document.getElementById('cgpa-lateral').checked = false;
+        document.querySelectorAll('.cgpa-sgpa-input')[0]?.dispatchEvent(new Event('input'));
+      });
     }
 
     if (tool === 'percentage') {
@@ -366,55 +540,80 @@ const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry, excluded
       const disp = document.getElementById('percentage-display');
       function calc() {
         const v = parseFloat(input.value);
-        if (isNaN(v)) { disp.textContent = '0.00 %'; return; }
-        const pct = v * multiplier;
-        disp.textContent = pct.toFixed(2) + ' %';
+        if (isNaN(v)) { disp.textContent = '0.00%'; return; }
+        disp.textContent = (v * multiplier).toFixed(2) + '%';
       }
       input?.addEventListener('input', calc);
     }
 
     printBtn?.addEventListener('click', () => window.print());
-    clearBtn?.addEventListener('click', () => {
+    clearAllBtn?.addEventListener('click', () => {
       if (tool === 'sgpa') {
-        document.querySelectorAll('#subjects-tbody select').forEach(s => { s.selectedIndex = 0; });
-        document.getElementById('lateral-entry').checked = false;
         const semesterSelect = document.getElementById('semester-select');
-        const initial = semesters.find((s) => s.semester === parseInt(semesterSelect?.value || '1', 10)) || semesters[0];
-        if (initial) {
-          const tbody = document.getElementById('subjects-tbody');
-          const sgpaDisplay = document.getElementById('sgpa-display');
-          const creditsDisplay = document.getElementById('credits-display');
-          const pointsDisplay = document.getElementById('points-display');
-          const breakdown = document.getElementById('breakdown');
-          const saved = {};
-          try { localStorage.setItem(`cgpa-calc-${schemeId}-${branchId || 'na'}-sem${initial.semester}`, JSON.stringify(saved)); } catch {}
-          // trigger recompute
-          semesterSelect.dispatchEvent(new Event('change'));
+        const selected = parseInt(semesterSelect?.value || '1', 10);
+        try { localStorage.removeItem(`cgpa-calc-${schemeId}-${branchId || 'na'}-sem${selected}`); } catch {}
+        document.getElementById('lateral-entry').checked = false;
+        const semObj = semesters.find((s) => s.semester === selected) || semesters[0];
+        if (semObj) {
+          const event = new Event('click');
+          document.querySelector(`.sem-pill[data-sem="${semObj.semester}"]`)?.click();
         }
-        return;
       }
       if (tool === 'cgpa') {
         document.querySelectorAll('.cgpa-sgpa-input').forEach(i => { i.value = ''; });
         document.getElementById('cgpa-lateral').checked = false;
         document.querySelectorAll('.cgpa-sgpa-input')[0]?.dispatchEvent(new Event('input'));
-        return;
       }
       if (tool === 'percentage') {
         const input = document.getElementById('percentage-cgpa');
         if (input) input.value = '';
-        document.getElementById('percentage-display').textContent = '0.00 %';
-        return;
+        document.getElementById('percentage-display').textContent = '0.00%';
       }
     });
   })();
 </script>
 
 <style>
-  #subjects-tbody tr:hover { background: var(--color-surface); }
-  #subjects-tbody select:focus { outline: 2px solid var(--color-primary); outline-offset: -1px; border-color: var(--color-primary); }
-  .cgpa-sgpa-input:focus { outline: 2px solid var(--color-primary); outline-offset: -1px; border-color: var(--color-primary); }
-  #percentage-cgpa:focus { outline: 2px solid var(--color-primary); outline-offset: -1px; border-color: var(--color-primary); }
-  @media (max-width: 640px) {
-    #subjects-tbody td { padding: 8px 10px !important; }
+  .calc-root { display: grid; gap: 16px; }
+  .calc-toolbar { display: grid; gap: 12px; }
+  @media (min-width: 720px) {
+    .calc-toolbar { grid-template-columns: 160px 160px 1fr; align-items: end; }
   }
+  .lateral {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+  .credit-pill {
+    display: inline-flex;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .score-meta { display: grid; gap: 6px; color: var(--color-on-dark-muted); font-size: 14px; text-align: right; }
+  .score-meta strong { color: #ffffff; }
+  .calc-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .marks-input {
+    text-align: center;
+    font-weight: 700;
+    padding: 8px 10px;
+  }
+  .marksheet-head > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .marksheet-head .seg-tabs {
+    width: auto;
+    background: var(--color-hairline-soft);
+    padding: 4px;
+  }
+  .cgpa-row { align-items: center; }
 </style>
