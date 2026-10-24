@@ -29,20 +29,24 @@ const jsonLd = JSON.stringify({
     <title>{seo.title}</title>
     <meta name="description" content={seo.description} />
     <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#f8f7f3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
-    <link rel="canonical" href={canonical} />
 
     {/* Inline theme script — runs before first paint to prevent flash */}
     <script is:inline>
       (() => {
-        const html = document.documentElement;
-        const saved = localStorage.getItem('cgpa-theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const shouldDark = saved === 'dark' || (!saved && prefersDark);
-        if (shouldDark) html.setAttribute('data-theme', 'dark');
+        try {
+          const html = document.documentElement;
+          const saved = localStorage.getItem('cgpa-theme');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const shouldDark = saved === 'dark' || (!saved && prefersDark);
+          if (shouldDark) html.setAttribute('data-theme', 'dark');
+          else html.removeAttribute('data-theme');
+        } catch (e) {}
       })();
     </script>
+
+    <link rel="canonical" href={canonical} />
 
     {/* Favicons */}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -69,6 +73,15 @@ const jsonLd = JSON.stringify({
     <meta name="twitter:image" content="/og-image.png" />
 
     <script type="application/ld+json" set:html={jsonLd}></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LQYX0BC4Z6"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-LQYX0BC4Z6');
+    </script>
   </head>
   <body>
     <a class="sr-only" href="#main-content">Skip to main content</a>
@@ -89,12 +102,3 @@ const jsonLd = JSON.stringify({
     </style>
   </body>
 </html>
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LQYX0BC4Z6"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-LQYX0BC4Z6');
-    </script>
