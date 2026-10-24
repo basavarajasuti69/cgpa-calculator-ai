@@ -258,7 +258,7 @@ img, picture, video, canvas, svg {
 /* ---------- Buttons ---------- */
 .button-primary {
   background: var(--color-primary);
-  color: var(--color-primary-contrast);
+  color: #0a0a0a;
   font-size: var(--font-size-button-lg);
   line-height: var(--line-height-button-lg);
   font-weight: 600;

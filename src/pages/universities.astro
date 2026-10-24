@@ -5,22 +5,24 @@ import { getUniversities, getVerifiedSchemes, getBranch, DEFAULT_BRANCH } from '
 
 <Layout title="Choose University — CGPA Calculator AI" description="Select your university and scheme to access the SGPA, CGPA and Percentage calculators." pathname="/universities" noAds>
   <section class="section">
-    <div class="container" style="max-width: 800px;">
-      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">University picker</p>
-      <h1 class="heading-lg" style="margin-bottom: 12px;">Which campus are you on?</h1>
+    <div class="container" style="max-width: 48rem;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Supported universities</p>
+      <h1 class="heading-lg" style="margin-bottom: 12px;">One calculator. Many campuses.</h1>
       <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 64ch;">
         Select your university and scheme. Verified schemes have complete, checked data.
       </p>
 
-      <div style="display: grid; gap: var(--spacing-lg); grid-template-columns: 1fr; align-items: stretch;">
+      <div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-lg); align-items: stretch;">
         {getUniversities().map((uni) => (
           <section class="feature-card" style="padding: var(--spacing-lg); display: flex; flex-direction: column; height: 100%;">
-            <div style="margin-bottom: var(--spacing-sm); min-width: 0;">
-              <div style="display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--color-border); font-size: 12px; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--spacing-xs);">{uni.id.toUpperCase()}</div>
+            <div style="margin-bottom: var(--spacing-md); min-width: 0;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: var(--spacing-sm); flex-wrap: wrap;">
+                <div style="display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--color-border); font-size: 12px; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.08em;">{uni.id.toUpperCase()}</div>
+              </div>
               <h2 style="margin: 0 0 var(--spacing-xs) 0; font-size: clamp(1.25rem, 2.5vw, 1.75rem); line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; color: var(--color-text-strong); word-break: break-word; overflow-wrap: anywhere; text-wrap: balance; min-width: 0;">{uni.name}</h2>
-              <p class="body-sm" style="margin: 0; color: var(--color-text-muted);">{uni.domain} • {uni.schemes.length} scheme(s)</p>
+              <p class="body-sm" style="margin: 0; color: var(--color-text-muted);">{uni.domain}</p>
             </div>
-            <div style="display: grid; gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
+            <div style="display: grid; grid-template-columns: 1fr; gap: 6px 24px; margin-bottom: var(--spacing-lg);" class="scheme-grid">
               {uni.schemes.map((scheme) => {
                 const br = getBranch(scheme, DEFAULT_BRANCH);
                 const isDraft = scheme.status === 'draft';
@@ -28,25 +30,33 @@ import { getUniversities, getVerifiedSchemes, getBranch, DEFAULT_BRANCH } from '
                   <a
                     href={`/${uni.id}/${scheme.id}/${br?.id ?? DEFAULT_BRANCH}/sgpa`}
                     class="button-ghost-sm"
-                    style="color: var(--color-text-muted);"
+                    style="color: var(--color-text); justify-self: start;"
                   >
                     {scheme.name} → SGPA{isDraft ? ' (draft)' : ''}
                   </a>
                 );
               })}
             </div>
-            <a href={`/${uni.id}/${(uni.schemes[0]?.id) ?? '2022'}/${getBranch(uni.schemes[0], DEFAULT_BRANCH)?.id ?? DEFAULT_BRANCH}/sgpa`} class="button-primary" style="align-self: flex-start; margin-top: auto;">Open calculator</a>
+            <a href={`/${uni.id}/${(uni.schemes[0]?.id) ?? '2022'}/${getBranch(uni.schemes[0], DEFAULT_BRANCH)?.id ?? DEFAULT_BRANCH}/sgpa`} class="button-primary" style="align-self: flex-start; margin-top: auto; width: auto;">Open calculator</a>
           </section>
         ))}
       </div>
 
       <div class="feature-card" style="margin-top: var(--spacing-lg); padding: var(--spacing-lg);">
-        <h2 class="heading-sm" style="margin: 0 0 var(--spacing-sm) 0;">Don't see your college?</h2>
+        <h2 style="margin: 0 0 var(--spacing-sm) 0; font-size: 1.25rem; font-weight: 700;">Don't see your college?</h2>
         <p class="body-sm" style="margin: 0 0 var(--spacing-sm) 0; color: var(--color-text);">
           Adding a new university is a data-only change. Tell us your college and we'll add it.
         </p>
-        <a href="/request-college" class="button-primary">Request your college</a>
+        <a href="/request-college" class="button-primary" style="align-self: flex-start;">Request your college</a>
       </div>
     </div>
   </section>
 </Layout>
+
+<style>
+  @media (min-width: 640px) {
+    .scheme-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
