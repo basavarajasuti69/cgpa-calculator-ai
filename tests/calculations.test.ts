@@ -304,3 +304,40 @@ describe('SRMIST 2021/2018 — F/Ab/I grade exclusion from denominator', () => {
     expect(r.skipped).toBe(2);
   });
 });
+
+describe('VIT FFCS — F/N grades stay in denominator', () => {
+  const VIT_GRADE_ENTRIES = [
+    { letter: 'S', gradePoint: 10 },
+    { letter: 'A', gradePoint: 9 },
+    { letter: 'B', gradePoint: 8 },
+    { letter: 'C', gradePoint: 7 },
+    { letter: 'D', gradePoint: 6 },
+    { letter: 'E', gradePoint: 5 },
+    { letter: 'F', gradePoint: 0 },
+    { letter: 'N', gradePoint: 0 },
+  ];
+  const VIT_SCALE = gradeTableToScale(VIT_GRADE_ENTRIES);
+
+  const semWithFail = {
+    semester: 1,
+    name: 'Semester 1',
+    subjects: [
+      { code: 'CS101', name: 'Programming', credits: 4, type: 'core' as const, grade: 'A' },   // 4×9=36
+      { code: 'CS102', name: 'Data Structures', credits: 3, type: 'core' as const, grade: 'F' }, // 3×0=0, stays in denom
+      { code: 'CS103', name: 'Digital Logic', credits: 3, type: 'core' as const, grade: 'N' },   // 3×0=0, stays in denom
+    ],
+  };
+
+  it('counts F and N (0 pts) credits in SGPA denominator per Section 9.9', () => {
+    const r = computeSemester(semWithFail, VIT_GRADE_ENTRIES, VIT_SCALE, 'credit-weighted', []);
+    // All 3 courses count: credits = 4+3+3 = 10, points = 36+0+0 = 36
+    // SGPA = 36/10 = 3.60
+    expect(r.totalCredits).toBe(10);
+    expect(r.totalCreditPoints).toBe(36);
+    expect(r.sgpa).toBeCloseTo(3.60, 4);
+  });
+
+  it('percentage = CGPA * 10', () => {
+    expect(cgpaToPercentage(8.75, 10)).toBe(87.5);
+  });
+});

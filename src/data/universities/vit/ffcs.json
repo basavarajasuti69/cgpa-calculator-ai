@@ -1,0 +1,59 @@
+{
+  "regulation": {
+    "id": "ffcs",
+    "name": "VIT FFCS (Flexible Full Credit System)",
+    "status": "draft",
+    "sources": [
+      {
+        "url": "https://vit.ac.in/files/CGPA-Conversion.pdf",
+        "clauses": ["VIT/Dean(Acd)/2008/Gen/16"],
+        "retrievedDate": "2026-10-24",
+        "note": "Official CGPA to percentage conversion circular - Percentage equivalent of CGPA = CGPA * 10"
+      },
+      {
+        "url": "https://vit.ac.in/wp-content/uploads/2023/09/Academic-Regulations.pdf",
+        "clauses": ["9.5", "9.9", "Annexure VI", "Annexure VII"],
+        "retrievedDate": "2026-10-24",
+        "note": "FFCS Academic Regulations Version 3.2 - grade table, relative grading, SGPA/CGPA calculation"
+      },
+      {
+        "url": "https://vit.ac.in/sites/default/files/academic/Academic-Regulations.pdf",
+        "clauses": ["Table 4", "Table 5"],
+        "retrievedDate": "2026-10-24",
+        "note": "FFCS Academic Regulations Version 4.0 - grade table and relative grading"
+      }
+    ],
+    "gradeTable": [
+      { "letter": "S", "gradePoint": 10, "minMarks": null, "maxMarks": null },
+      { "letter": "A", "gradePoint": 9, "minMarks": null, "maxMarks": null },
+      { "letter": "B", "gradePoint": 8, "minMarks": null, "maxMarks": null },
+      { "letter": "C", "gradePoint": 7, "minMarks": null, "maxMarks": null },
+      { "letter": "D", "gradePoint": 6, "minMarks": null, "maxMarks": null },
+      { "letter": "E", "gradePoint": 5, "minMarks": null, "maxMarks": null },
+      { "letter": "F", "gradePoint": 0, "minMarks": null, "maxMarks": null },
+      { "letter": "N", "gradePoint": 0, "minMarks": null, "maxMarks": null }
+    ],
+    "gradeScale": { "S": 10, "A": 9, "B": 8, "C": 7, "D": 6, "E": 5, "F": 0, "N": 0 },
+    "formulaType": "credit-weighted",
+    "cgpaToPercentage": { "multiplier": 10, "formula": "CGPA * 10" },
+    "lateralEntry": { "skipFirstNSemesters": "unverified" },
+    "totalCredits": { "regular": "unverified", "lateral": "unverified" },
+    "cgpaStartSemester": { "regular": 1, "lateral": "unverified" },
+    "backlogPolicy": {
+      "failedCreditsRemainInDenominator": true,
+      "failedGradeLetters": ["F", "N"],
+      "notes": "Section 9.9: CGPA includes all courses registered since first semester including those with 'F' grade. F and N grades remain in denominator until cleared. Pass-Fail (P grade), audit courses, Minor/Honours courses not counted for GPA/CGPA."
+    },
+    "nonComputableCourses": ["Pass-Fail (P grade)", "audit courses", "Minor credential courses", "Honours courses"],
+    "relativeGradingForTheory": true,
+    "relativeGradingNote": "VIT uses relative grading for theory courses (class strength > 10). Direct marks-to-grade conversion is disabled - select your letter grade directly.",
+    "classThresholds": [
+      { "class": "FCD", "minCGPA": 7.50, "label": "First Class with Distinction", "conditions": "CGPA >= 7.50 (indicative - VIT degree certificate only mentions CGPA)" },
+      { "class": "FC", "minCGPA": 6.00, "maxCGPA": 7.50, "label": "First Class", "conditions": "CGPA >= 6.00 and < 7.50 (indicative)" },
+      { "class": "PC", "minCGPA": 4.50, "maxCGPA": 6.00, "label": "Pass Class", "conditions": "CGPA >= 4.50 and < 6.00 (indicative)" }
+    ],
+    "rounding": "two decimal places",
+    "sourceUrl": "https://vit.ac.in/files/CGPA-Conversion.pdf",
+    "lastVerified": "2026-10-24"
+  }
+}
