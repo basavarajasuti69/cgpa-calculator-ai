@@ -150,3 +150,57 @@ describe('class division', () => {
     expect(classDivision(3.0).division).toBe('Fail');
   });
 });
+
+describe('Anna University R2021 — U/RA grade exclusion', () => {
+  const ANNA_GRADE_ENTRIES = [
+    { letter: 'O', gradePoint: 10 },
+    { letter: 'A+', gradePoint: 9 },
+    { letter: 'A', gradePoint: 8 },
+    { letter: 'B+', gradePoint: 7 },
+    { letter: 'B', gradePoint: 6 },
+    { letter: 'C', gradePoint: 5 },
+    { letter: 'U', gradePoint: 0 },
+    { letter: 'RA', gradePoint: 0 },
+    { letter: 'SA', gradePoint: 0 },
+    { letter: 'WD', gradePoint: 0 },
+    { letter: 'W', gradePoint: 0 },
+  ];
+  const ANNA_SCALE = gradeTableToScale(ANNA_GRADE_ENTRIES);
+
+  const semWithU = {
+    semester: 1,
+    name: 'Semester 1',
+    subjects: [
+      { code: 'CS101', name: 'Programming', credits: 4, type: 'core' as const, grade: 'A' },   // 4×8=32
+      { code: 'CS102', name: 'Data Structures', credits: 3, type: 'core' as const, grade: 'U' }, // excluded
+      { code: 'CS103', name: 'Digital Logic', credits: 3, type: 'core' as const, grade: 'B' },   // 3×6=18
+      { code: 'CS104', name: 'Lab', credits: 1, type: 'lab' as const, grade: 'RA' },            // excluded
+    ],
+  };
+
+  it('excludes U and RA grades from GPA denominator', () => {
+    const r = computeSemester(semWithU, ANNA_GRADE_ENTRIES, ANNA_SCALE, 'credit-weighted', ['U', 'RA']);
+    // Only CS101 (4 cr × 8 = 32) and CS103 (3 cr × 6 = 18) count
+    // Total credits = 7, Total points = 50, GPA = 50/7 = 7.1428...
+    expect(r.totalCredits).toBe(7);
+    expect(r.totalCreditPoints).toBe(50);
+    expect(r.sgpa).toBeCloseTo(50 / 7, 4);
+  });
+
+  it('U/RA courses do not change CGPA when excluded', () => {
+    const semList = [
+      { semester: 1, name: 'Sem 1', subjects: [
+        { code: 'S1', name: 'S1', credits: 4, type: 'core' as const, grade: 'A' },   // 4×8=32
+        { code: 'S2', name: 'S2', credits: 3, type: 'core' as const, grade: 'U' },    // excluded
+      ]},
+      { semester: 2, name: 'Sem 2', subjects: [
+        { code: 'S3', name: 'S3', credits: 4, type: 'core' as const, grade: 'B' },   // 4×6=24
+      ]},
+    ];
+    const r = computeCGPA(semList, ANNA_GRADE_ENTRIES, ANNA_SCALE, 'credit-weighted', 0, ['U', 'RA']);
+    // Total credits = 4 + 4 = 8, Total points = 32 + 24 = 56, CGPA = 56/8 = 7.0
+    expect(r.totalCredits).toBe(8);
+    expect(r.totalCreditPoints).toBe(56);
+    expect(r.cgpa).toBeCloseTo(7.0, 4);
+  });
+});

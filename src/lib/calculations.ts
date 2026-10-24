@@ -88,19 +88,23 @@ export function resolveSubjectGP(
 /* ------------------------------------------------------------------ */
 /* SGPA for a single semester                                         */
 /*   SGPA = Σ(credits × gradePoint) / Σ(credits)                      */
+/* Grades in excludedGradeLetters are excluded from both numerator    */
+/* and denominator (e.g. Anna U/RA).                                  */
 /* ------------------------------------------------------------------ */
 export function computeSemester(
   sem: Semester,
   entries: GradeEntry[],
   scale: GradeScale,
   formulaType: FormulaType = 'credit-weighted',
+  excludedGradeLetters: string[] = [],
 ): SemesterResult {
   const results = sem.subjects.map((s) => resolveSubjectGP(s, entries, scale));
+  const excluded = new Set(excludedGradeLetters.map((g) => g.toUpperCase()));
 
   let totalCredits = 0;
   let totalCreditPoints = 0;
   for (const r of results) {
-    if (r.gradePoint !== null) {
+    if (r.gradePoint !== null && !excluded.has(String(r.grade ?? '').toUpperCase())) {
       totalCredits += r.credits;
       totalCreditPoints += r.creditPoints;
     }
@@ -130,9 +134,12 @@ export function computeCGPA(
   scale: GradeScale,
   formulaType: FormulaType = 'credit-weighted',
   skipFirstNSemesters = 0,
+  excludedGradeLetters: string[] = [],
 ): CGPASummary {
   const included = semesters.slice(skipFirstNSemesters);
-  const results = included.map((s) => computeSemester(s, entries, scale, formulaType));
+  const results = included.map((s) =>
+    computeSemester(s, entries, scale, formulaType, excludedGradeLetters),
+  );
 
   let totalCredits = 0;
   let totalCreditPoints = 0;

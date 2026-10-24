@@ -58,5 +58,7 @@ const semesters = br.semesters.map((s) => ({
     gradeTable={sc.gradeTable}
     cgpaToPercentage={sc.cgpaToPercentage}
     lateralEntry={sc.lateralEntry}
+    excludedGradeLetters={sc.excludedGradeLetters ?? []}
+    cgpaFormulaNote={sc.cgpaFormulaNote ?? null}
   />
 </Layout>

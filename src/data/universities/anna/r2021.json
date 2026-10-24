@@ -1,0 +1,72 @@
+{
+  "regulation": {
+    "id": "r2021",
+    "name": "Anna University R2021",
+    "status": "draft",
+    "sources": [
+      {
+        "url": "https://cac.annauniv.edu/aidetails/reg/Approved%20R2021/Undergraduate%20Programme%20-%20Academic%20Regulations%202021.pdf",
+        "clauses": ["15", "15.1", "15.1.2", "15.5", "15.5.3", "16.2", "4.12"],
+        "retrievedDate": "2026-10-24"
+      },
+      {
+        "url": "https://cac.annauniv.edu/aidetails/reg/UG%20R%202021.pdf",
+        "clauses": ["original R2021"],
+        "retrievedDate": "2026-10-24",
+        "note": "original unamended R2021 for comparison"
+      }
+    ],
+    "gradeTable": [
+      { "letter": "O", "gradePoint": 10, "minMarks": null, "maxMarks": null },
+      { "letter": "A+", "gradePoint": 9, "minMarks": null, "maxMarks": null },
+      { "letter": "A", "gradePoint": 8, "minMarks": null, "maxMarks": null },
+      { "letter": "B+", "gradePoint": 7, "minMarks": null, "maxMarks": null },
+      { "letter": "B", "gradePoint": 6, "minMarks": null, "maxMarks": null },
+      { "letter": "C", "gradePoint": 5, "minMarks": null, "maxMarks": null },
+      { "letter": "U", "gradePoint": 0, "minMarks": null, "maxMarks": null },
+      { "letter": "RA", "gradePoint": 0, "minMarks": null, "maxMarks": null },
+      { "letter": "SA", "gradePoint": 0, "minMarks": null, "maxMarks": null },
+      { "letter": "WD", "gradePoint": 0, "minMarks": null, "maxMarks": null },
+      { "letter": "W", "gradePoint": 0, "minMarks": null, "maxMarks": null }
+    ],
+    "gradeScale": { "O": 10, "A+": 9, "A": 8, "B+": 7, "B": 6, "C": 5, "U": 0, "RA": 0, "SA": 0, "WD": 0, "W": 0 },
+    "formulaType": "credit-weighted",
+    "cgpaToPercentage": { "multiplier": 10, "formula": "CGPA * 10" },
+    "lateralEntry": { "skipFirstNSemesters": 0 },
+    "totalCredits": { "regular": "curriculum_dependent", "lateral": "curriculum_dependent" },
+    "cgpaStartSemester": { "regular": 1, "lateral": 1 },
+    "backlogPolicy": {
+      "failedGradesExcludedFromGPA": true,
+      "failedGradesExcludedFromCGPA": true,
+      "failedGradeLetters": ["U", "RA"],
+      "notes": "R2021 clause 15.5: U grades excluded for calculating GPA and CGPA. Credits of failed courses do NOT enter denominator. Course cleared later counts once at clearing semester."
+    },
+    "relativeGradingForTheory": true,
+    "absoluteGradingForLabs": true,
+    "absoluteGradingTable": [
+      { "letter": "O", "gradePoint": 10, "minMarks": 91, "maxMarks": 100 },
+      { "letter": "A+", "gradePoint": 9, "minMarks": 81, "maxMarks": 90 },
+      { "letter": "A", "gradePoint": 8, "minMarks": 71, "maxMarks": 80 },
+      { "letter": "B+", "gradePoint": 7, "minMarks": 61, "maxMarks": 70 },
+      { "letter": "B", "gradePoint": 6, "minMarks": 56, "maxMarks": 60 },
+      { "letter": "C", "gradePoint": 5, "minMarks": 50, "maxMarks": 55 },
+      { "letter": "U", "gradePoint": 0, "minMarks": null, "maxMarks": 49 }
+    ],
+    "absoluteGradingScope": ["labs", "project_work", "courses_with_30_or_fewer_passed_students"],
+    "passGrades": ["O", "A+", "A", "B+", "B", "C"],
+    "failedGrades": ["U", "RA"],
+    "excludedFromCGPA": ["mandatory courses", "value-added courses", "hons/minor additional courses unless completed", "internship credits beyond curriculum"],
+    "classThresholds": [
+      { "class": "FCD", "minCGPA": 8.50, "label": "First Class with Distinction", "conditions": "CGPA >= 8.50, all courses passed in first appearance within 5 years (4 lateral; 6 Sandwich), never prevented for attendance" },
+      { "class": "FC", "minCGPA": 6.50, "maxCGPA": 8.50, "label": "First Class", "conditions": "CGPA >= 6.50, all courses passed within duration" },
+      { "class": "SC", "minCGPA": 0, "maxCGPA": 6.50, "label": "Second Class", "conditions": "All other qualifying students" }
+    ],
+    "skillBasedCourseDrop": {
+      "twoSkillCourses": { "droppedPEOE": 1, "credits": 3, "formula": "(2*higherGP + 1*lowerGP)/3" },
+      "threeSkillCourses": { "droppedPEOE": 2, "creditsEach": 3, "formula": "average grade point of three skill courses" }
+    },
+    "creditsPerPeriod": { "lecture": 1, "tutorial": 1, "lab": 0.5 },
+    "sourceUrl": "https://cac.annauniv.edu/aidetails/reg/Approved%20R2021/Undergraduate%20Programme%20-%20Academic%20Regulations%202021.pdf",
+    "lastVerified": "2026-10-24"
+  }
+}

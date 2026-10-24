@@ -49,6 +49,9 @@ export interface Scheme {
   lateralEntry: { skipFirstNSemesters: number };
   sourceUrl: string;
   lastVerified: string; // ISO date
+  excludedGradeLetters?: string[]; // grades excluded from GPA/CGPA denominator (e.g. U, RA for Anna)
+  cgpaFormulaNote?: string; // note about unverified percentage formula
+  classThresholds?: Array<{ class: string; minCGPA?: number; maxCGPA?: number; label: string; conditions?: string }>;
 }
 
 export interface University {

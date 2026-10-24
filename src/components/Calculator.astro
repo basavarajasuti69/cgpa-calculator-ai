@@ -1,11 +1,11 @@
 ---
-const { schemeId, branchId, branches = [], tool = 'sgpa', semesters = [], gradeTable = {}, cgpaToPercentage = { multiplier: 9.5 }, lateralEntry = { skipFirstNSemesters: 2 } } = Astro.props;
+const { schemeId, branchId, branches = [], tool = 'sgpa', semesters = [], gradeTable = {}, cgpaToPercentage = { multiplier: 9.5 }, lateralEntry = { skipFirstNSemesters: 2 }, excludedGradeLetters = [], cgpaFormulaNote = null } = Astro.props;
 
 const gradeOptions = Object.keys(gradeTable).sort((a, b) => (gradeTable[b] || 0) - (gradeTable[a] || 0));
 const gradeJson = JSON.stringify(gradeTable);
 const semestersJson = JSON.stringify(semesters);
 const branchesJson = JSON.stringify(branches.map(b => ({ id: b.id, short: b.short })));
-const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry });
+const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry, excludedGradeLetters, cgpaFormulaNote });
 ---
 
 <section id="calculator" aria-label="CGPA calculator" style="display: grid; gap: var(--spacing-md);"
@@ -15,7 +15,9 @@ const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry });
   data-branch={branchId}
   data-branches={branchesJson}
   data-tool={tool}
-  data-cgpa-config={cgpaConfigJson}>
+  data-cgpa-config={cgpaConfigJson}
+  data-excluded-grades={JSON.stringify(excludedGradeLetters)}
+  data-cgpa-formula-note={cgpaFormulaNote ?? ''}>
 
   {/* Top selectors */}
   <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap; align-items: flex-end;">
@@ -206,6 +208,8 @@ const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry });
     const branches = JSON.parse(calcRoot.dataset.branches ?? '[]');
     const tool = calcRoot.dataset.tool || 'sgpa';
     const cgpaConfig = JSON.parse(calcRoot.dataset.cgpaConfig ?? '{"cgpaToPercentage":{"multiplier":9.5},"lateralEntry":{"skipFirstNSemesters":2}}');
+    const excludedGrades = JSON.parse(calcRoot.dataset.excludedGrades ?? '[]');
+    const cgpaFormulaNote = calcRoot.dataset.cgpaFormulaNote ?? '';
     const schemeId = calcRoot.dataset.scheme;
     const branchId = calcRoot.dataset.branch;
     const multiplier = cgpaConfig?.cgpaToPercentage?.multiplier || 9.5;
@@ -294,19 +298,21 @@ const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry });
         const semObj = semesters.find((s) => s.semester === selected);
         if (!semObj) return;
         renderSubjects(semObj);
-        let credits = 0, points = 0;
-        const lines = [];
-        const selects = tbody.querySelectorAll('select[data-credits]');
-        selects.forEach((sel) => {
-          const c = parseInt(sel.getAttribute('data-credits'), 10);
-          const g = sel.value;
-          const gp = resolveGP(g);
-          if (gp !== null) {
-            credits += c;
-            points += c * gp;
-            lines.push(`${sel.getAttribute('data-code') || 'SUB'}: ${c} cr × ${gp} = ${c * gp} pts`);
-          }
-        });
+      const excludedSet = new Set(excludedGrades.map(g => g.toUpperCase()));
+      let credits = 0, points = 0;
+      const lines = [];
+      const selects = tbody.querySelectorAll('select[data-credits]');
+      selects.forEach((sel) => {
+        const c = parseInt(sel.getAttribute('data-credits'), 10);
+        const g = sel.value;
+        const gp = resolveGP(g);
+        const isExcluded = g && excludedSet.has(g.toUpperCase());
+        if (gp !== null && !isExcluded) {
+          credits += c;
+          points += c * gp;
+          lines.push(`${sel.getAttribute('data-code') || 'SUB'}: ${c} cr × ${gp} = ${c * gp} pts`);
+        }
+      });
         const sgpa = credits > 0 ? points / credits : 0;
         sgpaDisplay.textContent = sgpa.toFixed(2);
         creditsDisplay.textContent = credits;
