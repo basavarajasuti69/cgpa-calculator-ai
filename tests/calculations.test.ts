@@ -256,3 +256,51 @@ describe('KTU 2024/2019 — failed courses stay in denominator', () => {
     expect(r.skipped).toBe(2);
   });
 });
+
+describe('SRMIST 2021/2018 — F/Ab/I grade exclusion from denominator', () => {
+  const SRM_GRADE_ENTRIES = [
+    { letter: 'O', gradePoint: 10 },
+    { letter: 'A+', gradePoint: 9 },
+    { letter: 'A', gradePoint: 8 },
+    { letter: 'B+', gradePoint: 7 },
+    { letter: 'B', gradePoint: 6 },
+    { letter: 'C', gradePoint: 5 },
+    { letter: 'F', gradePoint: 0 },
+    { letter: 'Ab', gradePoint: 0 },
+    { letter: 'I', gradePoint: 0 },
+  ];
+  const SRM_SCALE = gradeTableToScale(SRM_GRADE_ENTRIES);
+
+  const semWithFail = {
+    semester: 1,
+    name: 'Semester 1',
+    subjects: [
+      { code: 'CS101', name: 'Programming', credits: 4, type: 'core' as const, grade: 'A' },   // 4×8=32
+      { code: 'CS102', name: 'Data Structures', credits: 3, type: 'core' as const, grade: 'F' }, // 3×0=0, stays in denom
+      { code: 'CS103', name: 'Digital Logic', credits: 3, type: 'core' as const, grade: 'C' },   // 3×5=15
+    ],
+  };
+
+  it('counts F (0 pts) credits in SGPA denominator per R8.6/R15.2', () => {
+    const r = computeSemester(semWithFail, SRM_GRADE_ENTRIES, SRM_SCALE, 'credit-weighted', []);
+    // All 3 courses count: credits = 4+3+3 = 10, points = 32+0+15 = 47
+    // SGPA = 47/10 = 4.70
+    expect(r.totalCredits).toBe(10);
+    expect(r.totalCreditPoints).toBe(47);
+    expect(r.sgpa).toBeCloseTo(4.70, 4);
+  });
+
+  it('lateral entry skips first two semesters for CGPA', () => {
+    const semList = [
+      { semester: 1, name: 'Sem 1', subjects: [{ code: 'S1', name: 'S1', credits: 4, type: 'core' as const, grade: 'O' }] }, // 4×10=40
+      { semester: 2, name: 'Sem 2', subjects: [{ code: 'S2', name: 'S2', credits: 4, type: 'core' as const, grade: 'O' }] }, // 4×10=40
+      { semester: 3, name: 'Sem 3', subjects: [{ code: 'S3', name: 'S3', credits: 4, type: 'core' as const, grade: 'A' }] }, // 4×8=32
+    ];
+    const r = computeCGPA(semList, SRM_GRADE_ENTRIES, SRM_SCALE, 'credit-weighted', 2, []);
+    // Only Sem 3 counts: credits = 4, points = 32, CGPA = 32/4 = 8.0
+    expect(r.totalCredits).toBe(4);
+    expect(r.totalCreditPoints).toBe(32);
+    expect(r.cgpa).toBeCloseTo(8.0, 4);
+    expect(r.skipped).toBe(2);
+  });
+});

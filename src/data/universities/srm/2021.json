@@ -1,0 +1,47 @@
+{
+  "regulation": {
+    "id": "2021",
+    "name": "SRMIST 2021 Regulations",
+    "status": "draft",
+    "sources": [
+      {
+        "url": "https://webstor.srmist.edu.in/web_assets/downloads/2023/b-tech-mtech-ntegrated-2021-regulations.pdf",
+        "clauses": ["R 8.1", "R 8.6", "R 8.7", "R 8.8"],
+        "retrievedDate": "2026-10-24"
+      }
+    ],
+    "gradeTable": [
+      { "letter": "O", "gradePoint": 10, "minMarks": 91, "maxMarks": 100 },
+      { "letter": "A+", "gradePoint": 9, "minMarks": 81, "maxMarks": 90 },
+      { "letter": "A", "gradePoint": 8, "minMarks": 71, "maxMarks": 80 },
+      { "letter": "B+", "gradePoint": 7, "minMarks": 61, "maxMarks": 70 },
+      { "letter": "B", "gradePoint": 6, "minMarks": 56, "maxMarks": 60 },
+      { "letter": "C", "gradePoint": 5, "minMarks": 50, "maxMarks": 55 },
+      { "letter": "F", "gradePoint": 0, "minMarks": null, "maxMarks": 49 },
+      { "letter": "Ab", "gradePoint": 0, "minMarks": null, "maxMarks": null },
+      { "letter": "I", "gradePoint": 0, "minMarks": null, "maxMarks": null }
+    ],
+    "gradeScale": { "O": 10, "A+": 9, "A": 8, "B+": 7, "B": 6, "C": 5, "F": 0, "Ab": 0, "I": 0 },
+    "formulaType": "credit-weighted",
+    "cgpaToPercentage": { "multiplier": 10, "formula": "CGPA * 10" },
+    "lateralEntry": { "skipFirstNSemesters": 2, "note": "CGPA computed from III semester onwards for lateral entry; bridge course grades included" },
+    "totalCredits": { "regular": 160, "lateral": "curriculum_dependent" },
+    "cgpaStartSemester": { "regular": 1, "lateral": 3 },
+    "backlogPolicy": {
+      "failedCreditsRemainInDenominator": true,
+      "failedGradeLetters": ["F", "Ab", "I"],
+      "notes": "R 8.6: SGPA/CGPA include ALL courses including F grades (grade point 0). Credits of failed courses STAY in denominator until cleared."
+    },
+    "nonComputableCourses": ["mandatory non-credit courses", "non-credit audit courses (unless successfully completed)"],
+    "classThresholds": [
+      { "class": "FCD", "minCGPA": 8.0, "label": "First Class with Distinction", "conditions": "CGPA >= 8.0, without 'Ab' or 'F' or 'I' or temporary withdrawal in any semester" },
+      { "class": "FC", "minCGPA": 6.0, "maxCGPA": 8.0, "label": "First Class", "conditions": "CGPA >= 6.0 and < 8.0; or CGPA >= 8.0 with arrears cleared subsequently" },
+      { "class": "SC", "minCGPA": 5.0, "maxCGPA": 6.0, "label": "Second Class", "conditions": "CGPA >= 5.0 and < 6.0" }
+    ],
+    "passGrades": ["O", "A+", "A", "B+", "B", "C"],
+    "failedGrades": ["F", "Ab", "I"],
+    "rounding": "two decimal places",
+    "sourceUrl": "https://webstor.srmist.edu.in/web_assets/downloads/2023/b-tech-mtech-ntegrated-2021-regulations.pdf",
+    "lastVerified": "2026-10-24"
+  }
+}
