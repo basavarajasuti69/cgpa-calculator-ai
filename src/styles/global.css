@@ -1034,3 +1034,8 @@ footer a {
     color: black;
   }
 }
+
+/* Ensure scroll offset for sticky header */
+html {
+  scroll-padding-top: 80px;
+}
