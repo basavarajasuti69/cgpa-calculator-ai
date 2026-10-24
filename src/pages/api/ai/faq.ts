@@ -1,3 +1,5 @@
+export const prerender = false;
+
 /* ============================================================================
    CGPA Calculator AI — FAQ endpoint (grounded in verified data only)
    ============================================================================
@@ -18,7 +20,7 @@ const FAQ_SYSTEM = `You answer VTU grading/SGPA/CGPA questions using ONLY this v
 - VTU 10-point scale: S=10, A=9, B=8, C=7, D=6, E=5, F=0, Absent=0
 - SGPA = Σ(credits × grade point) ÷ Σ credits
 - CGPA = Σ(credit points all semesters) ÷ Σ(credits all semesters)
-- VTU Percentage = CGPA × 9.5
+- VTU Percentage = CGPA × 10 (2022/2025 schemes); (CGPA − 0.75) × 10 (2018 scheme)
 - CGPA → 4.0 GPA = CGPA ÷ 10 × 4
 - Lateral entry skips semesters 1–2
 If the answer is not in the above, say you're unsure and link https://vtu.ac.in/ .

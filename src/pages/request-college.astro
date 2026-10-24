@@ -73,11 +73,11 @@ import Layout from '../layouts/Layout.astro';
           const data = await res.json();
 
           msg.style.display = 'block';
-          msg.style.background = res.ok ? 'var(--color-canvas-elevated)' : 'var(--color-warning-soft)';
-          msg.style.border = '1px solid var(--color-hairline)';
+          msg.style.background = res.ok ? 'var(--color-surface-elevated)' : 'var(--color-warning-soft)';
+          msg.style.border = '1px solid var(--color-border)';
           msg.style.borderRadius = 'var(--radius-md)';
           msg.style.padding = 'var(--spacing-md)';
-          msg.style.color = res.ok ? 'var(--color-body)' : 'var(--color-error-deep)';
+          msg.style.color = res.ok ? 'var(--color-text)' : 'var(--color-error-deep)';
           msg.textContent = res.ok ? data.message : (data.error || 'Request failed');
         } catch (err) {
           msg.style.display = 'block';

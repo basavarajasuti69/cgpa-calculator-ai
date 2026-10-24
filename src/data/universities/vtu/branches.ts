@@ -17,7 +17,7 @@ type SemesterInput = {
   subjects: SubjectInput[];
 };
 
-function sem(n: number, name: string, subjects: SubjectInput[]): Semester {
+function sem(n: number, name: string, subjects: any[]): Semester {
   return { semester: n, name, subjects: subjects.map((s) => ({ ...s })) };
 }
 
@@ -26,7 +26,7 @@ function buildBranch(id: string, name: string, short: string, semesters: Semeste
     id,
     name,
     short,
-    semesters: semesters.map((s) => sem(s.semester, s.name, s.subjects)),
+    semesters: semesters.map((s: any) => sem(s.semester, s.name, s.subjects as any)),
   };
 }
 
@@ -74,7 +74,7 @@ function firstYear(tag: string, branchPrefix: string): SemesterInput[] {
       subjects: [
         { code: `BMATS201`, name: 'Mathematics-II for CSE Stream', credits: 4, type: 'core' },
         { code: `BCHES202`, name: 'Applied Chemistry for CSE Stream', credits: 4, type: 'core' },
-        ...(isCse ? [cad] : []),
+        ...(isCse ? [cad as any] : []),
         escII,
         plcII,
         engII,

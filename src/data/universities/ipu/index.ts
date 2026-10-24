@@ -9,7 +9,7 @@
 
 import type { University, Scheme, Branch } from '../../../data/types';
 import { gradeTableToScale } from '../../../data/types';
-import ord11Config from './ordinance11.json' assert { type: 'json' };
+import ord11Config from './ordinance11.json' with { type: 'json' };
 
 // Placeholder CSE branch until curriculum data is extracted
 const cseBranch: Branch = {
@@ -30,7 +30,14 @@ const cseBranch: Branch = {
 
 function buildScheme(reg: any, schemeId: string): Scheme {
   const gradeScale = gradeTableToScale(reg.gradeTable);
-  const multiplier = reg.cgpaToPercentage.multiplier ?? 10;
+  const multiplier = reg.cgpaToPercentage?.multiplier ?? 10;
+  const cgpaToPercentage = {
+    multiplier,
+    ...(reg.cgpaToPercentage?.formula ? { formula: reg.cgpaToPercentage.formula } : {}),
+    ...(reg.cgpaToPercentage?.note ? { note: reg.cgpaToPercentage.note } : {}),
+    ...(reg.cgpaToPercentage?.alternatives ? { alternatives: reg.cgpaToPercentage.alternatives } : {}),
+    ...(reg.cgpaToPercentage?.percentageAlternatives ? { alternatives: reg.cgpaToPercentage.percentageAlternatives } : {}),
+  };
   return {
     id: schemeId,
     name: reg.name,
@@ -39,34 +46,27 @@ function buildScheme(reg: any, schemeId: string): Scheme {
     gradeTable: reg.gradeTable,
     gradeScale,
     formulaType: reg.formulaType,
-    cgpaToPercentage: { multiplier },
-    lateralEntry: reg.lateralEntry,
+    cgpaToPercentage,
+    lateralEntry: reg.lateralEntry ?? { skipFirstNSemesters: 0 },
     sourceUrl: reg.sourceUrl,
     lastVerified: reg.lastVerified,
-    ...(reg.cgpaToPercentage.formula && { _cgpaFormula: reg.cgpaToPercentage.formula }),
-    ...(reg.cgpaToPercentage.percentageAlternatives && { _cgpaAlternatives: reg.cgpaToPercentage.percentageAlternatives }),
-    ...(reg.backlogPolicy && { _backlogPolicy: reg.backlogPolicy }),
-    ...(reg.classThresholds && { _classThresholds: reg.classThresholds }),
-    ...(reg.nonComputableCourses && { _nonComputableCourses: reg.nonComputableCourses }),
-    ...(reg.auditExcludedFromCGPA !== undefined && { _auditExcludedFromCGPA: reg.auditExcludedFromCGPA }),
-    ...(reg.passGrades && { _passGrades: reg.passGrades }),
-    ...(reg.failedGrades && { _failedGrades: reg.failedGrades }),
-    ...(reg.totalCredits && { _totalCredits: reg.totalCredits }),
-    ...(reg.rounding && { _rounding: reg.rounding }),
+    cgpaFormulaNote: reg.cgpaFormulaNote ?? reg.cgpaToPercentage?.note ?? null,
+    classThresholds: reg.classThresholds ?? [],
+    excludedGradeLetters: reg.backlogPolicy?.failedGradeLetters ?? [],
   } as Scheme;
 }
 
 const ord11 = (ord11Config as any).regulation ?? ord11Config;
 
 const schemes: Scheme[] = [
-  { ...buildScheme(ord11, 'ordinance11'), status: 'verified' as const },
+  { ...buildScheme(ord11, 'ordinance11'), status: 'draft' as const },
 ];
 
 const university: University = {
   id: 'ipu',
   name: 'Guru Gobind Singh Indraprastha University (IPU)',
   domain: 'ipu.ac.in',
-  status: 'verified',
+  status: 'draft',
   schemes,
 };
 

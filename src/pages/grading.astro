@@ -15,51 +15,98 @@ import Layout from '../layouts/Layout.astro';
         <table style="width: 100%; border-collapse: collapse; font-size: var(--font-size-body-sm);">
           <thead>
             <tr style="text-align: left;">
-              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-hairline); color: var(--color-mute);">Grade</th>
-              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-hairline); color: var(--color-mute); text-align: right;">Grade point</th>
-              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-hairline); color: var(--color-mute);">Remarks</th>
+              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-border); color: var(--color-text-muted);">Grade</th>
+              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-border); color: var(--color-text-muted); text-align: right;">Grade point</th>
+              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-border); color: var(--color-text-muted);">Remarks</th>
             </tr>
           </thead>
           <tbody>
-            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
-              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">S</td>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">O</td>
               <td style="padding: var(--spacing-xs); text-align: right;">10</td>
-              <td style="padding: var(--spacing-xs);">Outstanding</td>
+              <td style="padding: var(--spacing-xs);">Outstanding (2025 / 2022 scheme)</td>
             </tr>
-            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
-              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">A</td>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">A+</td>
               <td style="padding: var(--spacing-xs); text-align: right;">9</td>
-              <td style="padding: var(--spacing-xs);">Excellent</td>
+              <td style="padding: var(--spacing-xs);">Excellent (2025 / 2022 scheme)</td>
             </tr>
-            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
-              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">B</td>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">A</td>
               <td style="padding: var(--spacing-xs); text-align: right;">8</td>
-              <td style="padding: var(--spacing-xs);">Very Good</td>
+              <td style="padding: var(--spacing-xs);">Very Good (2025 / 2022 scheme)</td>
             </tr>
-            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
-              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">C</td>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">B+</td>
               <td style="padding: var(--spacing-xs); text-align: right;">7</td>
-              <td style="padding: var(--spacing-xs);">Good</td>
+              <td style="padding: var(--spacing-xs);">Good (2025 / 2022 scheme)</td>
             </tr>
-            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
-              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">D</td>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">B</td>
               <td style="padding: var(--spacing-xs); text-align: right;">6</td>
-              <td style="padding: var(--spacing-xs);">Average</td>
+              <td style="padding: var(--spacing-xs);">Pass (2025 / 2022 scheme)</td>
             </tr>
-            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
-              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">E</td>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">C</td>
               <td style="padding: var(--spacing-xs); text-align: right;">5</td>
-              <td style="padding: var(--spacing-xs);">Below Average</td>
+              <td style="padding: var(--spacing-xs);">Pass (2025 / 2022 scheme)</td>
             </tr>
-            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">P</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">4</td>
+              <td style="padding: var(--spacing-xs);">Pass (2025 / 2022 scheme)</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-border);">
               <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">F</td>
               <td style="padding: var(--spacing-xs); text-align: right;">0</td>
-              <td style="padding: var(--spacing-xs);">Fail</td>
+              <td style="padding: var(--spacing-xs);">Fail (all schemes)</td>
             </tr>
             <tr>
               <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">Absent</td>
               <td style="padding: var(--spacing-xs); text-align: right;">0</td>
-              <td style="padding: var(--spacing-xs);">Absent</td>
+              <td style="padding: var(--spacing-xs);">Absent (all schemes)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="feature-card" style="margin-bottom: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">VTU 2018 scheme grade table</h2>
+        <p class="body-sm mute" style="margin: 0 0 var(--spacing-sm) 0;">The 2018 scheme uses a different letter set. Never use E = 5 for the 2025 / 2022 schemes.</p>
+        <table style="width: 100%; border-collapse: collapse; font-size: var(--font-size-body-sm);">
+          <thead>
+            <tr style="text-align: left;">
+              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-border); color: var(--color-text-muted);">Grade</th>
+              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-border); color: var(--color-text-muted); text-align: right;">Grade point</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">S</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">10</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">A</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">9</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">B</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">8</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">C</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">7</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">D</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">6</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-border);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">E</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">4</td>
+            </tr>
+            <tr>
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">F</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">0</td>
             </tr>
           </tbody>
         </table>
@@ -73,7 +120,7 @@ import Layout from '../layouts/Layout.astro';
           <div class="body-sm mute">CGPA = Σ (credit points across all semesters) ÷ Σ (credits across all semesters)</div>
         </div>
         <div class="code-block">
-          <div class="body-sm mute">Percentage (VTU) = CGPA × 9.5</div>
+          <div class="body-sm mute">Percentage (VTU 2022/2025) = CGPA × 10</div>
         </div>
         <p class="body-sm mute" style="margin-top: var(--spacing-sm);">Grade points are not rounded before the formula. Percentage multiplier may vary by scheme — check your scheme.</p>
       </div>

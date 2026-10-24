@@ -1,0 +1,113 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getUniversities, getBranch, DEFAULT_BRANCH } from '../lib/data.ts';
+
+const universities = getUniversities();
+
+function hasSubjectData(scheme) {
+  for (const branch of scheme.branches) {
+    for (const sem of branch.semesters || []) {
+      if (sem.subjects && sem.subjects.length > 0) return true;
+    }
+  }
+  return false;
+}
+
+function subjectCoverage(scheme) {
+  let totalSemesters = 0;
+  let semestersWithData = 0;
+  let totalSubjects = 0;
+  for (const branch of scheme.branches) {
+    for (const sem of branch.semesters || []) {
+      totalSemesters += 1;
+      if (sem.subjects && sem.subjects.length > 0) {
+        semestersWithData += 1;
+        totalSubjects += sem.subjects.length;
+      }
+    }
+  }
+  return { totalSemesters, semestersWithData, totalSubjects };
+}
+
+function unverifiedFields(scheme) {
+  const issues = [];
+  if (!scheme.sourceUrl) issues.push('Missing source URL');
+  if (!scheme.lastVerified) issues.push('Missing lastVerified date');
+  if (!scheme.gradeTable || scheme.gradeTable.length === 0) issues.push('Empty grade table');
+  if (!scheme.cgpaToPercentage || !scheme.cgpaToPercentage.multiplier) issues.push('Missing percentage multiplier');
+  if (!scheme.classThresholds || scheme.classThresholds.length === 0) issues.push('Missing class thresholds');
+  return issues;
+}
+---
+
+<Layout title="Status — CGPA Calculator AI" description="Verification status of all university schemes, data sources, and subject coverage." pathname="/status">
+  <section class="section">
+    <div class="container" style="max-width: 1000px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Verification status</p>
+      <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Scheme Status Dashboard</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 64ch;">
+        Every scheme starts as <strong>draft</strong> until its grade table, percentage formula, and class rules are confirmed from a primary source and unit tests pass. Draft schemes show a visible banner on their calculator pages and should not be relied upon for academic decisions without checking your official grade card.
+      </p>
+
+      <table style="width: 100%; border-collapse: collapse; font-size: var(--font-size-body-sm);">
+        <thead>
+          <tr style="text-align: left; border-bottom: 2px solid var(--color-border);">
+            <th style="padding: var(--spacing-xs); color: var(--color-text-muted);">University</th>
+            <th style="padding: var(--spacing-xs); color: var(--color-text-muted);">Scheme</th>
+            <th style="padding: var(--spacing-xs); color: var(--color-text-muted); text-align:center;">Status</th>
+            <th style="padding: var(--spacing-xs); color: var(--color-text-muted); text-align:center;">Subjects</th>
+            <th style="padding: var(--spacing-xs); color: var(--color-text-muted);">Sources</th>
+            <th style="padding: var(--spacing-xs); color: var(--color-text-muted);">Last verified</th>
+            <th style="padding: var(--spacing-xs); color: var(--color-text-muted);">Unverified fields</th>
+          </tr>
+        </thead>
+        <tbody>
+          {universities.map((uni) => {
+            return uni.schemes.map((scheme) => {
+              const cov = subjectCoverage(scheme);
+              const issues = unverifiedFields(scheme);
+              const isDraft = scheme.status === 'draft';
+              const hasData = hasSubjectData(scheme);
+              const sourcesList = (scheme.sources || []).map((s) => s.url).join(', ');
+              return (
+                <tr style="border-bottom: 1px solid var(--color-border);">
+                  <td style="padding: var(--spacing-xs);">
+                    <strong style="color: var(--color-text-strong);">{uni.name}</strong>
+                  </td>
+                  <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">{scheme.name}</td>
+                  <td style="padding: var(--spacing-xs); text-align:center;">
+                    <span style="display:inline-block; padding:2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; {isDraft ? 'background:#fff3cd; color:#664d00; border:1px solid #b08a00;' : 'background:#e7f7ee; color:#1d6a3a; border:1px solid #2e7d32;'}">
+                      {isDraft ? 'DRAFT' : 'VERIFIED'}
+                    </span>
+                  </td>
+                  <td style="padding: var(--spacing-xs); text-align:center;">
+                    {hasData ? `${cov.totalSubjects} subjects across ${cov.semestersWithData}/${cov.totalSemesters} semesters` : '<span style="color:var(--color-text-muted);">Manual mode only</span>'}
+                  </td>
+                  <td style="padding: var(--spacing-xs); font-size: 11px; color: var(--color-text-muted);">{sourcesList}</td>
+                  <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">{scheme.lastVerified || '—'}</td>
+                  <td style="padding: var(--spacing-xs); font-size: 11px; color: var(--color-text-muted);">{issues.length === 0 ? 'None' : issues.join(', ')}</td>
+                </tr>
+              );
+            });
+          })}
+        </tbody>
+      </table>
+
+      <div class="feature-card" style="margin-top: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Legend</h2>
+        <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-text); font-size: var(--font-size-body-sm);">
+          <li style="margin-bottom: var(--spacing-xs);"><strong>DRAFT</strong> — Rules pending confirmation from a primary source. Calculator pages show a "Draft — verify with your official regulation" banner. Results are indicative only.</li>
+          <li style="margin-bottom: var(--spacing-xs);"><strong>VERIFIED</strong> — Grade table, percentage formula, and class rules confirmed from primary source documentation and unit tests pass.</li>
+          <li style="margin-bottom: var(--spacing-xs);"><strong>Subjects</strong> — Number of subjects with pre-filled credit data. "Manual mode only" means no subject data is loaded; users type their own courses and credits.</li>
+          <li style="margin-bottom: var(--spacing-xs);"><strong>Unverified fields</strong> — Config fields that still need primary-source confirmation.</li>
+        </ul>
+      </div>
+
+      <div style="margin-top: var(--spacing-lg);">
+        <p class="body-sm mute" style="margin: 0;">
+          Detailed per-university reports: <a href="DATA_REPORT_VTU.md">VTU</a> · <a href="DATA_REPORT_ANNA.md">Anna University</a> · <a href="DATA_REPORT_KTU.md">KTU</a> · <a href="DATA_REPORT_SRM.md">SRM</a> · <a href="DATA_REPORT_VIT.md">VIT</a> · <a href="DATA_REPORT_IPU.md">IPU</a> · <a href="DATA_REPORT_SAVEETHA.md">Saveetha</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -9,9 +9,9 @@
 
 import type { University, Scheme, Branch } from '../../../data/types';
 import { gradeTableToScale } from '../../../data/types';
-import r2021Config from './r2021.json' assert { type: 'json' };
-import r2017Config from './r2017.json' assert { type: 'json' };
-import r2013Config from './r2013.json' assert { type: 'json' };
+import r2021Config from './r2021.json' with { type: 'json' };
+import r2017Config from './r2017.json' with { type: 'json' };
+import r2013Config from './r2013.json' with { type: 'json' };
 
 // Placeholder CSE branch until curriculum data is extracted
 const cseBranch: Branch = {
@@ -32,7 +32,13 @@ const cseBranch: Branch = {
 
 function buildScheme(reg: any, regId: string): Scheme {
   const gradeScale = gradeTableToScale(reg.gradeTable);
-  const multiplier = reg.cgpaToPercentage.multiplier ?? 10;
+  const multiplier = reg.cgpaToPercentage?.multiplier ?? 10;
+  const cgpaToPercentage = {
+    multiplier,
+    ...(reg.cgpaToPercentage?.formula ? { formula: reg.cgpaToPercentage.formula } : {}),
+    ...(reg.cgpaToPercentage?.note ? { note: reg.cgpaToPercentage.note } : {}),
+    ...(reg.cgpaToPercentage?.alternatives ? { alternatives: reg.cgpaToPercentage.alternatives } : {}),
+  };
   return {
     id: regId,
     name: reg.name,
@@ -41,20 +47,13 @@ function buildScheme(reg: any, regId: string): Scheme {
     gradeTable: reg.gradeTable,
     gradeScale,
     formulaType: reg.formulaType,
-    cgpaToPercentage: { multiplier },
-    lateralEntry: reg.lateralEntry,
+    cgpaToPercentage,
+    lateralEntry: reg.lateralEntry ?? { skipFirstNSemesters: 0 },
     sourceUrl: reg.sourceUrl,
     lastVerified: reg.lastVerified,
-    ...(reg.cgpaToPercentage.formula && { _cgpaFormula: reg.cgpaToPercentage.formula }),
-    ...(reg.cgpaToPercentage.note && { _cgpaNote: reg.cgpaToPercentage.note }),
-    ...(reg.backlogPolicy && { _backlogPolicy: reg.backlogPolicy }),
-    ...(reg.classThresholds && { _classThresholds: reg.classThresholds }),
-    ...(reg.relativeGradingForTheory !== undefined && { _relativeGradingForTheory: reg.relativeGradingForTheory }),
-    ...(reg.absoluteGradingForAll !== undefined && { _absoluteGradingForAll: reg.absoluteGradingForAll }),
-    ...(reg.absoluteGradingTable && { _absoluteGradingTable: reg.absoluteGradingTable }),
-    ...(reg.passGrades && { _passGrades: reg.passGrades }),
-    ...(reg.failedGrades && { _failedGrades: reg.failedGrades }),
-    ...(reg.creditsPerPeriod && { _creditsPerPeriod: reg.creditsPerPeriod }),
+    cgpaFormulaNote: reg.cgpaFormulaNote ?? reg.cgpaToPercentage?.note ?? null,
+    classThresholds: reg.classThresholds ?? [],
+    excludedGradeLetters: reg.backlogPolicy?.failedGradeLetters ?? [],
   } as Scheme;
 }
 
@@ -63,16 +62,16 @@ const r2017 = (r2017Config as any).regulation ?? r2017Config;
 const r2013 = (r2013Config as any).regulation ?? r2013Config;
 
 const schemes: Scheme[] = [
-  { ...buildScheme(r2021, 'r2021'), status: 'verified' as const },
-  { ...buildScheme(r2017, 'r2017'), status: 'verified' as const },
-  { ...buildScheme(r2013, 'r2013'), status: 'verified' as const },
+  { ...buildScheme(r2021, 'r2021'), status: 'draft' as const },
+  { ...buildScheme(r2017, 'r2017'), status: 'draft' as const },
+  { ...buildScheme(r2013, 'r2013'), status: 'draft' as const },
 ];
 
 const university: University = {
   id: 'anna',
   name: 'Anna University',
   domain: 'annauniv.edu',
-  status: 'verified',
+  status: 'draft',
   schemes,
 };
 

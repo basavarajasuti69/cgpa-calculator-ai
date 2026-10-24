@@ -1,9 +1,4 @@
-/* ============================================================================
-   CGPA Calculator AI — Ask AI endpoint (plain-language assistant)
-   ============================================================================
-   The AI parses the user's request into a structured intent; the server then
-   calls deterministic calculation functions. The AI never does arithmetic.
-   ============================================================================ */
+export const prerender = false;
 
 import {
   rateLimit,
@@ -26,6 +21,23 @@ Return ONLY a JSON object with these fields:
 
 If the request is not about CGPA/SGPA planning, set questionType to "other".
 Use null for missing values. Do not explain. Output valid JSON only.`;
+
+export async function onRequestOptions(context: { request: Request }) {
+  const cors = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+  return new Response(null, { status: 204, headers: cors });
+}
+
+async function safeJson(request: Request): Promise<unknown> {
+  try {
+    return await request.json();
+  } catch {
+    return null;
+  }
+}
 
 export async function onRequestPost(context: {
   request: Request;
@@ -61,7 +73,6 @@ export async function onRequestPost(context: {
 
   const question = sanitizeText(check.data.question as string);
 
-  // Ask the AI to parse intent (AI does NOT calculate)
   const parsed = await groqChat([
     { role: 'system', content: PARSE_SYSTEM },
     { role: 'user', content: question },
@@ -78,59 +89,76 @@ export async function onRequestPost(context: {
   try {
     intent = JSON.parse(parsed.text);
   } catch {
-    return new Response(JSON.stringify({ error: 'provider_unavailable', message: fallback('ask'), guidance: aiGuidanceNote('ask') }), {
+    return new Response(JSON.stringify({ error: 'bad_response', message: fallback('ask') }), {
       status: 502,
       headers: { ...cors, 'Content-Type': 'application/json' },
     });
   }
 
-  // Deterministic calculation — AI never touches the numbers
-  let result: any = { questionType: intent.questionType ?? 'other' };
-  if (intent.questionType === 'target_sgpa' && intent.current && intent.targetCgpa != null && intent.remainingSemesters != null) {
-    // estimate credits from SGPAs if not provided
-    const currentCredits = intent.creditsSoFar ?? intent.current.reduce((sum: number, s: any) => sum + (s.semester * 20), 0);
-    const currentPoints = intent.current.reduce((sum: number, s: any) => sum + (s.sgpa * (s.semester * 20)), 0);
-    const plan = targetSgpaNeeded({
-      currentCredits,
-      currentCreditPoints: currentPoints,
-      remainingCredits: intent.creditsRemaining ?? intent.remainingSemesters * 20,
-      targetCgpa: intent.targetCgpa,
+  if (intent.questionType !== 'target_sgpa') {
+    return new Response(JSON.stringify({ error: 'unsupported', message: fallback('ask') }), {
+      status: 400,
+      headers: { ...cors, 'Content-Type': 'application/json' },
     });
-    result = {
-      ...result,
-      plan,
-      answer: plan.possible
-        ? `You need an average SGPA of ${plan.neededSgpa.toFixed(2)} in your remaining semesters to reach ${plan.targetCgpa} CGPA.`
-        : `That target isn't reachable — it would need an SGPA above 10.`,
-      guidance: aiGuidanceNote('ask'),
-    };
-  } else if (intent.questionType === 'cgpa_from_sgpas' && intent.current) {
-    let totCr = 0, totPts = 0;
-    for (const s of intent.current) {
-      const cr = s.semester * 20;
-      totCr += cr;
-      totPts += cr * s.sgpa;
-    }
-    result = {
-      ...result,
-      cgpa: totCr > 0 ? totPts / totCr : 0,
-      totalCredits: totCr,
-      guidance: aiGuidanceNote('ask'),
-    };
-  } else {
-    result = { ...result, message: 'I can help with CGPA/SGPA planning. Try: "I scored 8.1 in sem 4 and 7.6 in sem 5, what do I need in sem 6 for 8.0 overall?"' };
   }
 
-  return new Response(JSON.stringify({ ok: true, ...result }), {
+  const current = Array.isArray(intent.current) ? intent.current : [];
+  const targetCgpa = typeof intent.targetCgpa === 'number' ? intent.targetCgpa : null;
+  const remainingSemesters = typeof intent.remainingSemesters === 'number' ? intent.remainingSemesters : null;
+  const creditsSoFar = typeof intent.creditsSoFar === 'number' ? intent.creditsSoFar : undefined;
+  const creditsRemaining = typeof intent.creditsRemaining === 'number' ? intent.creditsRemaining : undefined;
+
+  if (targetCgpa == null || remainingSemesters == null || remainingSemesters <= 0) {
+    return new Response(JSON.stringify({ error: 'missing_fields', message: fallback('ask') }), {
+      status: 400,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  }
+
+  // Compute current credits and credit points from current SGPA if not provided
+  // Fallback: assume equal credits per semester if credits not given (best effort)
+  let currentCredits = creditsSoFar ?? 0;
+  let currentCreditPoints = 0;
+  if (creditsSoFar == null || creditsRemaining == null) {
+    // rough estimate: sum sgpa * assumed credits if unknown? better to use simple approach
+    // try to compute by assuming creditsSoFar/remaining if provided, else compute from current array
+    // fallback: if only sgpa given, can't know credits - use a reasonable default
+    const assumedCreditsPerSem = 20;
+    if (creditsSoFar == null) {
+      currentCredits = current.reduce((sum: number, c: any) => sum + assumedCreditsPerSem, 0);
+    }
+    if (creditsRemaining == null) {
+      // can't know, but pass remainingSemesters for calculation differently? Our function expects remainingCredits
+      // use assumed
+    }
+    for (const c of current) {
+      currentCreditPoints += (c.sgpa || 0) * assumedCreditsPerSem;
+    }
+  }
+
+  const plan = targetSgpaNeeded({
+    currentCredits,
+    currentCreditPoints,
+    remainingCredits: creditsRemaining ?? (remainingSemesters * 20),
+    targetCgpa,
+  });
+
+  if (!plan.possible || plan.neededSgpa > 10 || plan.neededSgpa < 0) {
+    return new Response(JSON.stringify({ error: 'not_possible', message: fallback('ask') }), {
+      status: 400,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  }
+
+  return new Response(JSON.stringify({
+    answer: `You need an average SGPA of ${plan.neededSgpa.toFixed(2)} across your remaining ${remainingSemesters} semester(s) to reach a target CGPA of ${targetCgpa.toFixed(2)}.`,
+    sgpaNeeded: plan.neededSgpa,
+    targetCgpa,
+    remainingSemesters,
+    current,
+    guidance: aiGuidanceNote('ask'),
+  }), {
     status: 200,
     headers: { ...cors, 'Content-Type': 'application/json' },
   });
-}
-
-async function safeJson(req: Request): Promise<unknown> {
-  try {
-    return await req.json();
-  } catch {
-    return null;
-  }
 }

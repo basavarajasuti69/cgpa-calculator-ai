@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="VTU (Visvesvaraya Technological University) — CGPA Calculator AI" description="VTU SGPA and CGPA calculator for 2025, 2022, 2021 and 2018 schemes. Grade table, percentage formula (CGPA × 10), class rules and worked examples. Not affiliated with VTU." pathname="/vtu">
+  <section class="section">
+    <div class="container" style="max-width: 800px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">University • VTU</p>
+      <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">VTU CGPA &amp; SGPA Calculator</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-md); max-width: 64ch;">
+        Calculate SGPA and CGPA for Visvesvaraya Technological University (VTU) across the 2025, 2022, 2021 and 2018 schemes. VTU 2025 credits are pre-filled for every subject, semester and branch — you only tap the grade. Results update live and show the formula and subject-wise breakdown.
+      </p>
+
+      <div class="feature-card" style="margin-bottom: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Supported schemes</h2>
+        <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-text);">
+          <li style="margin-bottom: var(--spacing-xs);"><strong>VTU 2025 Scheme</strong> — grades O (10), A+ (9), A (8), B+ (7), B (6), C (5), P (4), F (0). Percentage = CGPA × 10. Credits pre-filled.</li>
+          <li style="margin-bottom: var(--spacing-xs);"><strong>VTU 2022 Scheme</strong> — same 10-point grade table as 2025. Percentage = CGPA × 10. Credits pre-filled.</li>
+          <li style="margin-bottom: var(--spacing-xs);"><strong>VTU 2021 Scheme</strong> — percentage = CGPA × 10 (per R2021 regulations). Backlog/CGPA rules pending primary PDF confirmation.</li>
+          <li style="margin-bottom: var(--spacing-xs);"><strong>VTU 2018 Scheme</strong> — grades S (10), A (9), B (8), C (7), D (6), E (4), F (0). Percentage = (CGPA − 0.75) × 10 per the official VTU CGPA Standard Formula page (2015/2017/2018 only).</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Grade table — VTU 2025 / 2022</h2>
+        <table style="width: 100%; border-collapse: collapse; font-size: var(--font-size-body-sm);">
+          <thead>
+            <tr style="text-align: left;">
+              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-border); color: var(--color-text-muted);">Grade</th>
+              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-border); color: var(--color-text-muted); text-align: right;">Grade point</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">O</td><td style="padding: var(--spacing-xs); text-align: right;">10</td></tr>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">A+</td><td style="padding: var(--spacing-xs); text-align: right;">9</td></tr>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">A</td><td style="padding: var(--spacing-xs); text-align: right;">8</td></tr>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">B+</td><td style="padding: var(--spacing-xs); text-align: right;">7</td></tr>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">B</td><td style="padding: var(--spacing-xs); text-align: right;">6</td></tr>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">C</td><td style="padding: var(--spacing-xs); text-align: right;">5</td></tr>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">P</td><td style="padding: var(--spacing-xs); text-align: right;">4</td></tr>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">F</td><td style="padding: var(--spacing-xs); text-align: right;">0</td></tr>
+            <tr><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">Absent</td><td style="padding: var(--spacing-xs); text-align: right;">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Formulas &amp; class rules</h2>
+        <div class="code-block" style="margin-bottom: var(--spacing-sm);">
+          <div class="body-sm mute">SGPA = Σ (credits × grade point) ÷ Σ credits (all courses of the semester)</div>
+        </div>
+        <div class="code-block" style="margin-bottom: var(--spacing-sm);">
+          <div class="body-sm mute">CGPA = Σ (credit points of cleared courses) ÷ Σ (credits of cleared courses)</div>
+        </div>
+        <div class="code-block">
+          <div class="body-sm mute">Percentage = CGPA × 10 (2025 / 2022 schemes)</div>
+        </div>
+        <p class="body-sm mute" style="margin-top: var(--spacing-sm);">
+          VTU 2025 rule: F and Absent earn 0 grade points and their credits stay in the SGPA denominator. For CGPA, credits of courses with F are excluded; a course cleared later is counted once, in the semester it was cleared. Class bands (percentage = CGPA × 10): First Class with Distinction ≥ 70%, First Class 60 to &lt;70%, Second Class 50 to &lt;60%, Pass 40 to &lt;50%.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Worked example (VTU 2025 regulation)</h2>
+        <p class="body-sm" style="margin: 0;">Semester I: credit points 101 over 20 credits → SGPA = 101 ÷ 20 = 5.05. Semester II: credit points 178 over 26 credits → SGPA = 178 ÷ 26 = 6.85. Full program: credit points 1,406 over 160 credits → CGPA = 1,406 ÷ 160 = 8.79.</p>
+      </div>
+
+      <div style="margin-top: var(--spacing-lg); display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/vtu/2025/cse/sgpa" class="button-primary">VTU 2025 CSE SGPA</a>
+        <a href="/vtu/2022/cse/sgpa" class="button-secondary">VTU 2022 CSE SGPA</a>
+        <a href="/universities" class="button-ghost-sm">All universities</a>
+      </div>
+
+      <p class="body-xs mute" style="margin-top: var(--spacing-lg);">
+        CGPA Calculator AI is not affiliated with VTU. University names are used only to describe supported grading systems. Verify results with your college and vtu.ac.in.
+      </p>
+    </div>
+  </section>
+</Layout>

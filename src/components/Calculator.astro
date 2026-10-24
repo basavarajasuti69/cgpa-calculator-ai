@@ -1,11 +1,11 @@
 ---
-const { schemeId, branchId, branches = [], tool = 'sgpa', semesters = [], gradeTable = {}, cgpaToPercentage = { multiplier: 9.5 }, lateralEntry = { skipFirstNSemesters: 2 }, excludedGradeLetters = [], cgpaFormulaNote = null } = Astro.props;
+const { schemeId, branchId, uniId = 'vtu', branches = [], tool = 'sgpa', semesters = [], gradeTable = [], cgpaToPercentage = { multiplier: 10 }, lateralEntry = { skipFirstNSemesters: 2 }, excludedGradeLetters = [], cgpaFormulaNote = null, classThresholds = [], isDraft = false } = Astro.props;
 
 const gradeJson = JSON.stringify(gradeTable);
 const semestersJson = JSON.stringify(semesters);
 const branchesJson = JSON.stringify(branches.map(b => ({ id: b.id, short: b.short })));
 const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry, excludedGradeLetters, cgpaFormulaNote });
-const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
+const pathBase = branchId ? `/${uniId}/${schemeId}/${branchId}` : `/${uniId}/${schemeId}`;
 ---
 
 <section id="calculator" aria-label="CGPA calculator" class="calc-root"
@@ -13,11 +13,21 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
   data-semesters={semestersJson}
   data-scheme={schemeId}
   data-branch={branchId}
+  data-uni-id={uniId}
   data-branches={branchesJson}
   data-tool={tool}
   data-cgpa-config={cgpaConfigJson}
   data-excluded-grades={JSON.stringify(excludedGradeLetters)}
-  data-cgpa-formula-note={cgpaFormulaNote ?? ''}>
+  data-cgpa-formula-note={cgpaFormulaNote ?? ''}
+  data-class-thresholds={JSON.stringify(classThresholds)}
+  data-is-draft={isDraft}>
+
+  {isDraft && (
+    <div style="padding: 14px 18px; margin-bottom: 16px; background: #fff3cd; border: 1px solid #b08a00; color: #664d00; font-size: 13px; border-radius: 6px;">
+      <strong style="display:block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em;">Draft — verify with your official regulation</strong>
+      This scheme's grade table, percentage formula, and class rules are pending confirmation from the university's official regulation document. Results are indicative only — do not rely on them for academic decisions without checking your official grade card and the university website.
+    </div>
+  )}
 
   <div class="calc-toolbar">
     <div>
@@ -64,7 +74,7 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
   </div>
 
   {cgpaFormulaNote && cgpaFormulaNote.includes('unverified') && (
-    <div style="padding: 12px 16px; background: rgba(244, 196, 48, 0.12); color: #b45309; border-radius: 8px; margin-bottom: 16px; border: 1px solid rgba(244, 196, 48, 0.32); font-size: 13px;">
+    <div style="padding: 12px 16px; background: #f5f5f5; color: #333333; margin-bottom: 16px; border: 1px solid #dcdcdc; font-size: 13px;">
       <strong style="display:block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em;">Grading rules being verified</strong>
       {cgpaFormulaNote}
     </div>
@@ -112,8 +122,8 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
         <summary class="label-sm" style="cursor:pointer;">Show formula &amp; subject breakdown</summary>
         <div style="margin-top: 12px; display: grid; gap: 8px;">
           <div class="code-block">
-            <div style="color: var(--color-on-dark-muted); margin-bottom: 4px;">SGPA = Σ (credits × grade point) ÷ Σ credits</div>
-            <div id="breakdown" style="color:var(--color-on-dark); white-space:pre-wrap;">—</div>
+            <div style="color: var(--color-text-muted); margin-bottom: 4px;">SGPA = Σ (credits × grade point) ÷ Σ credits</div>
+            <div id="breakdown" style="color:var(--color-text-strong); white-space:pre-wrap;">—</div>
           </div>
           <p class="body-sm mute" style="margin:0;">Grade points are not rounded before the formula.</p>
         </div>
@@ -136,7 +146,7 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
         </div>
         <div>
           {semesters.map((s) => {
-            const credits = s.subjects?.reduce((a: number, b: any) => a + (b.credits || 0), 0) || 0;
+            const credits = s.subjects?.reduce((a, b) => a + (b.credits || 0), 0) || 0;
             return (
               <div class="subject-row cgpa-row">
                 <div class="sub-meta">
@@ -177,7 +187,7 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
       <div>
         <label class="field-label" for="percentage-cgpa">Enter CGPA</label>
         <input type="number" id="percentage-cgpa" class="text-input" step="0.01" min="0" max="10" placeholder="e.g. 8.75" style="max-width:280px;" />
-        <p class="body-sm mute" style="margin:8px 0 0;">Percentage = CGPA × {(cgpaToPercentage.multiplier || 9.5)}</p>
+        <p class="body-sm mute" style="margin:8px 0 0;">{cgpaToPercentage.formula ? `Percentage = ${cgpaToPercentage.formula}` : `Percentage = CGPA × ${cgpaToPercentage.multiplier || 10}`}</p>
       </div>
       <div class="score-dock">
         <div>
@@ -202,12 +212,16 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
     const semesters = JSON.parse(calcRoot.dataset.semesters ?? '[]');
     const branches = JSON.parse(calcRoot.dataset.branches ?? '[]');
     const tool = calcRoot.dataset.tool || 'sgpa';
-    const cgpaConfig = JSON.parse(calcRoot.dataset.cgpaConfig ?? '{"cgpaToPercentage":{"multiplier":9.5},"lateralEntry":{"skipFirstNSemesters":2}}');
+    const cgpaConfig = JSON.parse(calcRoot.dataset.cgpaConfig ?? '{"cgpaToPercentage":{"multiplier":10},"lateralEntry":{"skipFirstNSemesters":2}}');
     const excludedGrades = JSON.parse(calcRoot.dataset.excludedGrades ?? '[]');
+    const uniId = calcRoot.dataset.uniId || 'vtu';
     const schemeId = calcRoot.dataset.scheme;
     const branchId = calcRoot.dataset.branch;
-    const multiplier = cgpaConfig?.cgpaToPercentage?.multiplier || 9.5;
+    const multiplier = cgpaConfig?.cgpaToPercentage?.multiplier || 10;
     const lateralSkip = cgpaConfig?.lateralEntry?.skipFirstNSemesters || 2;
+    const ctRaw = calcRoot.dataset.classThresholds ?? '[]';
+    let classThresholds = [];
+    try { classThresholds = JSON.parse(ctRaw); } catch { classThresholds = []; }
 
     const schemeSelect = document.getElementById('scheme-select');
     const branchSelect = document.getElementById('branch-select');
@@ -219,18 +233,27 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
     const clearCgpaBtn = document.getElementById('clear-cgpa-btn');
 
     function classLabel(n) {
-      if (n >= 7.75) return 'First class with distinction';
-      if (n >= 6.75) return 'First class';
-      if (n >= 5.75) return 'Second class';
+      if (classThresholds && classThresholds.length) {
+        const t = classThresholds.find((x) => {
+          const min = x.minCGPA != null ? x.minCGPA : 0;
+          const max = x.maxCGPA != null ? x.maxCGPA : Infinity;
+          return n >= min && n < max;
+        });
+        if (t) return t.label || t.class;
+      }
+      const pct = n * multiplier;
+      if (pct >= 70) return 'First class with distinction';
+      if (pct >= 60) return 'First class';
+      if (pct >= 50) return 'Second class';
       if (n > 0) return 'Pass class';
       return 'Pick grades';
     }
 
     function buildBasePath() {
       if (branchId && branches && branches.length > 0) {
-        return `/vtu/${schemeSelect?.value || schemeId}/${branchSelect?.value || branchId}`;
+        return `/${uniId}/${schemeSelect?.value || schemeId}/${branchSelect?.value || branchId}`;
       }
-      return `/vtu/${schemeSelect?.value || schemeId}`;
+      return `/${uniId}/${schemeSelect?.value || schemeId}`;
     }
 
     schemeSelect?.addEventListener('change', () => { window.location.href = `${buildBasePath()}/${tool}/`; });
@@ -291,6 +314,7 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
       const pills = document.getElementById('sem-pills');
       const modeGradeBtn = document.getElementById('mode-grade');
       const modeMarksBtn = document.getElementById('mode-marks');
+      let lastCredits = 0;
 
       function storageKey(semester) {
         return `cgpa-calc-${schemeId}-${branchId || 'na'}-sem${semester}`;
@@ -312,8 +336,7 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
         }
         return 0;
       }
-      // Build a letter→gradePoint lookup from the grade table array
-      const gradeLookup: Record<string, number> = {};
+      const gradeLookup = {};
       for (const e of gradeTable) {
         gradeLookup[e.letter] = e.gradePoint;
         gradeLookup[e.letter.toUpperCase()] = e.gradePoint;
@@ -325,10 +348,32 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
       }
 
       let currentMode = 'grade';
-
+      let manualCourses = [];
+      function mKey(semester) { return `cgpa-manual-${schemeId}-${branchId || 'na'}-sem${semester}`; }
+      function loadManual(semester) {
+        try { return JSON.parse(localStorage.getItem(mKey(semester)) ?? '[]'); } catch { return []; }
+      }
+      function saveManual(semester, arr) {
+        try { localStorage.setItem(mKey(semester), JSON.stringify(arr)); } catch {}
+      }
+      function manualRowHTML(c, mode, savedVal) {
+        const chips = gradeTable.map((g) => {
+          const active = savedVal === g ? ' is-active' : '';
+          return `<button type="button" class="grade-chip${active}" data-code="${c.code}" data-credits="${c.credits}" data-grade="${g}" data-manual="1" aria-pressed="${savedVal === g}">${g}</button>`;
+        }).join('');
+        return `<div class="subject-row" data-code="${c.code}" data-credits="${c.credits}" data-marks="" data-grade="${savedVal}" data-manual="1">
+          <div class="sub-meta">
+            <div class="mute" style="font-size:11px; font-weight:700; letter-spacing:0.04em;">${c.code}</div>
+            <div class="ink" style="font-weight:700; font-size:14px;">${c.name}</div>
+          </div>
+          <div class="sub-credits"><span class="credit-pill">${c.credits} cr</span></div>
+          <div class="grade-chips">${chips}</div>
+          <button type="button" class="delete-btn" style="margin-left:8px; padding:4px 8px; font-size:12px; background:var(--color-error); color:#fff; border:none; border-radius:6px; cursor:pointer;">×</button>
+        </div>`;
+      }
       function showError(msg) {
         if (!tbody) return;
-        tbody.innerHTML = `<div style="padding:24px; color:var(--color-error); text-align:center; border:1px solid var(--color-error); border-radius:var(--radius-md); background:rgba(225,29,72,0.08);">${msg}</div>`;
+        tbody.innerHTML = `<div style="padding:24px; color:var(--color-text-strong); text-align:center; border:1px solid var(--color-border); background:var(--color-surface);">${msg}</div>`;
         if (sgpaDisplay) sgpaDisplay.textContent = '0.00';
         if (classEl) classEl.textContent = 'Error';
         if (creditsDisplay) creditsDisplay.textContent = '0';
@@ -339,13 +384,25 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
       function renderSubjects(semObj) {
         if (!tbody || !semObj) return;
         const saved = loadEntry(semObj.semester);
-        currentMode = saved.mode || 'grade';
+        manualCourses = loadManual(semObj.semester);
         if (modeGradeBtn) modeGradeBtn.classList.toggle('is-active', currentMode === 'grade');
         if (modeMarksBtn) modeMarksBtn.classList.toggle('is-active', currentMode === 'marks');
 
         const grades = gradeTable.map(e => e.letter).sort((a, b) => (gradeLookup[b] || 0) - (gradeLookup[a] || 0));
         if (!semObj.subjects || semObj.subjects.length === 0) {
-          tbody.innerHTML = '<div style="padding:24px; color:var(--color-mute); text-align:center;">No subjects found for this semester.</div>';
+          const list = manualCourses.map((c, i) => manualRowHTML(c, currentMode, (saved.marks && saved.marks[c.code]) ?? (saved.grades && saved.grades[c.code]) ?? '')).join('');
+          tbody.innerHTML = `
+            <div style="padding:16px 20px; border-bottom:1px solid var(--color-border);">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+                <input type="text" id="manual-code" class="text-input" placeholder="Course code" style="max-width:150px;" />
+                <input type="text" id="manual-name" class="text-input" placeholder="Course name" style="flex:1;" />
+                <input type="number" id="manual-credits" class="text-input" min="1" max="20" placeholder="Cr" style="max-width:90px;" value="3" />
+                <button type="button" id="add-manual-btn" class="button-primary-sm" style="padding:6px 12px; font-size:12px;">Add course</button>
+              </div>
+              <p class="body-sm mute" style="margin:0 0 10px;">No pre-filled subject data for this branch/semester — add courses manually below.</p>
+            </div>
+            <div id="manual-list">${list}</div>
+          `;
           recompute();
           return;
         }
@@ -418,6 +475,7 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
         if (creditsDisplay) creditsDisplay.textContent = String(credits);
         if (pointsDisplay) pointsDisplay.textContent = points.toFixed(2);
         if (breakdown) breakdown.textContent = lines.length ? lines.join('\n') : `Enter ${currentMode === 'marks' ? 'marks' : 'grades'} above to see the breakdown.`;
+        lastCredits = credits;
 
         if (selected && !isNaN(selected)) {
           saveEntry(selected, { mode: currentMode, ...(currentMode === 'grade' ? { grades } : { marks }) });
@@ -432,6 +490,8 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
             p.classList.toggle('is-active', p.getAttribute('data-sem') === String(n));
           });
         }
+        const saved = loadEntry(n);
+        currentMode = saved.mode || 'grade';
         const semObj = semesters.find((s) => s.semester === n);
         if (semObj) {
           renderSubjects(semObj);
@@ -480,6 +540,38 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
       });
 
       tbody?.addEventListener('click', (e) => {
+        const del = e.target.closest('.delete-btn');
+        if (del) {
+          const row = del.closest('.subject-row[data-manual="1"]');
+          if (row) {
+            const code = row.getAttribute('data-code');
+            manualCourses = manualCourses.filter((c) => c.code !== code);
+            saveManual(parseInt(semesterSelect?.value || '1', 10), manualCourses);
+            const selected = parseInt(semesterSelect?.value || '1', 10);
+            renderSubjects(semesters.find((s) => s.semester === selected));
+            recompute();
+          }
+          return;
+        }
+        const addBtn = e.target.closest('#add-manual-btn');
+        if (addBtn) {
+          const codeEl = document.getElementById('manual-code');
+          const nameEl = document.getElementById('manual-name');
+          const crEl = document.getElementById('manual-credits');
+          const code = (codeEl?.value || '').trim();
+          const name = (nameEl?.value || '').trim();
+          const credits = parseInt(crEl?.value || '3', 10) || 3;
+          if (!code || !name) return;
+          if (manualCourses.some((c) => c.code === code)) return;
+          manualCourses.push({ code, name, credits });
+          saveManual(parseInt(semesterSelect?.value || '1', 10), manualCourses);
+          codeEl.value = '';
+          nameEl.value = '';
+          const selected = parseInt(semesterSelect?.value || '1', 10);
+          renderSubjects(semesters.find((s) => s.semester === selected));
+          recompute();
+          return;
+        }
         if (currentMode !== 'grade') return;
         const btn = e.target.closest('.grade-chip');
         if (!btn) return;
@@ -526,7 +618,7 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
         const semObj = semesters.find((s) => s.semester === selected);
         const entry = {
           label: semObj ? semObj.name : `Semester ${selected}`,
-          value: isNaN(sgpa) || credits === 0 ? '0.00' : sgpa.toFixed(2),
+          value: isNaN(sgpa) || lastCredits === 0 ? '0.00' : sgpa.toFixed(2),
           scheme: schemeId,
           branch: branchId || 'na',
           date: new Date().toLocaleDateString(),
@@ -611,7 +703,7 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
       const alternatives = pctConfig.alternatives;
 
       // Safe formula evaluator: only allows numbers, CGPA variable, + - * / ( ) .
-      function evalPctFormula(cgpa: number, f: string): number | null {
+      function evalPctFormula(cgpa, f) {
         const sanitized = f.replace(/CGPA/g, String(cgpa));
         if (!/^[0-9\s\.\+\-\*\/\(\)]+$/.test(sanitized)) return null;
         try {
@@ -622,7 +714,7 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
       function calc() {
         const v = parseFloat(input.value);
         if (isNaN(v)) { disp.textContent = '0.00%'; return; }
-        let result: number;
+        let result;
         if (formula) {
           result = evalPctFormula(v, formula);
           if (result === null) result = v * multiplier;
@@ -635,7 +727,7 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
       // Show formula info below the input
       const formulaInfo = document.createElement('div');
       formulaInfo.style.fontSize = '12px';
-      formulaInfo.style.color = 'var(--color-muted)';
+      formulaInfo.style.color = 'var(--color-text-muted)';
       formulaInfo.style.marginTop = '8px';
       formulaInfo.style.maxWidth = '280px';
       if (formula) {
@@ -685,20 +777,20 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
     gap: 8px;
     font-size: 14px;
     font-weight: 600;
-    color: var(--color-ink);
+    color: var(--color-text-strong);
     cursor: pointer;
   }
   .credit-pill {
     display: inline-flex;
     padding: 4px 10px;
-    border-radius: 999px;
+    border-radius: 0;
     background: var(--color-primary-soft);
     color: var(--color-primary);
     font-size: 12px;
     font-weight: 800;
   }
-  .score-meta { display: grid; gap: 6px; color: var(--color-on-dark-muted); font-size: 14px; text-align: right; }
-  .score-meta strong { color: var(--color-dark-ink); }
+  .score-meta { display: grid; gap: 6px; color: var(--color-text-muted); font-size: 14px; text-align: right; }
+  .score-meta strong { color: var(--color-text-strong); }
   .calc-actions { display: flex; gap: 10px; flex-wrap: wrap; }
   .marks-input {
     text-align: center;
@@ -712,7 +804,7 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
   }
   .marksheet-head .seg-tabs {
     width: auto;
-    background: var(--color-hairline-soft);
+    background: var(--color-border);
     padding: 4px;
   }
   .cgpa-row { align-items: center; }

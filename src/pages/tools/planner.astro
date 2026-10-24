@@ -71,7 +71,7 @@ import { display } from '../../lib/calculations.ts';
         res.style.display = 'block';
         if (ok) {
           possible.textContent = `That's ${neededSgpa.toFixed(2)} × ${remCredits} credits = ${neededPoints.toFixed(0)} credit points needed.`;
-          possible.style.color = 'var(--color-body)';
+          possible.style.color = 'var(--color-text)';
         } else {
           possible.textContent = neededSgpa > 10 ? 'Not possible — that would require an SGPA above 10.' : 'Enter valid numbers.';
           possible.style.color = 'var(--color-error)';

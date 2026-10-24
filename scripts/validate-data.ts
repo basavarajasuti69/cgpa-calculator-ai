@@ -75,7 +75,7 @@ for (const uni of Object.values(universities)) {
     const ranged = entries.filter((e) => e.minMarks !== undefined && e.maxMarks !== undefined);
     for (let i = 0; i < ranged.length; i++) {
       for (let j = i + 1; j < ranged.length; j++) {
-        if (rangesOverlap(ranged[i], ranged[j])) {
+        if (rangesOverlap(ranged[i] as any, ranged[j] as any)) {
           fail(`  ${uni.id}/${scheme.id}: overlapping ranges ${ranged[i].letter} and ${ranged[j].letter}`);
         }
       }

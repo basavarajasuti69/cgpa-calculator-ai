@@ -9,9 +9,9 @@
 
 import type { University, Scheme, Branch } from '../../../data/types';
 import { gradeTableToScale } from '../../../data/types';
-import s2024Config from './2024.json' assert { type: 'json' };
-import s2019Config from './2019.json' assert { type: 'json' };
-import s2015Config from './2015.json' assert { type: 'json' };
+import s2024Config from './2024.json' with { type: 'json' };
+import s2019Config from './2019.json' with { type: 'json' };
+import s2015Config from './2015.json' with { type: 'json' };
 
 // Placeholder CSE branch until curriculum data is extracted
 const cseBranch: Branch = {
@@ -32,7 +32,14 @@ const cseBranch: Branch = {
 
 function buildScheme(reg: any, schemeId: string): Scheme {
   const gradeScale = gradeTableToScale(reg.gradeTable);
-  const multiplier = reg.cgpaToPercentage.multiplier ?? 10;
+  const multiplier = reg.cgpaToPercentage?.multiplier ?? 10;
+  const cgpaToPercentage = {
+    multiplier,
+    ...(reg.cgpaToPercentage?.formula ? { formula: reg.cgpaToPercentage.formula } : {}),
+    ...(reg.cgpaToPercentage?.note ? { note: reg.cgpaToPercentage.note } : {}),
+    ...(reg.cgpaToPercentage?.alternatives ? { alternatives: reg.cgpaToPercentage.alternatives } : {}),
+    ...(reg.cgpaToPercentage?.percentageAlternatives ? { alternatives: reg.cgpaToPercentage.percentageAlternatives } : {}),
+  };
   return {
     id: schemeId,
     name: reg.name,
@@ -41,22 +48,13 @@ function buildScheme(reg: any, schemeId: string): Scheme {
     gradeTable: reg.gradeTable,
     gradeScale,
     formulaType: reg.formulaType,
-    cgpaToPercentage: { multiplier },
-    lateralEntry: reg.lateralEntry,
+    cgpaToPercentage,
+    lateralEntry: reg.lateralEntry ?? { skipFirstNSemesters: 0 },
     sourceUrl: reg.sourceUrl,
     lastVerified: reg.lastVerified,
-    ...(reg.cgpaToPercentage.formula && { _cgpaFormula: reg.cgpaToPercentage.formula }),
-    ...(reg.cgpaToPercentage.alternatives && { _cgpaAlternatives: reg.cgpaToPercentage.alternatives }),
-    ...(reg.cgpaToPercentage.note && { _cgpaNote: reg.cgpaToPercentage.note }),
-    ...(reg.backlogPolicy && { _backlogPolicy: reg.backlogPolicy }),
-    ...(reg.classThresholds && { _classThresholds: reg.classThresholds }),
-    ...(reg.nonComputableCourses && { _nonComputableCourses: reg.nonComputableCourses }),
-    ...(reg.mandatoryActivityCredits !== undefined && { _mandatoryActivityCredits: reg.mandatoryActivityCredits }),
-    ...(reg.mandatoryActivityExcludedFromCGPA !== undefined && { _mandatoryActivityExcludedFromCGPA: reg.mandatoryActivityExcludedFromCGPA }),
-    ...(reg.creditRelaxation && { _creditRelaxation: reg.creditRelaxation }),
-    ...(reg.level5Elective && { _level5Elective: reg.level5Elective }),
-    ...(reg.totalCredits && { _totalCredits: reg.totalCredits }),
-    ...(reg.rounding && { _rounding: reg.rounding }),
+    cgpaFormulaNote: reg.cgpaFormulaNote ?? reg.cgpaToPercentage?.note ?? null,
+    classThresholds: reg.classThresholds ?? [],
+    excludedGradeLetters: reg.backlogPolicy?.failedGradeLetters ?? [],
   } as Scheme;
 }
 
@@ -65,8 +63,8 @@ const s2019 = (s2019Config as any).regulation ?? s2019Config;
 const s2015 = (s2015Config as any).regulation ?? s2015Config;
 
 const schemes: Scheme[] = [
-  buildScheme(s2024, '2024'),
-  buildScheme(s2019, '2019'),
+  { ...buildScheme(s2024, '2024'), status: 'draft' as const },
+  { ...buildScheme(s2019, '2019'), status: 'draft' as const },
   buildScheme(s2015, '2015'),
 ];
 
@@ -74,7 +72,7 @@ const university: University = {
   id: 'ktu',
   name: 'APJ Abdul Kalam Technological University',
   domain: 'ktu.edu.in',
-  status: 'verified',
+  status: 'draft',
   schemes,
 };
 

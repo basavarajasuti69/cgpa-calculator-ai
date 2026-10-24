@@ -12,9 +12,7 @@ import {
 export async function getStaticPaths() {
   const paths = [];
   for (const uni of getUniversities()) {
-    if (uni.status !== 'verified') continue;
     for (const scheme of uni.schemes) {
-      if (scheme.status !== 'verified') continue;
       const br = getBranch(scheme, DEFAULT_BRANCH);
       if (!br) continue;
       for (const tool of ['sgpa', 'cgpa', 'percentage']) {
@@ -56,6 +54,7 @@ const semesters = br.semesters.map((s) => ({
         <h1 class="heading-lg">{tool.toUpperCase()} calculator</h1>
       </div>
       <Calculator
+        uniId={uniId}
         schemeId={schemeId}
         branchId={DEFAULT_BRANCH}
         branches={sc.branches.map(b => ({ id: b.id, short: b.short, name: b.name }))}
@@ -66,6 +65,8 @@ const semesters = br.semesters.map((s) => ({
         lateralEntry={sc.lateralEntry}
         excludedGradeLetters={sc.excludedGradeLetters ?? []}
         cgpaFormulaNote={sc.cgpaFormulaNote ?? null}
+        classThresholds={sc.classThresholds ?? []}
+        isDraft={sc.status === 'draft'}
       />
     </div>
   </section>

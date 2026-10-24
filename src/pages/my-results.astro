@@ -1,0 +1,95 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const title = 'My Saved Results — CGPA Calculator AI';
+---
+
+<Layout title={title} description="Your saved SGPA and CGPA results, stored only in your browser." pathname="/my-results" noAds>
+  <section class="section">
+    <div class="container" style="max-width: 760px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">My results</p>
+      <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">My saved results</h1>
+      <div id="my-results" class="my-results-empty">
+        <div class="my-results-empty-mark" aria-hidden="true">📭</div>
+        <h2 class="heading-md" style="margin: 12px 0 6px;">No saved results yet</h2>
+        <p class="body-md" style="margin: 0 0 var(--spacing-lg); max-width: 42ch;">
+          Calculate an SGPA or CGPA and press <strong>Save result</strong> to store it here. Results live only in your browser.
+        </p>
+        <a href="/vtu/2022/cse/sgpa" class="button-primary">Open SGPA calculator</a>
+      </div>
+      <div id="my-results-list" class="my-results-list" style="display:none;">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-md);">Saved results</h2>
+        <div id="results-container"></div>
+        <p class="body-sm mute" style="margin-top: var(--spacing-sm);">
+          Tip: results are saved to your browser's localStorage and are not sent to a server.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (() => {
+      const container = document.getElementById('results-container');
+      const empty = document.getElementById('my-results');
+      const list = document.getElementById('my-results-list');
+      if (!container) return;
+      try {
+        const raw = localStorage.getItem('cgpa-saved-results');
+        const results = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(results) || results.length === 0) {
+          empty.style.display = '';
+          list.style.display = 'none';
+          return;
+        }
+        empty.style.display = 'none';
+        list.style.display = '';
+        container.innerHTML = results.map((r, i) => {
+          const dt = new Date(r.savedAt || 0).toLocaleString();
+          return `
+            <div class="result-item">
+              <div class="result-info">
+                <div class="result-title">${escapeHtml(r.label || 'Saved result')}</div>
+                <div class="result-meta">${r.university || ''} · ${r.scheme || ''} · ${dt}</div>
+              </div>
+              <div class="result-value">${r.sgpa !== undefined ? r.sgpa.toFixed(2) : r.cgpa !== undefined ? r.cgpa.toFixed(2) : '—'}</div>
+            </div>
+          `;
+        }).join('');
+      } catch {
+        empty.style.display = '';
+        list.style.display = 'none';
+      }
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
+      }
+    })();
+  </script>
+</Layout>
+
+<style>
+  .my-results-empty,
+  .my-results-list {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    text-align: center;
+  }
+  .my-results-empty-mark {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 12px;
+  }
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .result-item:last-child { border-bottom: none; }
+  .result-info { display: flex; flex-direction: column; gap: 2px; }
+  .result-title { font-weight: 600; color: var(--color-text-strong); font-size: 14px; }
+  .result-meta { font-size: 12px; color: var(--color-text-muted); }
+  .result-value { font-family: var(--font-family-serif); font-weight: 600; font-size: 20px; color: var(--color-primary); }
+</style>

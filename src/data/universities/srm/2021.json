@@ -34,9 +34,9 @@
     },
     "nonComputableCourses": ["mandatory non-credit courses", "non-credit audit courses (unless successfully completed)"],
     "classThresholds": [
-      { "class": "FCD", "minCGPA": 8.0, "label": "First Class with Distinction", "conditions": "CGPA >= 8.0, without 'Ab' or 'F' or 'I' or temporary withdrawal in any semester" },
-      { "class": "FC", "minCGPA": 6.0, "maxCGPA": 8.0, "label": "First Class", "conditions": "CGPA >= 6.0 and < 8.0; or CGPA >= 8.0 with arrears cleared subsequently" },
-      { "class": "SC", "minCGPA": 5.0, "maxCGPA": 6.0, "label": "Second Class", "conditions": "CGPA >= 5.0 and < 6.0" }
+      { "class": "FCD", "minCGPA": 8.50, "label": "First Class with Distinction", "conditions": "CGPA >= 8.50 (indicative; confirm with SRMIST)" },
+      { "class": "FC", "minCGPA": 6.50, "maxCGPA": 8.50, "label": "First Class", "conditions": "CGPA >= 6.50 and < 8.50 (indicative; confirm with SRMIST)" },
+      { "class": "PC", "minCGPA": 5.00, "maxCGPA": 6.50, "label": "Pass Class", "conditions": "CGPA >= 5.00 and < 6.50 (indicative; confirm with SRMIST)" }
     ],
     "passGrades": ["O", "A+", "A", "B+", "B", "C"],
     "failedGrades": ["F", "Ab", "I"],

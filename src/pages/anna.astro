@@ -1,0 +1,64 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Anna University — CGPA Calculator AI" description="Anna University SGPA and CGPA calculator for R2021, R2017 and R2013 regulations. Grade table O/A+/A/B+/B/C, U/RA excluded from GPA and CGPA, percentage = CGPA × 10. Not affiliated with Anna University." pathname="/anna">
+  <section class="section">
+    <div class="container" style="max-width: 800px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">University • Anna University</p>
+      <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Anna University CGPA &amp; SGPA Calculator</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-md); max-width: 64ch;">
+        Calculate SGPA and CGPA for Anna University under R2021, R2017 and R2013 regulations. Anna University uses a 10-point grade scale; U/RA grades are excluded from GPA and CGPA (their credits do not enter the denominator). Percentage = CGPA × 10 (R2021 clause 15.5.3).
+      </p>
+
+      <div class="feature-card" style="margin-bottom: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Supported regulations</h2>
+        <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-text);">
+          <li style="margin-bottom: var(--spacing-xs);"><strong>R2021</strong> — grades O (10), A+ (9), A (8), B+ (7), B (6), C (5), U/RA/SA/WD/W (0). U courses excluded from GPA and CGPA. Percentage = CGPA × 10.</li>
+          <li style="margin-bottom: var(--spacing-xs);"><strong>R2017</strong> — grades O (10), A+ (9), A (8), B+ (7), B (6), RA (0). No C grade. Percentage conversion pending primary PDF confirmation.</li>
+          <li style="margin-bottom: var(--spacing-xs);"><strong>R2013</strong> — grades S (10), A (9), B (8), C (7), D (6), E (5), U/RA (0). Percentage conversion pending primary PDF confirmation.</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Grade table — Anna R2021</h2>
+        <table style="width: 100%; border-collapse: collapse; font-size: var(--font-size-body-sm);">
+          <thead>
+            <tr style="text-align: left;">
+              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-border); color: var(--color-text-muted);">Grade</th>
+              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-border); color: var(--color-text-muted); text-align: right;">Grade point</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">O</td><td style="padding: var(--spacing-xs); text-align: right;">10</td></tr>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">A+</td><td style="padding: var(--spacing-xs); text-align: right;">9</td></tr>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">A</td><td style="padding: var(--spacing-xs); text-align: right;">8</td></tr>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">B+</td><td style="padding: var(--spacing-xs); text-align: right;">7</td></tr>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">B</td><td style="padding: var(--spacing-xs); text-align: right;">6</td></tr>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">C</td><td style="padding: var(--spacing-xs); text-align: right;">5</td></tr>
+            <tr style="border-bottom: 1px solid var(--color-border);"><td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">U / RA</td><td style="padding: var(--spacing-xs); text-align: right;">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="feature-card">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Key rules</h2>
+        <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-text); font-size: var(--font-size-body-sm);">
+          <li style="margin-bottom: var(--spacing-xs);">GPA = Σ(Ci × GPi) ÷ Σ(Ci) over courses successfully cleared in the semester.</li>
+          <li style="margin-bottom: var(--spacing-xs);">CGPA = same over all cleared courses of all semesters. U/RA grades are excluded — their credits do NOT enter the denominator.</li>
+          <li style="margin-bottom: var(--spacing-xs);">Percentage = CGPA × 10 (R2021, clause 15.5.3).</li>
+          <li style="margin-bottom: var(--spacing-xs);">Class: First Class with Distinction ≥ 8.50; First Class ≥ 6.50 (indicative; confirm with your college).</li>
+        </ul>
+      </div>
+
+      <div style="margin-top: var(--spacing-lg); display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/anna/r2021/cse/sgpa" class="button-primary">Anna R2021 CSE SGPA</a>
+        <a href="/universities" class="button-ghost-sm">All universities</a>
+      </div>
+
+      <p class="body-xs mute" style="margin-top: var(--spacing-lg);">
+        CGPA Calculator AI is not affiliated with Anna University. Some regulations are marked draft pending primary PDF verification — verify with cac.annauniv.edu before relying on results.
+      </p>
+    </div>
+  </section>
+</Layout>

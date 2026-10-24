@@ -67,10 +67,10 @@ export function resolveSubjectGP(
   scale: GradeScale,
 ): SubjectResult {
   const gp =
-    sub.grade !== undefined && sub.grade !== ''
-      ? letterToGradePoint(sub.grade, entries)
-      : sub.marks !== undefined
-        ? marksToGradePoint(sub.marks, entries)
+    (sub as any).grade !== undefined && (sub as any).grade !== ''
+      ? letterToGradePoint((sub as any).grade, entries)
+      : (sub as any).marks !== undefined
+        ? marksToGradePoint((sub as any).marks, entries)
         : null;
   const creditPoints = gp !== null ? sub.credits * gp : 0;
   return {
@@ -78,8 +78,8 @@ export function resolveSubjectGP(
     name: sub.name,
     credits: sub.credits,
     type: sub.type,
-    grade: sub.grade,
-    marks: sub.marks,
+    grade: (sub as any).grade,
+    marks: (sub as any).marks,
     gradePoint: gp,
     creditPoints,
   };
@@ -192,12 +192,12 @@ export function targetSgpaNeeded({
 /* ------------------------------------------------------------------ */
 
 /* CGPA -> Percentage (scheme-defined multiplier)                     */
-export function cgpaToPercentage(cgpa: number, multiplier = 9.5): number {
+export function cgpaToPercentage(cgpa: number, multiplier = 10): number {
   return cgpa * multiplier;
 }
 
 /* Percentage -> CGPA                                                 */
-export function percentageToCgpa(percentage: number, multiplier = 9.5): number {
+export function percentageToCgpa(percentage: number, multiplier = 10): number {
   return percentage / multiplier;
 }
 

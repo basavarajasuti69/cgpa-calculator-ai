@@ -75,8 +75,8 @@ import Layout from '../../layouts/Layout.astro';
 
           const subs = data.extracted.subjects || [];
           list.innerHTML = subs.map((s, i) => `
-            <div style="border:1px solid var(--color-hairline); background: var(--color-canvas-elevated); border-radius: var(--radius-sm); padding: var(--spacing-sm); display: grid; grid-template-columns: 1fr 120px 120px; gap: var(--spacing-xs); align-items: center;">
-              <div style="font-family:var(--font-family-mono);font-size:var(--font-size-code);color:var(--color-mute)">${s.code}</div>
+            <div style="border:1px solid var(--color-border); background: var(--color-surface-elevated); border-radius: var(--radius-sm); padding: var(--spacing-sm); display: grid; grid-template-columns: 1fr 120px 120px; gap: var(--spacing-xs); align-items: center;">
+              <div style="font-family:var(--font-family-mono);font-size:var(--font-size-code);color:var(--color-text-muted)">${s.code}</div>
               <div class="ink">${s.name}</div>
               <select data-idx="${i}">
                 <option value="">-- grade --</option>

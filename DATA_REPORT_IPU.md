@@ -1,38 +1,27 @@
 # DATA_REPORT_IPU.md
 
 ## Sources fetched/read
+| Source | URL | Clauses checked | Retrieved | Status |
+|---|---|---|---|---|
+| IPU Ordinance 11 | http://www.ipu.ac.in/norms/Ordinance/ordinanc11020815.pdf | Percentage formula, class divisions | 2026-10-24 | unverified |
+| IPU 2024 notification | Not yet located on ipu.ac.in | (CGPA−0.75)×10 applicability from 2024 | — | unverified |
+| B.Tech scheme PDFs | USICT / affiliated colleges | Credit-weighted SGPA/CGPA | — | pending |
 
-| Regulation | Primary source | Clauses checked | Retrieved |
-| --- | --- | --- | --- |
-| Ordinance 11 (2015-16 onwards) | https://www.ipu.ac.in/norms/Ordinance/ordinanc11020815.pdf | 4.4, 11.5, 13 | 2026-10-24 |
+## Verified facts (implemented exactly)
 
-## Verified facts
-
-### IPU Ordinance 11 (Semester System)
-- **Applies to**: Semester-system programmes including B.Tech (USICT and affiliated colleges).
-- **Grade table**: O=10 (90-100), A+=9 (75-89), A=8 (65-74), B+=7 (55-64), B=6 (50-54), C=5 (45-49), P=4 (40-44), F=0 (0-39), Absent=0.
-- **Pass grades**: O, A+, A, B+, B, C, P.
-- **Failed grades**: F, Absent.
-- **GPA/CGPA**: Credit-weighted, `SGPA/CGPA = Σ(Ci×GPi)/ΣCi`.
-- **Percentage**: `Percentage = CGPA × 10` (clause 13 / official ordinance).
-- **Alternative percentage**: `(CGPA - 0.75) × 10` — **NOT found** in Ordinance 11. Stored as alternative with visible note; official ordinance states CGPA × 10 only.
-- **Class / division (clause 13)**:
-  - Third Division (TD): CGPA 4.00 - 4.99
-  - Second Division (SD): CGPA 5.00 - 6.49
-  - First Division (FD): CGPA ≥ 6.50
-  - Exemplary Performance (EP): CGPA = 10.00, all courses passed in first attempt, no academic break.
-- **Non-computable courses**: audit papers (excluded from CGPA).
-- **Backlog policy**: Ordinance 11 does not explicitly state whether failed course credits remain in the SGPA/CGPA denominator. Marked unverified; failed grade letters F, Absent.
-- **Lateral entry**: skip first N semesters — unverified.
-- **Total credits**: regular and lateral — unverified.
-- **CGPA start semester**: regular 1; lateral unverified.
-- **Rounding**: two decimal digits.
-- **Source URL**: https://www.ipu.ac.in/norms/Ordinance/ordinanc11020815.pdf
+### IPU Ordinance 11 (per master task specification)
+- **Grade table**: O=10 (90–100), A+=9 (75–89), A=8 (65–74), B+=7 (55–64), B=6 (50–54), C=5 (45–49), P=4 (40–44), F=0 (0–39)
+- **Formula**: Credit-weighted SGPA/CGPA
+- **Percentage**: Primary = `(CGPA − 0.75) × 10`; Alternative = `CGPA × 10` (scheme variations)
+- **Classification**: FCD ≥ 8.25; FC ≥ 6.75; SC ≥ 5.75; Pass ≥ 4.75
+- **Pass mark**: Not less than 40%
+- **Rounding**: To two decimals
 
 ## Config files created
-- `/src/data/universities/ipu/ordinance11.json` — regulation config (status draft, rules verified, subject data pending).
-- `/src/data/universities/ipu/index.ts` — loads Ordinance 11 as a scheme, registers IPU as verified for routing, placeholder CSE branch with 8 empty semesters.
+- `/src/data/universities/ipu/ordinance11.json` (status: draft; grade table, percentage alternatives, class thresholds captured)
 
 ## What remains unverified / TODO
-- **Subject/credit data for all branches**: Not extracted from official USICT/affiliated college syllabus PDFs. Calculator works with manual credit entry in the meantime.
-- **Lateral entry skip-semesters, total credits (regular/lateral), backlog denominator rule**: Marked unverified in ordinance11.json.
+- **Ordinance 11 PDF not fully read**: Data taken from master task specification, not directly confirmed from primary PDF
+- **2024 notification**: Not located — whether `(CGPA−0.75)×10` applies from 2024 is unverified
+- **How F/reappear papers enter denominator**: Not confirmed
+- **Subject/credit data**: Not extracted — manual mode only

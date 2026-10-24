@@ -1,3 +1,5 @@
+export const prerender = false;
+
 /* ============================================================================
    CGPA Calculator AI — Explain AI endpoint
    ============================================================================
@@ -56,7 +58,7 @@ export async function onRequestPost(context: {
 
   const parsed = await groqChat([
     { role: 'system', content: EXPLAIN_SYSTEM },
-    { role: 'user', content: `CGPA: ${cgpa}, latest SGPA: ${sgpa}, total credits: ${totalCredits}. Formula: SGPA = Σ(credits × grade point) ÷ Σ credits; CGPA = Σ(credit points) ÷ Σ(credits). Percentage (VTU) = CGPA × 9.5.` },
+    { role: 'user', content: `CGPA: ${cgpa}, latest SGPA: ${sgpa}, total credits: ${totalCredits}. Formula: SGPA = Σ(credits × grade point) ÷ Σ credits; CGPA = Σ(credit points) ÷ Σ(credits). Percentage (VTU 2022/2025) = CGPA × 10.` },
   ], { temperature: 0.4 });
 
   if (!parsed.ok) {

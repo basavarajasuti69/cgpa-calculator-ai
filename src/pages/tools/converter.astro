@@ -17,7 +17,7 @@ import { marksToGradePoint } from '../../data/types';
       <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Tool • Converters</p>
       <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Grade &amp; CGPA Converters</h1>
       <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 60ch;">
-        Convert between marks, grade points, CGPA, percentage and 4.0 GPA. Formulas are stored per university — currently VTU (CGPA × 9.5 = percentage).
+        Convert between marks, grade points, CGPA, percentage and 4.0 GPA. Formulas are stored per university — VTU uses CGPA × 10 = percentage.
       </p>
 
       <div class="feature-card" style="padding: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
@@ -32,7 +32,7 @@ import { marksToGradePoint } from '../../data/types';
 
       <div class="feature-card" style="padding: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
         <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">CGPA ↔ Percentage</h2>
-        <p class="body-sm mute" style="margin: 0 0 var(--spacing-sm) 0;">VTU: Percentage = CGPA × 9.5</p>
+        <p class="body-sm mute" style="margin: 0 0 var(--spacing-sm) 0;">VTU: Percentage = CGPA × 10.</p>
         <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr 1fr;">
           <div>
             <label class="label-sm">CGPA</label>
@@ -52,7 +52,7 @@ import { marksToGradePoint } from '../../data/types';
 
       <div class="feature-card" style="padding: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
         <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">CGPA ↔ 4.0 GPA</h2>
-        <p class="body-sm mute" style="margin: 0 0 var(--spacing-sm) 0;">WES-style: GPA 4.0 = CGPA ÷ 10 × 4</p>
+        <p class="body-sm mute" style="margin: 0 0 var(--spacing-sm) 0;">Approximate 4.0 scale: GPA 4.0 ≈ CGPA ÷ 10 × 4. WES uses its own conversion table — this is an estimate only, not an official WES evaluation.</p>
         <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr 1fr;">
           <div>
             <label class="label-sm">CGPA (10-point)</label>
@@ -72,7 +72,7 @@ import { marksToGradePoint } from '../../data/types';
 
       <div class="feature-card" style="padding: var(--spacing-lg);">
         <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Class / Division</h2>
-        <p class="body-sm mute" style="margin: 0 0 var(--spacing-sm) 0;">VTU-style classification from CGPA.</p>
+        <p class="body-sm mute" style="margin: 0 0 var(--spacing-sm) 0;">Approximate class/division from CGPA (VTU uses percentage bands 70/60/50/40; this is an estimate — confirm with your university).</p>
         <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr 200px;">
           <input type="number" id="div-cgpa" class="text-input" placeholder="e.g. 7.5" min="0" max="10" step="0.01" />
           <button type="button" class="button-primary-sm" id="div-calc">Classify</button>

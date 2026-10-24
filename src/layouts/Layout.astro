@@ -7,7 +7,7 @@ import { getPageSEO } from '../lib/seo.ts';
 const { title = 'CGPA Calculator AI', description = '', pathname = '/', noAds = false } = Astro.props;
 const seo = getPageSEO({ title, description, pathname });
 
-const canonical = `https://cgpacalculatorai.com${pathname}`;
+const canonical = `${new URL(Astro.request.url).origin}${pathname}`;
 const jsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebApplication",
@@ -29,13 +29,25 @@ const jsonLd = JSON.stringify({
     <title>{seo.title}</title>
     <meta name="description" content={seo.description} />
     <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#f4efe4" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0b0d12" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f8f7f3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
     <link rel="canonical" href={canonical} />
+
+    {/* Inline theme script — runs before first paint to prevent flash */}
+    <script is:inline>
+      (() => {
+        const html = document.documentElement;
+        const saved = localStorage.getItem('cgpa-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldDark = saved === 'dark' || (!saved && prefersDark);
+        if (shouldDark) html.setAttribute('data-theme', 'dark');
+      })();
+    </script>
 
     {/* Favicons */}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />

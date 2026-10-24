@@ -52,6 +52,7 @@ export interface Scheme {
   excludedGradeLetters?: string[]; // grades excluded from GPA/CGPA denominator (e.g. U, RA for Anna)
   cgpaFormulaNote?: string; // note about unverified percentage formula
   classThresholds?: Array<{ class: string; minCGPA?: number; maxCGPA?: number; label: string; conditions?: string }>;
+  backlogPolicy?: any;
 }
 
 export interface University {
@@ -63,12 +64,26 @@ export interface University {
 }
 
 export const VTU_GRADE_TABLE: GradeEntry[] = [
+  { letter: 'O', gradePoint: 10, minMarks: 90, maxMarks: 100 },
+  { letter: 'A+', gradePoint: 9,  minMarks: 80, maxMarks: 89 },
+  { letter: 'A', gradePoint: 8,  minMarks: 70, maxMarks: 79 },
+  { letter: 'B+', gradePoint: 7,  minMarks: 60, maxMarks: 69 },
+  { letter: 'B', gradePoint: 6,  minMarks: 55, maxMarks: 59 },
+  { letter: 'C', gradePoint: 5,  minMarks: 50, maxMarks: 54 },
+  { letter: 'P', gradePoint: 4,  minMarks: 40, maxMarks: 49 },
+  { letter: 'F', gradePoint: 0,  minMarks: 0,  maxMarks: 39 },
+  { letter: 'Absent', gradePoint: 0, minMarks: 0, maxMarks: 0 },
+];
+
+/* VTU 2017/2018 scheme grade table (S/A/B/C/D/E/F, E=4 not 5).
+   Source: vtu.ac.in/wp-content/uploads/2019/12/becbcs2018-19.pdf clause 18OB6.0 */
+export const VTU_GRADE_TABLE_2018: GradeEntry[] = [
   { letter: 'S', gradePoint: 10, minMarks: 90, maxMarks: 100 },
   { letter: 'A', gradePoint: 9,  minMarks: 80, maxMarks: 89 },
   { letter: 'B', gradePoint: 8,  minMarks: 70, maxMarks: 79 },
   { letter: 'C', gradePoint: 7,  minMarks: 60, maxMarks: 69 },
-  { letter: 'D', gradePoint: 6,  minMarks: 50, maxMarks: 59 },
-  { letter: 'E', gradePoint: 5,  minMarks: 40, maxMarks: 49 },
+  { letter: 'D', gradePoint: 6,  minMarks: 45, maxMarks: 59 },
+  { letter: 'E', gradePoint: 4,  minMarks: 40, maxMarks: 44 },
   { letter: 'F', gradePoint: 0,  minMarks: 0,  maxMarks: 39 },
   { letter: 'Absent', gradePoint: 0, minMarks: 0, maxMarks: 0 },
 ];

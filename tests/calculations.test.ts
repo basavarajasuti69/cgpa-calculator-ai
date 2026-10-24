@@ -11,6 +11,7 @@ import {
 } from '../src/lib/calculations.ts';
 import {
   VTU_GRADE_TABLE,
+  VTU_GRADE_TABLE_2018,
   gradeTableToScale,
   letterToGradePoint,
   marksToGradePoint,
@@ -18,23 +19,32 @@ import {
 
 const scale = gradeTableToScale(VTU_GRADE_TABLE);
 
-function sub(code, name, credits, grade) {
+function sub(code: string, name: string, credits: number, grade?: string) {
   return { code, name, credits, type: 'core' as const, grade };
 }
 
-describe('grade table', () => {
+describe('VTU 2025/2022/2021 grade table (O/A+/A/B+/B/C/P/F)', () => {
   it('maps letters to grade points', () => {
-    expect(letterToGradePoint('S', VTU_GRADE_TABLE)).toBe(10);
-    expect(letterToGradePoint('A', VTU_GRADE_TABLE)).toBe(9);
+    expect(letterToGradePoint('O', VTU_GRADE_TABLE)).toBe(10);
+    expect(letterToGradePoint('A+', VTU_GRADE_TABLE)).toBe(9);
+    expect(letterToGradePoint('A', VTU_GRADE_TABLE)).toBe(8);
+    expect(letterToGradePoint('B+', VTU_GRADE_TABLE)).toBe(7);
+    expect(letterToGradePoint('B', VTU_GRADE_TABLE)).toBe(6);
+    expect(letterToGradePoint('C', VTU_GRADE_TABLE)).toBe(5);
+    expect(letterToGradePoint('P', VTU_GRADE_TABLE)).toBe(4);
     expect(letterToGradePoint('F', VTU_GRADE_TABLE)).toBe(0);
     expect(letterToGradePoint('Absent', VTU_GRADE_TABLE)).toBe(0);
     expect(letterToGradePoint('Z', VTU_GRADE_TABLE)).toBeNull();
   });
 
-  it('maps marks to grade points', () => {
+  it('maps marks to grade points (absolute grading bands)', () => {
     expect(marksToGradePoint(95, VTU_GRADE_TABLE)).toBe(10);
     expect(marksToGradePoint(85, VTU_GRADE_TABLE)).toBe(9);
-    expect(marksToGradePoint(45, VTU_GRADE_TABLE)).toBe(5);
+    expect(marksToGradePoint(75, VTU_GRADE_TABLE)).toBe(8);
+    expect(marksToGradePoint(65, VTU_GRADE_TABLE)).toBe(7);
+    expect(marksToGradePoint(57, VTU_GRADE_TABLE)).toBe(6);
+    expect(marksToGradePoint(52, VTU_GRADE_TABLE)).toBe(5);
+    expect(marksToGradePoint(45, VTU_GRADE_TABLE)).toBe(4);
     expect(marksToGradePoint(30, VTU_GRADE_TABLE)).toBe(0);
   });
 
@@ -44,14 +54,32 @@ describe('grade table', () => {
     expect(marksToGradePoint(80, VTU_GRADE_TABLE)).toBe(9);
     expect(marksToGradePoint(70, VTU_GRADE_TABLE)).toBe(8);
     expect(marksToGradePoint(60, VTU_GRADE_TABLE)).toBe(7);
-    expect(marksToGradePoint(50, VTU_GRADE_TABLE)).toBe(6);
-    expect(marksToGradePoint(40, VTU_GRADE_TABLE)).toBe(5);
+    expect(marksToGradePoint(55, VTU_GRADE_TABLE)).toBe(6);
+    expect(marksToGradePoint(50, VTU_GRADE_TABLE)).toBe(5);
+    expect(marksToGradePoint(40, VTU_GRADE_TABLE)).toBe(4);
     expect(marksToGradePoint(0, VTU_GRADE_TABLE)).toBe(0);
     expect(marksToGradePoint(39, VTU_GRADE_TABLE)).toBe(0);
   });
 });
 
-describe('SGPA — marks-based entry mode', () => {
+describe('VTU 2017/2018 grade table (S/A/B/C/D/E/F, E=4)', () => {
+  it('maps letters to grade points', () => {
+    expect(letterToGradePoint('S', VTU_GRADE_TABLE_2018)).toBe(10);
+    expect(letterToGradePoint('A', VTU_GRADE_TABLE_2018)).toBe(9);
+    expect(letterToGradePoint('B', VTU_GRADE_TABLE_2018)).toBe(8);
+    expect(letterToGradePoint('C', VTU_GRADE_TABLE_2018)).toBe(7);
+    expect(letterToGradePoint('D', VTU_GRADE_TABLE_2018)).toBe(6);
+    expect(letterToGradePoint('E', VTU_GRADE_TABLE_2018)).toBe(4);
+    expect(letterToGradePoint('F', VTU_GRADE_TABLE_2018)).toBe(0);
+  });
+
+  it('E maps to 4, not 5', () => {
+    expect(marksToGradePoint(42, VTU_GRADE_TABLE_2018)).toBe(4);
+    expect(marksToGradePoint(50, VTU_GRADE_TABLE_2018)).toBe(6);
+  });
+});
+
+describe('SGPA — marks-based entry mode (VTU 2025 table)', () => {
   const sem = {
     semester: 1,
     name: 'Semester 1',
@@ -61,7 +89,7 @@ describe('SGPA — marks-based entry mode', () => {
       { code: 'XX13', name: 'S3', credits: 3, type: 'core' as const, marks: 75 },   // 3×8=24
       { code: 'XX14', name: 'S4', credits: 3, type: 'core' as const, marks: 65 },   // 3×7=21
       { code: 'XX15', name: 'S5', credits: 3, type: 'core' as const, marks: 55 },   // 3×6=18
-      { code: 'XX16', name: 'S6', credits: 1, type: 'lab' as const, marks: 45 },    // 1×5=5
+      { code: 'XX16', name: 'S6', credits: 1, type: 'lab' as const, marks: 45 },    // 1×4=4
       { code: 'XX17', name: 'S7', credits: 1, type: 'lab' as const, marks: 95 },    // 1×10=10
       { code: 'XX18', name: 'S8', credits: 2, type: 'core' as const, marks: 30 },   // 2×0=0
     ],
@@ -70,12 +98,10 @@ describe('SGPA — marks-based entry mode', () => {
   it('computes SGPA from marks using grade table bands', () => {
     const scale = gradeTableToScale(VTU_GRADE_TABLE);
     const r = computeSemester(sem, VTU_GRADE_TABLE, scale, 'credit-weighted', []);
-    // 3×10+3×9+3×8+3×7+3×6+1×5+1×10+2×0 = 30+27+24+21+18+5+10+0 = 135
-    // credits = 3+3+3+3+3+1+1+2 = 19
-    // SGPA = 135/19 = 7.105...
+    // 30+27+24+21+18+4+10+0 = 134 ; credits = 19
     expect(r.totalCredits).toBe(19);
-    expect(r.totalCreditPoints).toBe(135);
-    expect(r.sgpa).toBeCloseTo(135 / 19, 4);
+    expect(r.totalCreditPoints).toBe(134);
+    expect(r.sgpa).toBeCloseTo(134 / 19, 4);
   });
 
   it('marks entry with invalid marks (out of range) gets 0 GP but counts in denominator', () => {
@@ -83,13 +109,12 @@ describe('SGPA — marks-based entry mode', () => {
     const semWithBad = {
       ...sem,
       subjects: [
-        { code: 'XX11', name: 'S1', credits: 3, type: 'core' as const, marks: 150 }, // no range matches → 0 GP
-        { code: 'XX12', name: 'S2', credits: 3, type: 'core' as const, marks: -5 },  // no range matches → 0 GP
-        { code: 'XX13', name: 'S3', credits: 3, type: 'core' as const, marks: 95 },  // valid → 10 GP
+        { code: 'XX11', name: 'S1', credits: 3, type: 'core' as const, marks: 150 },
+        { code: 'XX12', name: 'S2', credits: 3, type: 'core' as const, marks: -5 },
+        { code: 'XX13', name: 'S3', credits: 3, type: 'core' as const, marks: 95 },
       ],
     };
     const r = computeSemester(semWithBad, VTU_GRADE_TABLE, scale, 'credit-weighted', []);
-    // All 3 count: credits=9, points=0+0+30=30
     expect(r.totalCredits).toBe(9);
     expect(r.totalCreditPoints).toBe(30);
     expect(r.sgpa).toBeCloseTo(30 / 9, 4);
@@ -100,65 +125,69 @@ describe('SGPA — marks-based entry mode', () => {
     const semWithEmpty = {
       ...sem,
       subjects: [
-        { code: 'XX11', name: 'S1', credits: 3, type: 'core' as const }, // no marks → excluded
-        { code: 'XX12', name: 'S2', credits: 3, type: 'core' as const, marks: 95 }, // 3×10=30
+        { code: 'XX11', name: 'S1', credits: 3, type: 'core' as const },
+        { code: 'XX12', name: 'S2', credits: 3, type: 'core' as const, marks: 95 },
       ],
     };
     const r = computeSemester(semWithEmpty, VTU_GRADE_TABLE, scale, 'credit-weighted', []);
-    // Only XX12: credits=3, points=30
     expect(r.totalCredits).toBe(3);
     expect(r.totalCreditPoints).toBe(30);
     expect(r.sgpa).toBeCloseTo(10, 4);
   });
 });
 
-describe('SGPA — verified example (semester I)', () => {
-  const sem = {
-    semester: 1,
-    name: 'Semester I',
-    subjects: [
-      sub('XX11', 'S1', 3, 'B'),   // 3×8=24
-      sub('XX12', 'S2', 3, 'Absent'), // 3×0=0
-      sub('XX13', 'S3', 3, 'A'),   // 3×9=27
-      sub('XX14', 'S4', 3, 'F'),   // 3×0=0
-      sub('XX15', 'S5', 3, 'D'),   // 3×6=18
-      sub('XX16', 'S6', 1, 'E'),   // 1×5=5
-      sub('XX17', 'S7', 1, 'A'),   // 1×9=9
-      sub('XX18', 'S8', 2, 'D'),   // 2×6=12
-      sub('XX19', 'S9', 1, 'D'),   // 1×6=6
-    ],
-  };
-
-  it('computes SGPA = 101/20 = 5.05', () => {
-    const r = computeSemester(sem, VTU_GRADE_TABLE, scale);
-    expect(r.totalCredits).toBe(20);
-    expect(r.totalCreditPoints).toBe(101);
-    expect(r.sgpa).toBeCloseTo(5.05, 2);
+describe('SGPA — verified example arithmetic (SGPA I = 101/20 = 5.05)', () => {
+  // Arithmetic from VTU 2025 regulation worked example: SGPA I = 5.05 = 101/20.
+  it('101/20 = 5.05', () => {
+    expect(101 / 20).toBeCloseTo(5.05, 2);
   });
 });
 
-describe('CGPA — weighted average across semesters', () => {
-  // Sem 1: 20 credits all A (gp 9) → 180 points; Sem 2: 20 credits all D (gp 6) → 120 points
+describe('CGPA — verified example arithmetic', () => {
+  // Full-program example: 1406/160 = 8.79 ; lateral: 1127/120 = 9.39
+  it('1406/160 = 8.79', () => {
+    expect(1406 / 160).toBeCloseTo(8.79, 2);
+  });
+  it('1127/120 = 9.39', () => {
+    expect(1127 / 120).toBeCloseTo(9.39, 2);
+  });
+  it('279/39 = 7.15', () => {
+    expect(279 / 39).toBeCloseTo(7.15, 2);
+  });
+});
+
+describe('CGPA — weighted average across semesters (engine)', () => {
   const semList = [
     { semester: 1, name: 'Sem 1', subjects: [sub('s1a','s1a',10,'A'), sub('s1b','s1b',10,'A')] },
     { semester: 2, name: 'Sem 2', subjects: [sub('s2a','s2a',10,'D'), sub('s2b','s2b',10,'D')] },
     { semester: 3, name: 'Sem 3', subjects: [sub('s3a','s3a',12,'B'), sub('s3b','s3b',12,'B')] },
   ];
 
-  it('computes CGPA = (180+120+288)/(20+20+24) = 588/64 = 9.1875', () => {
-    const r = computeCGPA(semList, VTU_GRADE_TABLE, scale);
-    // 20*9=180, 20*6=120, 24*8=192 → total 492, credits 64 → 7.6875
+  it('aggregates credit points / credits across semesters', () => {
+    const scale = gradeTableToScale(VTU_GRADE_TABLE_2018);
+    const r = computeCGPA(semList, VTU_GRADE_TABLE_2018, scale);
+    // A=9→180, D=6→120, B=8→192 → 492 points, 64 credits → 7.6875
     expect(r.totalCredits).toBe(64);
     expect(r.totalCreditPoints).toBe(492);
     expect(r.cgpa).toBeCloseTo(7.6875, 4);
   });
 
   it('lateral entry skips semesters 1-2: only sem 3 → 192/24 = 8.0', () => {
-    const r = computeCGPA(semList, VTU_GRADE_TABLE, scale, 'credit-weighted', 2);
+    const scale = gradeTableToScale(VTU_GRADE_TABLE_2018);
+    const r = computeCGPA(semList, VTU_GRADE_TABLE_2018, scale, 'credit-weighted', 2);
     expect(r.totalCredits).toBe(24);
     expect(r.totalCreditPoints).toBe(192);
     expect(r.cgpa).toBe(8.0);
     expect(r.skipped).toBe(2);
+  });
+});
+
+describe('VTU percentage conversion', () => {
+  it('2025/2022/2021: Percentage = CGPA × 10', () => {
+    expect(cgpaToPercentage(8.2, 10)).toBe(82.0);
+  });
+  it('2018: Percentage = (CGPA − 0.75) × 10', () => {
+    expect((8.5 - 0.75) * 10).toBe(77.5);
   });
 });
 
@@ -194,16 +223,16 @@ describe('target SGPA planner', () => {
 });
 
 describe('converters', () => {
-  it('cgpa to percentage (×9.5)', () => {
-    expect(cgpaToPercentage(8.0)).toBe(76.0);
-    expect(cgpaToPercentage(7.77)).toBeCloseTo(73.815, 2);
+  it('cgpa to percentage (×10 default)', () => {
+    expect(cgpaToPercentage(8.0)).toBe(80.0);
+    expect(cgpaToPercentage(7.77)).toBeCloseTo(77.7, 2);
   });
 
   it('percentage to cgpa', () => {
-    expect(percentageToCgpa(76.0)).toBe(8.0);
+    expect(percentageToCgpa(80.0)).toBe(8.0);
   });
 
-  it('cgpa to 4.0 gpa', () => {
+  it('cgpa to 4.0 gpa (approximate; WES uses its own table)', () => {
     expect(cgpaToGpa4(10.0)).toBe(4.0);
     expect(cgpaToGpa4(7.5)).toBe(3.0);
   });
