@@ -130,3 +130,73 @@ test.describe('Universities picker and links', () => {
     expect(res?.status()).toBeLessThan(400);
   });
 });
+
+// Theme screenshots and contrast checks
+const viewports = [
+  { name: 'mobile-360', width: 360, height: 800 },
+  { name: 'tablet-768', width: 768, height: 1024 },
+  { name: 'desktop-1280', width: 1280, height: 800 },
+];
+
+for (const vp of viewports) {
+  test(`screenshot light ${vp.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: vp.width, height: vp.height });
+    await page.goto('/');
+    await page.evaluate(() => {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('cgpa-theme', 'light');
+    });
+    await page.reload();
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: `test-results/home-light-${vp.name}.png`, fullPage: true });
+  });
+
+  test(`screenshot dark ${vp.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: vp.width, height: vp.height });
+    await page.goto('/');
+    await page.evaluate(() => {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('cgpa-theme', 'dark');
+    });
+    await page.reload();
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: `test-results/home-dark-${vp.name}.png`, fullPage: true });
+  });
+}
+
+test('contrast check on key elements', async ({ page }) => {
+  await page.goto('/');
+  const result = await page.evaluate(() => {
+    function getContrast(fg: string, bg: string) {
+      function toRgb(c: string) {
+        const el = document.createElement('div');
+        el.style.color = c;
+        document.body.appendChild(el);
+        const rgb = getComputedStyle(el).color;
+        document.body.removeChild(el);
+        const m = rgb.match(/\d+/g);
+        if (!m) return [0,0,0];
+        return m.slice(0,3).map(x=>parseInt(x));
+      }
+      function lum([r,g,b]: number[]) {
+        const a = [r,g,b].map(v=>{
+          v = v/255;
+          return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+        });
+        return a[0]*0.2126 + a[1]*0.7152 + a[2]*0.0722;
+      }
+      const L1 = lum(toRgb(fg));
+      const L2 = lum(toRgb(bg));
+      const bright = Math.max(L1,L2), dark = Math.min(L1,L2);
+      return (bright+0.05)/(dark+0.05);
+    }
+    const body = getComputedStyle(document.body);
+    const h1 = document.querySelector('h1');
+    const link = document.querySelector('a');
+    let c1 = 0, c2 = 0;
+    if (h1) c1 = getContrast(getComputedStyle(h1).color, body.backgroundColor);
+    if (link) c2 = getContrast(getComputedStyle(link).color, body.backgroundColor);
+    return { h1Contrast: c1, linkContrast: c2 };
+  });
+  expect(result.h1Contrast).toBeGreaterThan(4.5);
+});
