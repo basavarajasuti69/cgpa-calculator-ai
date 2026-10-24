@@ -1,0 +1,42 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Calculator from '../../components/Calculator.astro';
+import { getUniversity, getScheme, getBranch, DEFAULT_UNIVERSITY, DEFAULT_SCHEME, DEFAULT_BRANCH } from '../../lib/data.ts';
+import { getPageSEO } from '../../lib/seo.ts';
+
+export async function getStaticPaths() {
+  return ['sgpa', 'cgpa', 'percentage'].map((tool) => ({
+    params: { tool },
+    props: { tool },
+  }));
+}
+
+const { tool } = Astro.props;
+if (!['sgpa', 'cgpa', 'percentage'].includes(tool)) {
+  return Astro.redirect('/tools/sgpa');
+}
+
+const uni = getUniversity(DEFAULT_UNIVERSITY);
+const sc = getScheme(uni, DEFAULT_SCHEME);
+const br = getBranch(sc, DEFAULT_BRANCH);
+
+const title = `${br.short} ${tool.toUpperCase()} Calculator — CGPA Calculator AI`;
+const description = `Calculate ${tool.toUpperCase()} for ${br.name} (${sc.name}) online. Credits pre-filled, real-time results, no data stored.`;
+
+const semesters = br.semesters.map((s) => ({
+  semester: s.semester,
+  name: s.name,
+  subjects: s.subjects.map((sub) => ({ code: sub.code, name: sub.name, credits: sub.credits, type: sub.type })),
+}));
+---
+
+<Layout title={title} description={description} pathname={Astro.url.pathname}>
+  <a href="/" style="text-decoration: none; color: inherit;">&larr; Back to home</a>
+  <Calculator
+    schemeId={DEFAULT_SCHEME}
+    branchId={DEFAULT_BRANCH}
+    tool={tool}
+    semesters={semesters}
+    gradeTable={sc.gradeTable}
+  />
+</Layout>

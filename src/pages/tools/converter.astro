@@ -1,0 +1,128 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import {
+  cgpaToPercentage,
+  percentageToCgpa,
+  cgpaToGpa4,
+  gpa4ToCgpa,
+  classDivision,
+  display,
+} from '../../lib/calculations.ts';
+import { marksToGradePoint } from '../../data/types';
+---
+
+<Layout title="Grade & CGPA Converters — CGPA Calculator AI" description="Convert marks to grade points, CGPA to percentage, CGPA to 4.0 GPA, and find your class/division." pathname="/tools/converter">
+  <section class="section">
+    <div class="container" style="max-width: 720px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Tool • Converters</p>
+      <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Grade &amp; CGPA Converters</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 60ch;">
+        Convert between marks, grade points, CGPA, percentage and 4.0 GPA. Formulas are stored per university — currently VTU (CGPA × 9.5 = percentage).
+      </p>
+
+      <div class="feature-card" style="padding: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Marks → Grade point</h2>
+        <p class="body-sm mute" style="margin: 0 0 var(--spacing-sm) 0;">Enter marks (0–100) to get the VTU grade point.</p>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr 200px;">
+          <input type="number" id="marks-input" class="text-input" placeholder="e.g. 85" min="0" max="100" />
+          <button type="button" class="button-primary-sm" id="marks-convert">Convert</button>
+        </div>
+        <div id="marks-result" class="body-md" style="margin-top: var(--spacing-sm);">—</div>
+      </div>
+
+      <div class="feature-card" style="padding: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">CGPA ↔ Percentage</h2>
+        <p class="body-sm mute" style="margin: 0 0 var(--spacing-sm) 0;">VTU: Percentage = CGPA × 9.5</p>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr 1fr;">
+          <div>
+            <label class="label-sm">CGPA</label>
+            <input type="number" id="cgpa-input" class="text-input" placeholder="e.g. 8.0" min="0" max="10" step="0.01" />
+          </div>
+          <div>
+            <label class="label-sm">Percentage</label>
+            <input type="number" id="pct-input" class="text-input" placeholder="e.g. 76.0" min="0" max="100" step="0.01" />
+          </div>
+        </div>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr 200px; margin-top: var(--spacing-sm);">
+          <button type="button" class="button-primary-sm" id="cgpa-to-pct">CGPA → Percentage</button>
+          <button type="button" class="button-primary-sm" id="pct-to-cgpa">Percentage → CGPA</button>
+        </div>
+        <div id="conv-result" class="body-md" style="margin-top: var(--spacing-sm);">—</div>
+      </div>
+
+      <div class="feature-card" style="padding: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">CGPA ↔ 4.0 GPA</h2>
+        <p class="body-sm mute" style="margin: 0 0 var(--spacing-sm) 0;">WES-style: GPA 4.0 = CGPA ÷ 10 × 4</p>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr 1fr;">
+          <div>
+            <label class="label-sm">CGPA (10-point)</label>
+            <input type="number" id="gpa4-cgpa" class="text-input" placeholder="e.g. 8.0" min="0" max="10" step="0.01" />
+          </div>
+          <div>
+            <label class="label-sm">GPA (4.0)</label>
+            <input type="number" id="gpa4-value" class="text-input" placeholder="e.g. 3.2" min="0" max="4" step="0.01" />
+          </div>
+        </div>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr 200px; margin-top: var(--spacing-sm);">
+          <button type="button" class="button-primary-sm" id="cgpa-to-gpa4">CGPA → 4.0 GPA</button>
+          <button type="button" class="button-primary-sm" id="gpa4-to-cgpa">4.0 GPA → CGPA</button>
+        </div>
+        <div id="gpa4-result" class="body-md" style="margin-top: var(--spacing-sm);">—</div>
+      </div>
+
+      <div class="feature-card" style="padding: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Class / Division</h2>
+        <p class="body-sm mute" style="margin: 0 0 var(--spacing-sm) 0;">VTU-style classification from CGPA.</p>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr 200px;">
+          <input type="number" id="div-cgpa" class="text-input" placeholder="e.g. 7.5" min="0" max="10" step="0.01" />
+          <button type="button" class="button-primary-sm" id="div-calc">Classify</button>
+        </div>
+        <div id="div-result" class="body-md" style="margin-top: var(--spacing-sm);">—</div>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (() => {
+      // Marks → grade point
+      document.getElementById('marks-convert').addEventListener('click', () => {
+        const m = parseFloat(document.getElementById('marks-input').value);
+        if (isNaN(m)) return;
+        const gp = marksToGradePoint(m);
+        document.getElementById('marks-result').textContent = `${m} marks → Grade point ${gp}`;
+      });
+
+      // CGPA ↔ Percentage
+      document.getElementById('cgpa-to-pct').addEventListener('click', () => {
+        const c = parseFloat(document.getElementById('cgpa-input').value);
+        if (isNaN(c)) return;
+        document.getElementById('conv-result').textContent = `CGPA ${c} = ${cgpaToPercentage(c).toFixed(2)}%`;
+      });
+      document.getElementById('pct-to-cgpa').addEventListener('click', () => {
+        const p = parseFloat(document.getElementById('pct-input').value);
+        if (isNaN(p)) return;
+        document.getElementById('conv-result').textContent = `${p}% = CGPA ${percentageToCgpa(p).toFixed(2)}`;
+      });
+
+      // CGPA ↔ 4.0 GPA
+      document.getElementById('cgpa-to-gpa4').addEventListener('click', () => {
+        const c = parseFloat(document.getElementById('gpa4-cgpa').value);
+        if (isNaN(c)) return;
+        document.getElementById('gpa4-result').textContent = `CGPA ${c} = GPA 4.0 ${cgpaToGpa4(c).toFixed(2)}`;
+      });
+      document.getElementById('gpa4-to-cgpa').addEventListener('click', () => {
+        const g = parseFloat(document.getElementById('gpa4-value').value);
+        if (isNaN(g)) return;
+        document.getElementById('gpa4-result').textContent = `GPA 4.0 ${g} = CGPA ${gpa4ToCgpa(g).toFixed(2)}`;
+      });
+
+      // Class division
+      document.getElementById('div-calc').addEventListener('click', () => {
+        const c = parseFloat(document.getElementById('div-cgpa').value);
+        if (isNaN(c)) return;
+        const d = classDivision(c);
+        document.getElementById('div-result').textContent = `CGPA ${c} → ${d.division} (${d.label})`;
+      });
+    })();
+  </script>
+</Layout>

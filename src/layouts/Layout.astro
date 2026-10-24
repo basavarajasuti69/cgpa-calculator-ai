@@ -1,0 +1,77 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { getPageSEO } from '../lib/seo.ts';
+
+const { title = 'CGPA Calculator AI', description = '', pathname = '/', noAds = false } = Astro.props;
+const seo = getPageSEO({ title, description, pathname });
+
+const canonical = `https://cgpacalculatorai.com${pathname}`;
+const jsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "CGPA Calculator AI",
+  "url": canonical,
+  "description": seo.description,
+  "applicationCategory": "Education",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+});
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{seo.title}</title>
+    <meta name="description" content={seo.description} />
+    <meta name="color-scheme" content="light" />
+    <link rel="canonical" href={canonical} />
+
+    {/* Favicons */}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="apple-mobile-web-app-title" content="cgpacalculatorai.com" />
+
+    {/* Open Graph */}
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={seo.title} />
+    <meta property="og:description" content={seo.description} />
+    <meta property="og:site_name" content="CGPA Calculator AI" />
+    <meta property="og:image" content="/og-image.png" />
+
+    {/* Twitter */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonical} />
+    <meta name="twitter:title" content={seo.title} />
+    <meta name="twitter:description" content={seo.description} />
+    <meta name="twitter:image" content="/og-image.png" />
+
+    <script type="application/ld+json" set:html={jsonLd}></script>
+  </head>
+  <body style="background-color: var(--color-canvas); color: var(--color-body); font-family: var(--font-family-sans); min-height: 100vh;">
+    <a class="sr-only" href="#main-content">Skip to main content</a>
+
+    <Nav />
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <Footer noAds={noAds} />
+
+    <style>
+      :focus-visible {
+        outline: 2px solid var(--color-link);
+        outline-offset: 2px;
+      }
+    </style>
+  </body>
+</html>

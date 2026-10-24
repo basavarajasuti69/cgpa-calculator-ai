@@ -1,0 +1,414 @@
+---
+const { schemeId, branchId, branches = [], tool = 'sgpa', semesters = [], gradeTable = {}, cgpaToPercentage = { multiplier: 9.5 }, lateralEntry = { skipFirstNSemesters: 2 } } = Astro.props;
+
+const gradeOptions = Object.keys(gradeTable).sort((a, b) => (gradeTable[b] || 0) - (gradeTable[a] || 0));
+const gradeJson = JSON.stringify(gradeTable);
+const semestersJson = JSON.stringify(semesters);
+const branchesJson = JSON.stringify(branches.map(b => ({ id: b.id, short: b.short })));
+const cgpaConfigJson = JSON.stringify({ cgpaToPercentage, lateralEntry });
+---
+
+<section id="calculator" aria-label="CGPA calculator" style="display: grid; gap: var(--spacing-md);"
+  data-grade-table={gradeJson}
+  data-semesters={semestersJson}
+  data-scheme={schemeId}
+  data-branch={branchId}
+  data-branches={branchesJson}
+  data-tool={tool}
+  data-cgpa-config={cgpaConfigJson}>
+
+  {/* Top selectors */}
+  <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap; align-items: flex-end;">
+    <div style="flex: 1; min-width: 120px;">
+      <label style="display: block; margin-bottom: 4px; color: var(--color-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Scheme</label>
+      <select id="scheme-select" style="width: 100%; padding: 10px 12px; background: var(--color-canvas); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;">
+        {['2025','2022','2021','2018'].map(s => (
+          <option value={s} selected={s === schemeId}>{s} Scheme</option>
+        ))}
+      </select>
+    </div>
+    {branches && branches.length > 0 && (
+      <div style="flex: 1; min-width: 120px;">
+        <label style="display: block; margin-bottom: 4px; color: var(--color-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Branch</label>
+        <select id="branch-select" style="width: 100%; padding: 10px 12px; background: var(--color-canvas); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;">
+          {branches.map(b => (
+            <option value={b.id} selected={b.id === branchId}>{b.short}</option>
+          ))}
+        </select>
+      </div>
+    )}
+    {tool === 'sgpa' && (
+      <div style="flex: 1; min-width: 120px;">
+        <label style="display: block; margin-bottom: 4px; color: var(--color-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Semester</label>
+        <select id="semester-select" style="width: 100%; padding: 10px 12px; background: var(--color-canvas); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;">
+          {semesters.map((s) => (
+            <option value={s.semester}>{s.name || `Semester ${s.semester}`}</option>
+          ))}
+        </select>
+      </div>
+    )}
+  </div>
+
+  {/* Tool tabs */}
+  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+    {branchId ? (
+      <>
+        <a href={`/vtu/${schemeId}/${branchId}/sgpa`} style={`padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid ${tool === 'sgpa' ? 'var(--color-primary)' : 'var(--color-hairline)'}; background: ${tool === 'sgpa' ? 'var(--color-primary)' : 'var(--color-canvas)'}; color: ${tool === 'sgpa' ? '#fff' : 'var(--color-ink)'};`}>SGPA</a>
+        <a href={`/vtu/${schemeId}/${branchId}/cgpa`} style={`padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid ${tool === 'cgpa' ? 'var(--color-primary)' : 'var(--color-hairline)'}; background: ${tool === 'cgpa' ? 'var(--color-primary)' : 'var(--color-canvas)'}; color: ${tool === 'cgpa' ? '#fff' : 'var(--color-ink)'};`}>CGPA</a>
+        <a href={`/vtu/${schemeId}/${branchId}/percentage`} style={`padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid ${tool === 'percentage' ? 'var(--color-primary)' : 'var(--color-hairline)'}; background: ${tool === 'percentage' ? 'var(--color-primary)' : 'var(--color-canvas)'}; color: ${tool === 'percentage' ? '#fff' : 'var(--color-ink)'};`}>Percentage</a>
+      </>
+    ) : (
+      <>
+        <a href={`/vtu/${schemeId}/sgpa`} style={`padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid ${tool === 'sgpa' ? 'var(--color-primary)' : 'var(--color-hairline)'}; background: ${tool === 'sgpa' ? 'var(--color-primary)' : 'var(--color-canvas)'}; color: ${tool === 'sgpa' ? '#fff' : 'var(--color-ink)'};`}>SGPA</a>
+        <a href={`/vtu/${schemeId}/cgpa`} style={`padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid ${tool === 'cgpa' ? 'var(--color-primary)' : 'var(--color-hairline)'}; background: ${tool === 'cgpa' ? 'var(--color-primary)' : 'var(--color-canvas)'}; color: ${tool === 'cgpa' ? '#fff' : 'var(--color-ink)'};`}>CGPA</a>
+        <a href={`/vtu/${schemeId}/percentage`} style={`padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid ${tool === 'percentage' ? 'var(--color-primary)' : 'var(--color-hairline)'}; background: ${tool === 'percentage' ? 'var(--color-primary)' : 'var(--color-canvas)'}; color: ${tool === 'percentage' ? '#fff' : 'var(--color-ink)'};`}>Percentage</a>
+      </>
+    )}
+  </div>
+
+  {tool === 'sgpa' && (
+    <>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; color: var(--color-body);">
+        <input type="checkbox" id="lateral-entry" style="width: 16px; height: 16px; accent-color: var(--color-primary);" />
+        Lateral entry (skip semesters 1–2)
+      </label>
+
+      <div style="background: var(--color-canvas); border: 1px solid var(--color-hairline); border-radius: 12px; overflow: hidden;">
+        <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-hairline); background: var(--color-surface);">
+          <span style="font-weight: 600; color: var(--color-ink); font-size: 15px;">Subjects &amp; Grades</span>
+          <span style="color: var(--color-muted); font-size: 13px; margin-left: 8px;">Credits are pre-filled per scheme</span>
+        </div>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: var(--color-surface);">
+                <th style="padding: 10px 16px; text-align: left; color: var(--color-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-hairline);">Subject</th>
+                <th style="padding: 10px 16px; text-align: center; color: var(--color-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-hairline); width: 80px;">Credits</th>
+                <th style="padding: 10px 16px; text-align: center; color: var(--color-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-hairline); width: 120px;">Grade</th>
+              </tr>
+            </thead>
+            <tbody id="subjects-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="background: var(--color-canvas); border: 2px solid var(--color-primary); border-radius: 12px; padding: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <div style="color: var(--color-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">SGPA</div>
+          <div id="sgpa-display" style="font-weight: 700; font-size: 2.5rem; color: var(--color-primary); line-height: 1;">0.00</div>
+        </div>
+        <div style="display: grid; gap: 4px; text-align: right;">
+          <div style="font-size: 14px; color: var(--color-muted);">Credits: <span id="credits-display" style="color: var(--color-ink); font-weight: 600;">0</span></div>
+          <div style="font-size: 14px; color: var(--color-muted);">Points: <span id="points-display" style="color: var(--color-ink); font-weight: 600;">0</span></div>
+        </div>
+      </div>
+
+      <details style="background: var(--color-canvas); border: 1px solid var(--color-hairline); border-radius: 12px; padding: 16px;">
+        <summary style="cursor: pointer; font-weight: 600; color: var(--color-ink); font-size: 14px;">Show formula & breakdown</summary>
+        <div style="margin-top: 12px; display: grid; gap: 8px;">
+          <div style="background: var(--color-surface-code); color: var(--color-on-dark); border-radius: 8px; padding: 12px; font-family: var(--font-family-mono); font-size: 13px;">
+            <div style="color: var(--color-muted); margin-bottom: 4px;">SGPA = Σ (credits × grade point) ÷ Σ credits</div>
+            <div style="color: #fff; white-space: pre-wrap;" id="breakdown">—</div>
+          </div>
+          <p style="margin: 0; color: var(--color-muted); font-size: 13px;">Grade points are not rounded before the formula. Credits are pre-filled per scheme.</p>
+        </div>
+      </details>
+    </>
+  )}
+
+  {tool === 'cgpa' && (
+    <>
+      <div style="background: var(--color-canvas); border: 1px solid var(--color-hairline); border-radius: 12px; overflow: hidden;">
+        <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-hairline); background: var(--color-surface);">
+          <span style="font-weight: 600; color: var(--color-ink); font-size: 15px;">Enter SGPA for each semester</span>
+          <span style="color: var(--color-muted); font-size: 13px; margin-left: 8px;">(Leave blank if not applicable)</span>
+        </div>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: var(--color-surface);">
+                <th style="padding: 10px 16px; text-align: left; color: var(--color-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-hairline);">Semester</th>
+                <th style="padding: 10px 16px; text-align: center; color: var(--color-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-hairline); width: 120px;">Credits</th>
+                <th style="padding: 10px 16px; text-align: center; color: var(--color-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-hairline); width: 180px;">SGPA</th>
+              </tr>
+            </thead>
+            <tbody id="cgpa-tbody">
+              {semesters.map((s) => {
+                const credits = s.subjects?.reduce((a: number, b: any) => a + (b.credits || 0), 0) || 0;
+                return (
+                  <tr style="border-bottom: 1px solid var(--color-hairline);">
+                    <td style="padding: 10px 16px;">
+                      <div style="color: var(--color-ink); font-weight: 500; font-size: 14px;">{s.name || `Semester ${s.semester}`}</div>
+                      <div style="font-family: var(--font-family-mono); font-size: 12px; color: var(--color-muted);">Sem {s.semester}</div>
+                    </td>
+                    <td style="padding: 10px 16px; text-align: center;">
+                      <span style="color: var(--color-ink); font-weight: 600; font-size: 14px; background: var(--color-surface); padding: 2px 10px; border-radius: 6px;">{credits}</span>
+                    </td>
+                    <td style="padding: 10px 16px; text-align: center;">
+                      <input type="number" step="0.01" min="0" max="10" data-sem={s.semester} data-credits={credits} class="cgpa-sgpa-input" style="width: 100%; padding: 8px 10px; background: var(--color-canvas); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 6px; font-size: 14px;" placeholder="e.g. 8.75" />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; color: var(--color-body);">
+        <input type="checkbox" id="cgpa-lateral" style="width: 16px; height: 16px; accent-color: var(--color-primary);" />
+        Lateral entry (skip first two semesters)
+      </label>
+
+      <div style="background: var(--color-canvas); border: 2px solid var(--color-primary); border-radius: 12px; padding: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <div style="color: var(--color-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">CGPA</div>
+          <div id="cgpa-display" style="font-weight: 700; font-size: 2.5rem; color: var(--color-primary); line-height: 1;">0.00</div>
+        </div>
+        <div style="display: grid; gap: 4px; text-align: right;">
+          <div style="font-size: 14px; color: var(--color-muted);">Total Credits: <span id="cgpa-credits" style="color: var(--color-ink); font-weight: 600;">0</span></div>
+          <div style="font-size: 14px; color: var(--color-muted);">Total Points: <span id="cgpa-points" style="color: var(--color-ink); font-weight: 600;">0</span></div>
+        </div>
+      </div>
+    </>
+  )}
+
+  {tool === 'percentage' && (
+    <>
+      <div style="background: var(--color-canvas); border: 1px solid var(--color-hairline); border-radius: 12px; padding: 20px; display: grid; gap: 16px;">
+        <div>
+          <label style="display: block; margin-bottom: 6px; color: var(--color-ink); font-weight: 600; font-size: 14px;">Enter CGPA</label>
+          <input type="number" id="percentage-cgpa" step="0.01" min="0" max="10" style="width: 100%; max-width: 300px; padding: 10px 12px; background: var(--color-canvas); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 8px; font-size: 15px;" placeholder="e.g. 8.75" />
+          <p style="margin: 6px 0 0 0; color: var(--color-muted); font-size: 13px;">VTU usually uses Percentage = CGPA × {(cgpaToPercentage.multiplier || 9.5)}</p>
+        </div>
+        <div style="background: var(--color-surface); padding: 16px; border-radius: 10px;">
+          <div style="color: var(--color-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Percentage</div>
+          <div id="percentage-display" style="font-weight: 700; font-size: 2.5rem; color: var(--color-primary); line-height: 1;">0.00 %</div>
+        </div>
+      </div>
+    </>
+  )}
+
+  {/* Actions */}
+  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+    <button type="button" id="print-btn" style="flex: 1; min-width: 100px; padding: 10px 16px; background: var(--color-primary); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Print / Save</button>
+    <button type="button" id="clear-btn" style="flex: 1; min-width: 100px; padding: 10px 16px; background: var(--color-surface); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Clear All</button>
+  </div>
+
+  <p style="margin: 0; color: var(--color-muted); text-align: center; font-size: 12px;">No personal data is stored. Results live in your browser only.</p>
+</section>
+
+<script is:inline>
+  (() => {
+    const calcRoot = document.getElementById('calculator');
+    const gradeTable = JSON.parse(calcRoot.dataset.gradeTable ?? '{}');
+    const semesters = JSON.parse(calcRoot.dataset.semesters ?? '[]');
+    const branches = JSON.parse(calcRoot.dataset.branches ?? '[]');
+    const tool = calcRoot.dataset.tool || 'sgpa';
+    const cgpaConfig = JSON.parse(calcRoot.dataset.cgpaConfig ?? '{"cgpaToPercentage":{"multiplier":9.5},"lateralEntry":{"skipFirstNSemesters":2}}');
+    const schemeId = calcRoot.dataset.scheme;
+    const branchId = calcRoot.dataset.branch;
+    const multiplier = cgpaConfig?.cgpaToPercentage?.multiplier || 9.5;
+    const lateralSkip = cgpaConfig?.lateralEntry?.skipFirstNSemesters || 2;
+
+    const schemeSelect = document.getElementById('scheme-select');
+    const branchSelect = document.getElementById('branch-select');
+    const printBtn = document.getElementById('print-btn');
+    const clearBtn = document.getElementById('clear-btn');
+
+    function buildBasePath() {
+      if (branchId && branches && branches.length > 0) {
+        return `/vtu/${schemeSelect?.value || schemeId}/${branchSelect?.value || branchId}`;
+      } else {
+        return `/vtu/${schemeSelect?.value || schemeId}`;
+      }
+    }
+
+    schemeSelect?.addEventListener('change', () => {
+      window.location.href = `${buildBasePath()}/${tool}/`;
+    });
+    branchSelect?.addEventListener('change', () => {
+      window.location.href = `${buildBasePath()}/${tool}/`;
+    });
+
+    if (tool === 'sgpa') {
+      const tbody = document.getElementById('subjects-tbody');
+      const sgpaDisplay = document.getElementById('sgpa-display');
+      const creditsDisplay = document.getElementById('credits-display');
+      const pointsDisplay = document.getElementById('points-display');
+      const breakdown = document.getElementById('breakdown');
+      const lateralCheckbox = document.getElementById('lateral-entry');
+      const semesterSelect = document.getElementById('semester-select');
+
+      function storageKey(semester) {
+        return `cgpa-calc-${schemeId}-${branchId || 'na'}-sem${semester}`;
+      }
+
+      function loadGrades(semester) {
+        try {
+          const raw = localStorage.getItem(storageKey(semester));
+          return raw ? JSON.parse(raw) : {};
+        } catch { return {}; }
+      }
+
+      function saveGrades(semester, grades) {
+        try { localStorage.setItem(storageKey(semester), JSON.stringify(grades)); } catch {}
+      }
+
+      function resolveGP(input) {
+        if (input === undefined || input === null || input === '') return null;
+        const key = String(input).trim();
+        if (gradeTable[key] !== undefined) return gradeTable[key];
+        return gradeTable[key.toUpperCase()] ?? null;
+      }
+
+      function renderSubjects(semObj) {
+        const saved = loadGrades(semObj.semester);
+        tbody.innerHTML = '';
+        for (const sub of semObj.subjects) {
+          const tr = document.createElement('tr');
+          tr.style.borderBottom = '1px solid var(--color-hairline)';
+          const opts = Object.keys(gradeTable).sort((a, b) => (gradeTable[b] || 0) - (gradeTable[a] || 0)).map(g => {
+            const selected = saved[sub.code] === g ? ' selected' : '';
+            return `<option value="${g}"${selected}>${g} (${gradeTable[g]})</option>`;
+          }).join('');
+          tr.innerHTML = `
+            <td style="padding: 10px 16px;">
+              <div style="font-family: var(--font-family-mono); font-size: 12px; color: var(--color-muted);">${sub.code || ''}</div>
+              <div style="color: var(--color-ink); font-weight: 500; font-size: 14px;">${sub.name}</div>
+            </td>
+            <td style="padding: 10px 16px; text-align: center;">
+              <span style="color: var(--color-ink); font-weight: 600; font-size: 14px; background: var(--color-surface); padding: 2px 10px; border-radius: 6px;">${sub.credits}</span>
+            </td>
+            <td style="padding: 10px 16px; text-align: center;">
+              <select data-credits="${sub.credits}" data-code="${sub.code || ''}" style="width: 100%; padding: 6px 8px; background: var(--color-canvas); color: var(--color-ink); border: 1px solid var(--color-hairline); border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                <option value="">-- Select --</option>${opts}
+              </select>
+            </td>`;
+          tbody.appendChild(tr);
+        }
+      }
+
+      function recompute() {
+        const selected = parseInt(semesterSelect.value, 10);
+        const semObj = semesters.find((s) => s.semester === selected);
+        if (!semObj) return;
+        renderSubjects(semObj);
+        let credits = 0, points = 0;
+        const lines = [];
+        const selects = tbody.querySelectorAll('select[data-credits]');
+        selects.forEach((sel) => {
+          const c = parseInt(sel.getAttribute('data-credits'), 10);
+          const g = sel.value;
+          const gp = resolveGP(g);
+          if (gp !== null) {
+            credits += c;
+            points += c * gp;
+            lines.push(`${sel.getAttribute('data-code') || 'SUB'}: ${c} cr × ${gp} = ${c * gp} pts`);
+          }
+        });
+        const sgpa = credits > 0 ? points / credits : 0;
+        sgpaDisplay.textContent = sgpa.toFixed(2);
+        creditsDisplay.textContent = credits;
+        pointsDisplay.textContent = points.toFixed(2);
+        breakdown.textContent = lines.length ? lines.join('\n') : 'Select grades above to see the breakdown.';
+        const grades = {};
+        selects.forEach((sel) => { if (sel.value) grades[sel.getAttribute('data-code')] = sel.value; });
+        saveGrades(selected, grades);
+      }
+
+      semesterSelect?.addEventListener('change', recompute);
+      tbody?.addEventListener('change', recompute);
+      lateralCheckbox?.addEventListener('change', recompute);
+      const initial = semesters.find((s) => s.semester === parseInt(semesterSelect?.value || '1', 10)) || semesters[0];
+      if (initial) { renderSubjects(initial); recompute(); }
+    }
+
+    if (tool === 'cgpa') {
+      const inputs = document.querySelectorAll('.cgpa-sgpa-input');
+      const cgpaDisplay = document.getElementById('cgpa-display');
+      const cgpaCredits = document.getElementById('cgpa-credits');
+      const cgpaPoints = document.getElementById('cgpa-points');
+      const lateral = document.getElementById('cgpa-lateral');
+
+      function recomputeCgpa() {
+        let totalCredits = 0, totalPoints = 0;
+        let skip = lateral?.checked ? lateralSkip : 0;
+        inputs.forEach((inp, idx) => {
+          const semNum = parseInt(inp.getAttribute('data-sem') || '0', 10);
+          if (skip > 0 && semNum <= skip) return;
+          const c = parseFloat(inp.getAttribute('data-credits') || '0');
+          const v = parseFloat(inp.value);
+          if (!isNaN(v) && v >= 0 && v <= 10 && c > 0) {
+            totalCredits += c;
+            totalPoints += c * v;
+          }
+        });
+        const cgpa = totalCredits > 0 ? totalPoints / totalCredits : 0;
+        cgpaDisplay.textContent = cgpa.toFixed(2);
+        cgpaCredits.textContent = totalCredits;
+        cgpaPoints.textContent = totalPoints.toFixed(2);
+      }
+
+      inputs.forEach(inp => inp.addEventListener('input', recomputeCgpa));
+      lateral?.addEventListener('change', recomputeCgpa);
+      recomputeCgpa();
+    }
+
+    if (tool === 'percentage') {
+      const input = document.getElementById('percentage-cgpa');
+      const disp = document.getElementById('percentage-display');
+      function calc() {
+        const v = parseFloat(input.value);
+        if (isNaN(v)) { disp.textContent = '0.00 %'; return; }
+        const pct = v * multiplier;
+        disp.textContent = pct.toFixed(2) + ' %';
+      }
+      input?.addEventListener('input', calc);
+    }
+
+    printBtn?.addEventListener('click', () => window.print());
+    clearBtn?.addEventListener('click', () => {
+      if (tool === 'sgpa') {
+        document.querySelectorAll('#subjects-tbody select').forEach(s => { s.selectedIndex = 0; });
+        document.getElementById('lateral-entry').checked = false;
+        const semesterSelect = document.getElementById('semester-select');
+        const initial = semesters.find((s) => s.semester === parseInt(semesterSelect?.value || '1', 10)) || semesters[0];
+        if (initial) {
+          const tbody = document.getElementById('subjects-tbody');
+          const sgpaDisplay = document.getElementById('sgpa-display');
+          const creditsDisplay = document.getElementById('credits-display');
+          const pointsDisplay = document.getElementById('points-display');
+          const breakdown = document.getElementById('breakdown');
+          const saved = {};
+          try { localStorage.setItem(`cgpa-calc-${schemeId}-${branchId || 'na'}-sem${initial.semester}`, JSON.stringify(saved)); } catch {}
+          // trigger recompute
+          semesterSelect.dispatchEvent(new Event('change'));
+        }
+        return;
+      }
+      if (tool === 'cgpa') {
+        document.querySelectorAll('.cgpa-sgpa-input').forEach(i => { i.value = ''; });
+        document.getElementById('cgpa-lateral').checked = false;
+        document.querySelectorAll('.cgpa-sgpa-input')[0]?.dispatchEvent(new Event('input'));
+        return;
+      }
+      if (tool === 'percentage') {
+        const input = document.getElementById('percentage-cgpa');
+        if (input) input.value = '';
+        document.getElementById('percentage-display').textContent = '0.00 %';
+        return;
+      }
+    });
+  })();
+</script>
+
+<style>
+  #subjects-tbody tr:hover { background: var(--color-surface); }
+  #subjects-tbody select:focus { outline: 2px solid var(--color-primary); outline-offset: -1px; border-color: var(--color-primary); }
+  .cgpa-sgpa-input:focus { outline: 2px solid var(--color-primary); outline-offset: -1px; border-color: var(--color-primary); }
+  #percentage-cgpa:focus { outline: 2px solid var(--color-primary); outline-offset: -1px; border-color: var(--color-primary); }
+  @media (max-width: 640px) {
+    #subjects-tbody td { padding: 8px 10px !important; }
+  }
+</style>

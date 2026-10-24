@@ -1,0 +1,56 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getUniversities, getVerifiedSchemes, getBranch, DEFAULT_BRANCH } from '../lib/data.ts';
+---
+
+<Layout title="Choose University — CGPA Calculator AI" description="Select your university and scheme to access the SGPA, CGPA and Percentage calculators." pathname="/universities" noAds>
+  <section class="section">
+    <div class="container" style="max-width: 800px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">University picker</p>
+      <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Choose your university</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 64ch;">
+        Select your university and scheme. Verified schemes have complete, checked data; draft schemes are placeholders pending official verification.
+      </p>
+
+      <div style="display: grid; gap: var(--spacing-lg);">
+        {getUniversities().map((uni) => (
+          <section class="feature-card" style="padding: var(--spacing-lg);">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: var(--spacing-sm);">
+              <div>
+                <h2 class="heading-md" style="margin: 0 0 var(--spacing-xs) 0;">{uni.name}</h2>
+                <p class="body-sm" style="margin: 0; color: var(--color-mute);">{uni.domain} • {uni.schemes.length} scheme(s)</p>
+              </div>
+              <span class="button-ghost-sm" style={uni.status === 'verified' ? 'color: var(--color-link); border-color: var(--color-link);' : 'color: var(--color-mute); border-color: var(--color-mute);'}>
+                {uni.status === 'verified' ? 'Verified' : 'Draft'}
+              </span>
+            </div>
+            <div style="display: grid; gap: var(--spacing-xs); margin-bottom: var(--spacing-lg);">
+              {uni.schemes.map((scheme) => {
+                const br = getBranch(scheme, DEFAULT_BRANCH);
+                return (
+                  <a
+                    href={`/${uni.id}/${scheme.id}/${br?.id ?? DEFAULT_BRANCH}/sgpa`}
+                    class="button-ghost-sm"
+                  >
+                    {scheme.name} → SGPA
+                  </a>
+                );
+              })}
+            </div>
+            {uni.status !== 'verified' && (
+              <p class="body-sm mute" style="margin: 0;">Data for this university/scheme is a draft. <a href="/request-college" class="link-color">Request your college</a> to prioritize verification.</p>
+            )}
+          </section>
+        ))}
+      </div>
+
+      <div class="feature-card" style="margin-top: var(--spacing-lg); padding: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Don't see your college?</h2>
+        <p class="body-sm" style="margin: 0 0 var(--spacing-sm) 0; color: var(--color-body);">
+          Adding a new university is a data-only change. Tell us your college and we'll add it.
+        </p>
+        <a href="/request-college" class="button-primary">Request your college</a>
+      </div>
+    </div>
+  </section>
+</Layout>

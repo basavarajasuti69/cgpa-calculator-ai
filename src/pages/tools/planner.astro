@@ -1,0 +1,82 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { targetSgpaNeeded } from '../../lib/calculations.ts';
+import { display } from '../../lib/calculations.ts';
+---
+
+<Layout title="Target CGPA Planner — CGPA Calculator AI" description="What SGPA do you need in remaining semesters to reach your target CGPA?" pathname="/tools/planner">
+  <section class="section">
+    <div class="container" style="max-width: 640px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Tool • Target Planner</p>
+      <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Target CGPA Planner</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 60ch;">
+        Work out what SGPA you need in your remaining semesters to reach a target overall CGPA.
+      </p>
+
+      <form id="planner-form" class="feature-card" style="padding: var(--spacing-lg); display: grid; gap: var(--spacing-md);">
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr;">
+          <label class="label-sm">Current total credits</label>
+          <input type="number" id="cur-credits" class="text-input" placeholder="e.g. 60" value="60" />
+        </div>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr;">
+          <label class="label-sm">Current total credit points</label>
+          <input type="number" id="cur-points" class="text-input" placeholder="e.g. 420" value="420" />
+        </div>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr;">
+          <label class="label-sm">Credits remaining</label>
+          <input type="number" id="rem-credits" class="text-input" placeholder="e.g. 60" value="60" />
+        </div>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr;">
+          <label class="label-sm">Target CGPA</label>
+          <input type="number" id="target" class="text-input" placeholder="e.g. 8.0" min="0" max="10" step="0.01" value="8.0" />
+        </div>
+        <button type="submit" class="button-primary" style="width: 100%;">Calculate needed SGPA</button>
+      </form>
+
+      <div id="planner-result" style="margin-top: var(--spacing-lg); display: none;" class="feature-card" style="padding: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Result</h2>
+        <p class="body-md" style="margin-bottom: var(--spacing-sm);">
+          You need an average SGPA of <span id="needed-sgpa" style="font-weight: 600; color: var(--color-link); font-size: var(--font-size-heading-lg);">—</span> in your remaining semesters.
+        </p>
+        <p id="planner-possible" class="body-sm" style="margin: 0;"></p>
+      </div>
+
+      <div class="code-block" style="margin-top: var(--spacing-lg);">
+        <div class="body-sm mute">Needed SGPA = (target × total credits − current points) ÷ remaining credits</div>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (() => {
+      const form = document.getElementById('planner-form');
+      const res = document.getElementById('planner-result');
+      const needed = document.getElementById('needed-sgpa');
+      const possible = document.getElementById('planner-possible');
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const curCredits = parseFloat(document.getElementById('cur-credits').value) || 0;
+        const curPoints = parseFloat(document.getElementById('cur-points').value) || 0;
+        const remCredits = parseFloat(document.getElementById('rem-credits').value) || 0;
+        const target = parseFloat(document.getElementById('target').value) || 0;
+
+        const totalCredits = curCredits + remCredits;
+        const neededTotal = target * totalCredits;
+        const neededPoints = neededTotal - curPoints;
+        const neededSgpa = remCredits > 0 ? neededPoints / remCredits : 0;
+        const ok = neededSgpa <= 10 && neededSgpa >= 0;
+
+        needed.textContent = neededSgpa.toFixed(2);
+        res.style.display = 'block';
+        if (ok) {
+          possible.textContent = `That's ${neededSgpa.toFixed(2)} × ${remCredits} credits = ${neededPoints.toFixed(0)} credit points needed.`;
+          possible.style.color = 'var(--color-body)';
+        } else {
+          possible.textContent = neededSgpa > 10 ? 'Not possible — that would require an SGPA above 10.' : 'Enter valid numbers.';
+          possible.style.color = 'var(--color-error)';
+        }
+      });
+    })();
+  </script>
+</Layout>

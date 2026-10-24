@@ -1,0 +1,82 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="VTU Grading System — CGPA Calculator AI" description="VTU 10-point grading system, grade points, SGPA and CGPA formulas explained." pathname="/grading">
+  <section class="section">
+    <div class="container" style="max-width: 720px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Grading system</p>
+      <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">VTU Grading System</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 64ch;">
+        VTU follows a 10-point grading system. Each subject is assigned a letter grade and a corresponding grade point. Credits are pre-filled per subject, so you only enter grades.
+      </p>
+      <div class="feature-card" style="margin-bottom: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Grade table (10-point scale)</h2>
+        <table style="width: 100%; border-collapse: collapse; font-size: var(--font-size-body-sm);">
+          <thead>
+            <tr style="text-align: left;">
+              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-hairline); color: var(--color-mute);">Grade</th>
+              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-hairline); color: var(--color-mute); text-align: right;">Grade point</th>
+              <th style="padding: var(--spacing-xs); border-bottom: 1px solid var(--color-hairline); color: var(--color-mute);">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">S</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">10</td>
+              <td style="padding: var(--spacing-xs);">Outstanding</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">A</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">9</td>
+              <td style="padding: var(--spacing-xs);">Excellent</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">B</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">8</td>
+              <td style="padding: var(--spacing-xs);">Very Good</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">C</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">7</td>
+              <td style="padding: var(--spacing-xs);">Good</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">D</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">6</td>
+              <td style="padding: var(--spacing-xs);">Average</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">E</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">5</td>
+              <td style="padding: var(--spacing-xs);">Below Average</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--color-hairline-soft);">
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">F</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">0</td>
+              <td style="padding: var(--spacing-xs);">Fail</td>
+            </tr>
+            <tr>
+              <td style="padding: var(--spacing-xs); font-family: var(--font-family-mono);">Absent</td>
+              <td style="padding: var(--spacing-xs); text-align: right;">0</td>
+              <td style="padding: var(--spacing-xs);">Absent</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="feature-card">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Formulas</h2>
+        <div class="code-block" style="margin-bottom: var(--spacing-sm);">
+          <div class="body-sm mute">SGPA = Σ (credits × grade point) ÷ Σ credits</div>
+        </div>
+        <div class="code-block" style="margin-bottom: var(--spacing-sm);">
+          <div class="body-sm mute">CGPA = Σ (credit points across all semesters) ÷ Σ (credits across all semesters)</div>
+        </div>
+        <div class="code-block">
+          <div class="body-sm mute">Percentage (VTU) = CGPA × 9.5</div>
+        </div>
+        <p class="body-sm mute" style="margin-top: var(--spacing-sm);">Grade points are not rounded before the formula. Percentage multiplier may vary by scheme — check your scheme.</p>
+      </div>
+    </div>
+  </section>
+</Layout>

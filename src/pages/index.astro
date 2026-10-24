@@ -1,0 +1,338 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getUniversities, getVerifiedSchemes, DEFAULT_UNIVERSITY, DEFAULT_SCHEME } from '../lib/data.ts';
+
+const homeTitle = 'CGPA Calculator — Free VTU SGPA, CGPA & Percentage Tool';
+const homeDescription = 'Free CGPA calculator for VTU, Anna University, KTU, SRM, VIT, IPU & Saveetha. Convert SGPA to CGPA, CGPA to percentage, percentage to CGPA. VTU 2022 scheme, 2021, 2018, 2025. No signup, no data stored.';
+---
+
+<Layout title={homeTitle} description={homeDescription} pathname="/">
+  <section class="hero-band" style="position: relative; overflow: hidden;">
+    <div style="position: absolute; inset: -20%; opacity: 0.35; pointer-events: none; z-index: 0;" class="mesh-gradient"></div>
+    <div class="container" style="position: relative; z-index: 1; display: grid; gap: var(--spacing-lg); align-items: start;">
+      <div style="max-width: 720px;">
+        <p class="eyebrow" style="margin: 0;">CGPA Calculator AI</p>
+        <h1 class="display-xl" style="margin: var(--spacing-xs) 0 var(--spacing-md) 0;">Free CGPA Calculator — SGPA, CGPA &amp; Percentage</h1>
+        <p class="body-lg" style="margin-bottom: var(--spacing-lg); max-width: 64ch;">A free, transparent CGPA calculator for university students. Credits pre-filled for every subject, semester and branch. Enter grades and watch your SGPA, CGPA and percentage recalculate in real time. No account, no personal data stored on a server.</p>
+        <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
+          <a href="/vtu/2022/cse/sgpa" class="button-primary">Start VTU SGPA Calculator</a>
+          <a href="/universities" class="button-secondary">Choose your university</a>
+        </div>
+      </div>
+      <div style="max-width: 440px;" class="feature-card" style="padding: var(--spacing-lg);">
+        <p class="eyebrow" style="margin: 0 0 var(--spacing-sm) 0;">Quick start</p>
+        <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-body);">
+          <li style="margin-bottom: var(--spacing-xs);">Pick your university and scheme</li>
+          <li style="margin-bottom: var(--spacing-xs);">Pick your branch and semester</li>
+          <li style="margin-bottom: var(--spacing-xs);">Choose a grade per subject (credits pre-filled)</li>
+          <li style="margin-bottom: var(--spacing-xs);">SGPA, CGPA and percentage recalculate instantly</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Supported universities</p>
+      <h2 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Multi-university CGPA calculator</h2>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 60ch;">University, scheme, branch, semester, subjects, credits, grade table and formulas live in JSON data. Adding a new university is a data-only change — no code edits.</p>
+      <div style="display: grid; gap: var(--spacing-lg); grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+        {getUniversities().map((uni) => (
+          <div class="feature-card" style="padding: var(--spacing-lg);">
+            <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs) 0;">{uni.name}</h3>
+            <p class="body-sm" style="margin: 0 0 var(--spacing-sm) 0; color: var(--color-body);">{uni.domain}</p>
+            <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-mute); font-size: var(--font-size-body-sm);">
+              {uni.schemes.map((s) => (
+                <li style="margin-bottom: var(--spacing-xs);">✓ {s.name}</li>
+              ))}
+            </ul>
+            <a href={`/${uni.id}/${uni.schemes.find(s => s.status === 'verified')?.id ?? uni.schemes[0]?.id}/cse/sgpa`} class="button-primary-sm" style="margin-top: var(--spacing-sm); display: inline-block;">Open calculator</a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* ===== SEO CONTENT SECTION (800-1200 words) ===== */}
+  <section class="section" style="background: var(--color-canvas-elevated);">
+    <div class="container" style="max-width: 800px;">
+      <article style="display: grid; gap: var(--spacing-lg);">
+        <h2 class="heading-lg" style="margin-bottom: var(--spacing-md);">What is a CGPA Calculator?</h2>
+        <p class="body-md" style="margin-bottom: var(--spacing-md);">
+          A <strong>CGPA calculator</strong> is a free online tool that helps students compute their <strong>Cumulative Grade Point Average (CGPA)</strong> — the overall academic score across all semesters of a degree program. Unlike a single-semester SGPA, CGPA aggregates every subject and every semester into one number that universities, employers and postgraduate programs use to judge academic performance. Our CGPA calculator is built for students of <strong>VTU (Visvesvaraya Technological University)</strong>, <strong>Anna University</strong>, <strong>KTU (APJ Abdul Kalam Technological University)</strong>, <strong>SRM Institute of Science and Technology</strong>, <strong>VIT (Vellore Institute of Technology)</strong>, <strong>IPU (Guru Gobind Singh Indraprastha University)</strong>, <strong>Saveetha University</strong> and many other Indian universities. It is free, requires no account, stores nothing on a server, and works on any phone or laptop.
+        </p>
+
+        <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">CGPA Full Form and Meaning</h2>
+        <p class="body-md" style="margin-bottom: var(--spacing-md);">
+          The <strong>CGPA full form</strong> is <strong>Cumulative Grade Point Average</strong>. It is the weighted average of the grade points earned across all semesters of your course. In a 10-point grading system (used by VTU, Anna University, KTU, SRM, VIT, IPU and Saveetha), each subject grade (S, A, B, C, D, E, F) carries a grade point from 10 down to 0. The CGPA is the total credit points divided by total credits. A CGPA of 8.5 and above is typically "First Class with Distinction," 6.5–8.4 is "First Class," 5.0–6.4 is "Second Class," and below 4.0 is a fail. Because CGPA is cumulative, a single bad semester can pull it down, and a strong final semester can lift it up — which is exactly why a good CGPA calculator matters.
+        </p>
+
+        <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">SGPA to CGPA Calculator</h2>
+        <p class="body-md" style="margin-bottom: var(--spacing-md);">
+          Our <strong>SGPA to CGPA calculator</strong> converts semester-wise SGPA values into an overall CGPA. You simply enter your SGPA for each semester along with the credits of that semester, and the tool computes the credit-weighted CGPA. This is the most accurate method because it weights each semester by its credits rather than averaging SGPAs blindly. Students searching for "sgpa to cgpa calculator" often need exactly this — a tool that respects credit weights and lateral-entry rules (where the first two semesters are skipped). Our calculator handles both regular and lateral-entry students correctly.
+        </p>
+
+        <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Percentage to CGPA Calculator</h2>
+        <p class="body-md" style="margin-bottom: var(--spacing-md);">
+          The <strong>percentage to CGPA calculator</strong> converts your percentage score into its CGPA equivalent. For VTU, the standard conversion is <strong>CGPA × 9.5 = Percentage</strong>, so <strong>CGPA to percentage</strong> is <strong>Percentage ÷ 9.5 = CGPA</strong>. For example, a CGPA of 8.0 equals 76% (8.0 × 9.5). Our converter also supports CGPA to 4.0 GPA conversion (WES-style: CGPA ÷ 10 × 4) and class/division classification, so you can see where your CGPA stands for placements and higher studies.
+        </p>
+
+        <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">VTU CGPA Calculator (2025, 2022, 2021, 2018 Scheme)</h2>
+        <p class="body-md" style="margin-bottom: var(--spacing-md);">
+          The <strong>VTU CGPA calculator</strong> is our most-used tool. VTU (Visvesvaraya Technological University) follows a 10-point grading system with grades S (10), A (9), B (8), C (7), D (6), E (5), F (0). Credits are pre-filled for every subject, semester and branch, so you only enter grades. We support the <strong>VTU CGPA calculator 2022 scheme</strong> (verified), plus 2025, 2021 and 2018 schemes (draft, being verified). The <strong>VTU CGPA to percentage</strong> conversion uses the official multiplier of 9.5. Whether you need a <strong>VTU CGPA calculator</strong> for CSE, ECE, ME, CE, EEE or ISE, our tool has credits pre-filled for all branches and semesters.
+        </p>
+
+        <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">VIT CGPA Calculator and CGPA Calculator VIT</h2>
+        <p class="body-md" style="margin-bottom: var(--spacing-md);">
+          Students searching for a <strong>VIT CGPA calculator</strong> or <strong>CGPA calculator VIT</strong> can use our generic 10-point credit-weighted calculator while VIT-specific subject data is being added. The same applies to the <strong>SRM CGPA calculator</strong> and <strong>CGPA calculator SRM</strong> — SRM follows a 10-point system and our calculator supports it through the generic credit-weighted mode. Use the "Request your college" form to ask us to add your university's full subject/credit data.
+        </p>
+
+        <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">KTU CGPA Calculator</h2>
+        <p class="body-md" style="margin-bottom: var(--spacing-md);">
+          The <strong>KTU CGPA calculator</strong> (for APJ Abdul Kalam Technological University, Kerala) is supported via the generic credit-weighted mode. KTU uses a 10-point grading scale with grades O, A+, A, B+, B, C+, C, D, E, F. Enter your subjects, credits and grades and the calculator computes your SGPA and CGPA. Full KTU subject data will be added in a future data-only update.
+        </p>
+
+        <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">CGPA Calculator Anna University</h2>
+        <p class="body-md" style="margin-bottom: var(--spacing-md);">
+          The <strong>CGPA calculator Anna University</strong> follows Anna University's 10-point grading system. Our generic calculator supports Anna University's credit-weighted formula. Full Anna University subject and credit data is on our roadmap — request it via the form and we'll prioritize it.
+        </p>
+
+        <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">IPU CGPA Calculator and Saveetha CGPA Calculator</h2>
+        <p class="body-md" style="margin-bottom: var(--spacing-md);">
+          The <strong>IPU CGPA calculator</strong> (Guru Gobind Singh Indraprastha University, Delhi) and the <strong>Saveetha CGPA calculator</strong> (Saveetha Institute of Medical and Technical Sciences) are both supported through the generic credit-weighted mode. Enter your subjects, credits and grades and get instant SGPA and CGPA. Full pre-filled subject data for IPU and Saveetha will be added as data-only updates.
+        </p>
+
+        <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Key Features of Our CGPA Calculator</h2>
+        <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-body); display: grid; gap: var(--spacing-xs);">
+          <li><strong>Three tools, separate URLs:</strong> SGPA calculator, CGPA calculator and percentage calculator — each with its own page and shareable link.</li>
+          <li><strong>Credits pre-filled:</strong> No need to look up credits. They are pre-filled for every subject, semester and branch.</li>
+          <li><strong>Real-time recalculation:</strong> Results update instantly as you change grades.</li>
+          <li><strong>Subject-wise, no rounding:</strong> Grade points are never rounded before the formula, so results stay exact.</li>
+          <li><strong>Multi-semester support:</strong> Including lateral entry (skip semesters 1–2 with correct credit total).</li>
+          <li><strong>Print and save:</strong> Print or save your result for your records.</li>
+          <li><strong>Formula transparency:</strong> Every result shows the formula and a subject-wise breakdown.</li>
+          <li><strong>Privacy:</strong> No personal data stored on a server. Calculations happen in your browser.</li>
+          <li><strong>Target planner:</strong> "What SGPA do I need in remaining semesters to reach X CGPA?"</li>
+          <li><strong>What-if / backlog simulator:</strong> Change a grade or clear an F and see the live effect.</li>
+          <li><strong>Converters:</strong> Marks to grade point, CGPA to percentage, CGPA to 4.0 GPA, class/division.</li>
+          <li><strong>AI features:</strong> Marks card scanner, plain-language assistant, study planner, result explainer, eligibility check, FAQ chatbot.</li>
+        </ul>
+
+        <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">How to Use the CGPA Calculator</h2>
+        <ol style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-body); display: grid; gap: var(--spacing-xs);">
+          <li>Select your university and scheme (VTU 2022, 2021, 2018, 2025).</li>
+          <li>Select your branch (CSE, ECE, ME, CE, EEE, ISE, etc.) and semester.</li>
+          <li>Choose a grade for each subject — credits are already pre-filled.</li>
+          <li>Your SGPA appears instantly. Switch semesters and repeat to build your full CGPA.</li>
+          <li>Use the Target Planner to plan what you need in remaining semesters.</li>
+          <li>Print or save your results.</li>
+        </ol>
+
+        <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Frequently Asked Questions</h2>
+        <div style="display: grid; gap: var(--spacing-md);">
+          <div>
+            <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs) 0; font-size: var(--font-size-body-md);">What is the CGPA full form?</h3>
+            <p class="body-sm" style="margin: 0;">CGPA full form is Cumulative Grade Point Average — the credit-weighted average of all your semester grade points.</p>
+          </div>
+          <div>
+            <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs) 0; font-size: var(--font-size-body-md);">How to convert CGPA to percentage?</h3>
+            <p class="body-sm" style="margin: 0;">For VTU: Percentage = CGPA × 9.5. So a CGPA of 8.0 = 76%.</p>
+          </div>
+          <div>
+            <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs) 0; font-size: var(--font-size-body-md);">How to convert SGPA to CGPA?</h3>
+            <p class="body-sm" style="margin: 0;">CGPA = (sum of all semester credit points) ÷ (sum of all credits). Use our SGPA to CGPA calculator for an exact result.</p>
+          </div>
+          <div>
+            <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs) 0; font-size: var(--font-size-body-md);">Is this CGPA calculator free?</h3>
+            <p class="body-sm" style="margin: 0;">Yes, completely free. No account, no signup, no data stored. Unlimited use.</p>
+          </div>
+          <div>
+            <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs) 0; font-size: var(--font-size-body-md);">Which universities are supported?</h3>
+            <p class="body-sm" style="margin: 0;">VTU is fully supported with pre-filled credits. Anna University, KTU, SRM, VIT, IPU and Saveetha are supported via the generic credit-weighted calculator. More universities are being added as data-only updates.</p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  {/* ===== SEO FAQ SECTION ===== */}
+  <section class="section" style="background: var(--color-canvas);">
+    <div class="container" style="max-width: 800px;">
+      <h2 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Frequently Asked Questions About CGPA Calculator</h2>
+      <div style="display: grid; gap: var(--spacing-md);">
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">What is CGPA calculator?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">A CGPA calculator is a free online tool that computes your Cumulative Grade Point Average. It takes your subjects, credits and grades for each semester and calculates your SGPA (Semester Grade Point Average) and overall CGPA. Our CGPA calculator is free, requires no signup, and supports VTU, Anna University, KTU, SRM, VIT, IPU and Saveetha with pre-filled credits.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How to calculate CGPA calculator?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">To calculate CGPA: select your university and scheme, choose your branch and semester, enter your grade for each subject (credits are pre-filled), and the calculator instantly shows your SGPA. Repeat for all semesters, and the tool computes your overall CGPA as the credit-weighted average of all semester credit points divided by total credits.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How to CGPA calculator?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">Using a CGPA calculator is simple: pick your university, select your scheme and branch, choose the semester, enter grades for each subject (credits are pre-filled), and your SGPA and CGPA are calculated in real time. No manual credit entry needed.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How to do CGPA to percentage calculator?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">To convert CGPA to percentage, use the formula: Percentage = CGPA × 9.5 (for VTU). For example, a CGPA of 8.0 = 76%. Our CGPA to percentage converter does this instantly. Just enter your CGPA and get the percentage.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How to convert percentage to CGPA calculator?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">To convert percentage to CGPA, divide your percentage by 9.5 (for VTU). For example, 76% ÷ 9.5 = 8.0 CGPA. Our percentage to CGPA calculator handles this conversion instantly.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How to CGPA to percentage calculator?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">Enter your CGPA into our CGPA to percentage calculator. The tool multiplies your CGPA by 9.5 (VTU standard) and gives you the percentage. For other universities, the multiplier may differ.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How to convert CGPA to percentage calculator?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">Use our CGPA to percentage converter. Enter your CGPA value and the tool applies the university-specific multiplier (9.5 for VTU) to give you the equivalent percentage. Results are instant and accurate.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How to calculate CGPA calculator?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">Enter your grades for each subject across all semesters. The calculator computes credit points (credits × grade point) for each subject, sums them per semester for SGPA, then divides total credit points by total credits for CGPA. No manual math needed.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How to calculator CGPA for architecture?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">For architecture programs, enter your subject grades and credits into the CGPA calculator. The formula is the same: CGPA = total credit points ÷ total credits. Our tool supports architecture branches — select your university, scheme and branch, then enter grades.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How to calculate CGPA in VTU?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">In VTU, CGPA = (sum of all semester credit points) ÷ (sum of all credits). Each subject's credit points = credits × grade point (S=10, A=9, B=8, C=7, D=6, E=5, F=0). Use our VTU CGPA calculator — credits are pre-filled, you only enter grades.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How to convert CGPA to percentage in VTU?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">VTU CGPA to percentage: Percentage = CGPA × 9.5. For example, CGPA 7.5 = 71.25%. Use our converter tool for instant conversion.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How to calculate VTU CGPA?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">Enter your grades for each subject in each semester. The calculator computes SGPA per semester (credit-weighted), then CGPA across all semesters. Credits are pre-filled for VTU 2022, 2021, 2018 and 2025 schemes.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How CGPA is calculated in VTU?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">CGPA in VTU is calculated as: total credit points across all semesters ÷ total credits across all semesters. Credit points per subject = credits × grade point. Lateral entry students skip semesters 1-2 in this calculation.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How is CGPA calculated in VTU?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">CGPA = Σ(credits × grade point) ÷ Σ(credits) across all semesters. Each grade maps to a point: S=10, A=9, B=8, C=7, D=6, E=5, F=0. Our calculator does this automatically with pre-filled credits.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How to calculate CGPA in VTU 2022 scheme?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">For VTU 2022 scheme: select "VTU 2022 Scheme", choose your branch (CSE, ECE, ME, etc.), pick each semester, enter grades. Credits are pre-filled per the 2022 scheme. The calculator shows SGPA per semester and cumulative CGPA.</p>
+        </details>
+        <details class="feature-card" style="padding: var(--spacing-md);">
+          <summary class="label-sm ink" style="cursor: pointer; font-weight: 600;">How to calculate CGPA to percentage in VTU?</summary>
+          <p class="body-sm" style="margin-top: var(--spacing-sm);">First calculate your CGPA using the VTU CGPA calculator, then multiply by 9.5 to get percentage. For example, CGPA 8.2 × 9.5 = 77.9%. Use our converter tool for instant results.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  {/* FAQPage JSON-LD */}
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {"@type":"Question","name":"What is CGPA calculator?","acceptedAnswer":{"@type":"Answer","text":"A CGPA calculator is a free online tool that computes your Cumulative Grade Point Average. It takes your subjects, credits and grades for each semester and calculates your SGPA and overall CGPA. Our CGPA calculator is free, requires no signup, and supports VTU, Anna University, KTU, SRM, VIT, IPU and Saveetha with pre-filled credits."}},
+      {"@type":"Question","name":"How to calculate CGPA calculator?","acceptedAnswer":{"@type":"Answer","text":"To calculate CGPA: select your university and scheme, choose your branch and semester, enter your grade for each subject (credits are pre-filled), and the calculator instantly shows your SGPA. Repeat for all semesters, and the tool computes your overall CGPA as the credit-weighted average of all semester credit points divided by total credits."}},
+      {"@type":"Question","name":"How to CGPA calculator?","acceptedAnswer":{"@type":"Answer","text":"Using a CGPA calculator is simple: pick your university, select your scheme and branch, choose the semester, enter grades for each subject (credits are pre-filled), and your SGPA and CGPA are calculated in real time."}},
+      {"@type":"Question","name":"How to do CGPA to percentage calculator?","acceptedAnswer":{"@type":"Answer","text":"To convert CGPA to percentage, use the formula: Percentage = CGPA × 9.5 (for VTU). For example, a CGPA of 8.0 = 76%. Our CGPA to percentage converter does this instantly."}},
+      {"@type":"Question","name":"How to convert percentage to CGPA calculator?","acceptedAnswer":{"@type":"Answer","text":"To convert percentage to CGPA, divide your percentage by 9.5 (for VTU). For example, 76% ÷ 9.5 = 8.0 CGPA. Our percentage to CGPA calculator handles this conversion instantly."}},
+      {"@type":"Question","name":"How to CGPA to percentage calculator?","acceptedAnswer":{"@type":"Answer","text":"Enter your CGPA into our CGPA to percentage calculator. The tool multiplies your CGPA by 9.5 (VTU standard) and gives you the percentage."}},
+      {"@type":"Question","name":"How to convert CGPA to percentage calculator?","acceptedAnswer":{"@type":"Answer","text":"Use our CGPA to percentage converter. Enter your CGPA value and the tool applies the university-specific multiplier (9.5 for VTU) to give you the equivalent percentage."}},
+      {"@type":"Question","name":"How to calculate CGPA calculator?","acceptedAnswer":{"@type":"Answer","text":"Enter your grades for each subject across all semesters. The calculator computes credit points (credits × grade point) for each subject, sums them per semester for SGPA, then divides total credit points by total credits for CGPA."}},
+      {"@type":"Question","name":"How to calculator CGPA for architecture?","acceptedAnswer":{"@type":"Answer","text":"For architecture programs, enter your subject grades and credits into the CGPA calculator. The formula is the same: CGPA = total credit points ÷ total credits. Our tool supports architecture branches."}},
+      {"@type":"Question","name":"How to calculate CGPA in VTU?","acceptedAnswer":{"@type":"Answer","text":"In VTU, CGPA = (sum of all semester credit points) ÷ (sum of all credits). Each subject's credit points = credits × grade point (S=10, A=9, B=8, C=7, D=6, E=5, F=0). Use our VTU CGPA calculator — credits are pre-filled."}},
+      {"@type":"Question","name":"How to convert CGPA to percentage in VTU?","acceptedAnswer":{"@type":"Answer","text":"VTU CGPA to percentage: Percentage = CGPA × 9.5. For example, CGPA 7.5 = 71.25%. Use our converter tool for instant conversion."}},
+      {"@type":"Question","name":"How to calculate VTU CGPA?","acceptedAnswer":{"@type":"Answer","text":"Enter your grades for each subject in each semester. The calculator computes SGPA per semester (credit-weighted), then CGPA across all semesters. Credits are pre-filled for VTU 2022, 2021, 2018 and 2025 schemes."}},
+      {"@type":"Question","name":"How CGPA is calculated in VTU?","acceptedAnswer":{"@type":"Answer","text":"CGPA in VTU is calculated as: total credit points across all semesters ÷ total credits across all semesters. Credit points per subject = credits × grade point. Lateral entry students skip semesters 1-2."}},
+      {"@type":"Question","name":"How is CGPA calculated in VTU?","acceptedAnswer":{"@type":"Answer","text":"CGPA = Σ(credits × grade point) ÷ Σ(credits) across all semesters. Each grade maps to a point: S=10, A=9, B=8, C=7, D=6, E=5, F=0. Our calculator does this automatically."}},
+      {"@type":"Question","name":"How to calculate CGPA in VTU 2022 scheme?","acceptedAnswer":{"@type":"Answer","text":"For VTU 2022 scheme: select 'VTU 2022 Scheme', choose your branch, pick each semester, enter grades. Credits are pre-filled per the 2022 scheme. The calculator shows SGPA per semester and cumulative CGPA."}},
+      {"@type":"Question","name":"How to calculate CGPA to percentage in VTU?","acceptedAnswer":{"@type":"Answer","text":"First calculate your CGPA using the VTU CGPA calculator, then multiply by 9.5 to get percentage. For example, CGPA 8.2 × 9.5 = 77.9%. Use our converter tool for instant results."}}
+    ]
+  })}></script>
+
+  {/* ===== ABOUT SECTION ===== */}
+  <section class="section" id="about" style="background: var(--color-canvas-elevated);">
+    <div class="container" style="max-width: 800px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">About</p>
+      <h2 class="heading-lg" style="margin-bottom: var(--spacing-lg);">About CGPA Calculator AI</h2>
+      <p class="body-md" style="margin-bottom: var(--spacing-md);">CGPA Calculator AI helps university students calculate SGPA, CGPA and percentage transparently, in real time, with no personal data stored on a server. Credits are pre-filled for every subject, semester and branch — you only enter grades.</p>
+      <div class="feature-card" style="margin-bottom: var(--spacing-md);">
+        <h3 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Our commitments</h3>
+        <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-body);">
+          <li style="margin-bottom: var(--spacing-xs);"><strong>Accuracy:</strong> Subject-wise calculation with no rounding of grade points before the formula.</li>
+          <li style="margin-bottom: var(--spacing-xs);"><strong>Transparency:</strong> Every result shows the formula and a subject-wise breakdown.</li>
+          <li style="margin-bottom: var(--spacing-xs);"><strong>Privacy:</strong> No personal data stored on a server. Calculations happen in your browser.</li>
+          <li style="margin-bottom: var(--spacing-xs);"><strong>Free &amp; open:</strong> Unlimited use, no account required.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {/* ===== CONTACT SECTION ===== */}
+  <section class="section" id="contact">
+    <div class="container" style="max-width: 800px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Contact</p>
+      <h2 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Get in Touch</h2>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 60ch;">Have feedback, a question about a calculation, or want to report a bug? Reach out. We respond to every message.</p>
+      <div class="feature-card" style="margin-bottom: var(--spacing-md);">
+        <h3 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Email</h3>
+        <p class="body-sm" style="margin: 0;"><a href="mailto:support@cgpacalculatorai.com" class="link-color">support@cgpacalculatorai.com</a></p>
+      </div>
+      <div class="feature-card">
+        <h3 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Social</h3>
+        <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap; margin-top: var(--spacing-sm);">
+          <a href="https://instagram.com" class="button-ghost-sm" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://twitter.com" class="button-ghost-sm" target="_blank" rel="noopener">Twitter</a>
+          <a href="https://facebook.com" class="button-ghost-sm" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://linkedin.com" class="button-ghost-sm" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ===== PRIVACY SECTION ===== */}
+  <section class="section" id="privacy" style="background: var(--color-canvas-elevated);">
+    <div class="container" style="max-width: 800px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Privacy</p>
+      <h2 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Privacy Policy</h2>
+      <p class="body-md" style="margin-bottom: var(--spacing-md);">CGPA Calculator AI does not collect, store, or transmit any personal data. Your grades, credits and calculation results never leave your browser.</p>
+      <p class="body-sm" style="margin-bottom: var(--spacing-sm);"><strong>What we collect:</strong> Nothing. No name, email, roll number, or academic record is collected.</p>
+      <p class="body-sm" style="margin-bottom: var(--spacing-sm);"><strong>Local storage:</strong> If you save progress, it is stored only in your browser's localStorage, on your device. We cannot access it.</p>
+      <p class="body-sm" style="margin-bottom: var(--spacing-sm);"><strong>AI features:</strong> Optional AI features process input temporarily to generate a response. No personal data is logged or retained.</p>
+      <p class="body-sm" style="margin: 0;"><strong>Third parties:</strong> No analytics, no tracking, no third-party scripts on the core calculators.</p>
+    </div>
+  </section>
+
+  {/* ===== TERMS SECTION ===== */}
+  <section class="section" id="terms">
+    <div class="container" style="max-width: 800px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Terms</p>
+      <h2 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Terms of Service</h2>
+      <p class="body-md" style="margin-bottom: var(--spacing-md);">By using CGPA Calculator AI you agree to these terms. The service is provided free of charge, with no account required.</p>
+      <p class="body-sm" style="margin-bottom: var(--spacing-sm);"><strong>Use of the calculators:</strong> The calculators are for educational guidance only. Results are computed from the grades and credits you enter.</p>
+      <p class="body-sm" style="margin-bottom: var(--spacing-sm);"><strong>AI output:</strong> AI-generated content is guidance only, not an official result, and never overrides the calculator output.</p>
+      <p class="body-sm" style="margin: 0;"><strong>No warranty:</strong> The service is provided "as is" without warranty. Always verify results with your college and official VTU sources.</p>
+    </div>
+  </section>
+
+  {/* ===== DISCLAIMER SECTION ===== */}
+  <section class="section" id="disclaimer" style="background: var(--color-canvas-elevated);">
+    <div class="container" style="max-width: 800px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Disclaimer</p>
+      <h2 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Disclaimer</h2>
+      <div class="feature-card" style="margin-bottom: var(--spacing-md);">
+        <p class="body-md" style="margin: 0;"><strong>CGPA Calculator AI is not affiliated with Visvesvaraya Technological University (VTU).</strong> It is an independent tool created for students.</p>
+      </div>
+      <p class="body-md" style="margin-bottom: var(--spacing-md);">All grading rules, credits, and formulas are provided for guidance only and may not reflect official VTU circulars. Always verify with your college and the official VTU website before making academic decisions.</p>
+      <p class="body-sm mute" style="margin: 0;">Official VTU: <a href="https://vtu.ac.in/" class="link-color" target="_blank" rel="noopener">vtu.ac.in</a></p>
+    </div>
+  </section>
+
+  <section class="cta-band" style="padding: var(--spacing-4xl) var(--spacing-lg); text-align: center;">
+    <h2 class="display-xl" style="margin: 0 0 var(--spacing-lg) 0;">Start calculating your CGPA</h2>
+    <a href="/vtu/2022/cse/sgpa" class="button-primary">VTU SGPA Calculator</a>
+  </section>
+</Layout>
+

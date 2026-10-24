@@ -1,0 +1,28 @@
+---
+const { noAds = false } = Astro.props;
+---
+
+<footer>
+  <div class="container">
+    <div style="display: flex; flex-direction: column; gap: var(--spacing-lg); align-items: flex-start;">
+      <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
+        <span style="font-weight: 600; font-size: var(--font-size-heading-md); letter-spacing: var(--letter-spacing-heading-md); color: var(--color-ink);">CGPA</span>
+        <span style="color: var(--color-link); font-weight: 600;">Calculator AI</span>
+      </div>
+      <p class="body-sm" style="max-width: 600px;">
+        Accurate, transparent SGPA • CGPA • Percentage calculators for VTU students. No personal data stored on a server.
+      </p>
+      <div style="display: flex; flex-direction: column; gap: var(--spacing-xs);">
+        <a href="/about" class="body-sm link-color">About</a>
+        <a href="/contact" class="body-sm link-color">Contact</a>
+        <a href="/privacy" class="body-sm link-color">Privacy</a>
+        <a href="/terms" class="body-sm link-color">Terms</a>
+        <a href="/disclaimer" class="body-sm link-color">Disclaimer</a>
+        <span class="body-sm" style="color: var(--color-mute);">Not affiliated with VTU.</span>
+      </div>
+      <div class="body-sm" style="color: var(--color-mute);">
+        &copy; {new Date().getFullYear()} CGPA Calculator AI
+      </div>
+    </div>
+  </div>
+</footer>

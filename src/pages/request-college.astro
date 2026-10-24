@@ -1,0 +1,93 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Request Your College — CGPA Calculator AI" description="Request your college/university to be added to CGPA Calculator AI." pathname="/request-college" noAds>
+  <section class="section">
+    <div class="container" style="max-width: 600px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Request your college</p>
+      <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Request your college</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 60ch;">
+        Don't see your university? Adding a new university is a data-only change. Tell us about it and we'll prioritize adding it.
+      </p>
+
+      <form id="college-form" class="feature-card" style="padding: var(--spacing-lg); display: grid; gap: var(--spacing-md);">
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr;">
+          <label class="label-sm">College / University name</label>
+          <input type="text" id="college-name" class="text-input" placeholder="e.g. Anna University" required />
+        </div>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr;">
+          <label class="label-sm">Country</label>
+          <input type="text" id="country" class="text-input" placeholder="e.g. India" required />
+        </div>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr;">
+          <label class="label-sm">Scheme / Regulation (optional)</label>
+          <input type="text" id="scheme" class="text-input" placeholder="e.g. 2021 Regulation" />
+        </div>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr;">
+          <label class="label-sm">Official website (optional)</label>
+          <input type="url" id="website" class="text-input" placeholder="https://example.edu" />
+        </div>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr;">
+          <label class="label-sm">Your email (optional, for updates)</label>
+          <input type="email" id="email" class="text-input" placeholder="you@example.com" />
+        </div>
+        <div style="display: grid; gap: var(--spacing-sm); grid-template-columns: 1fr;">
+          <label class="label-sm">Additional notes (optional)</label>
+          <textarea id="notes" class="text-input" rows="3" placeholder="Any details about grading, credits, or schemes"></textarea>
+        </div>
+        <button type="submit" class="button-primary" id="submit-btn">Send request</button>
+      </form>
+
+      <div id="form-message" style="margin-top: var(--spacing-lg); display: none;" class="feature-card" style="padding: var(--spacing-lg);"></div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (() => {
+      const form = document.getElementById('college-form');
+      const btn = document.getElementById('submit-btn');
+      const msg = document.getElementById('form-message');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+
+        const body = {
+          collegeName: document.getElementById('college-name').value,
+          university: document.getElementById('college-name').value,
+          country: document.getElementById('country').value,
+          scheme: document.getElementById('scheme').value,
+          website: document.getElementById('website').value,
+          email: document.getElementById('email').value,
+          notes: document.getElementById('notes').value,
+        };
+
+        try {
+          const res = await fetch('/api/college-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          const data = await res.json();
+
+          msg.style.display = 'block';
+          msg.style.background = res.ok ? 'var(--color-canvas-elevated)' : 'var(--color-warning-soft)';
+          msg.style.border = '1px solid var(--color-hairline)';
+          msg.style.borderRadius = 'var(--radius-md)';
+          msg.style.padding = 'var(--spacing-md)';
+          msg.style.color = res.ok ? 'var(--color-body)' : 'var(--color-error-deep)';
+          msg.textContent = res.ok ? data.message : (data.error || 'Request failed');
+        } catch (err) {
+          msg.style.display = 'block';
+          msg.textContent = 'Network error. Please try again.';
+          msg.style.color = 'var(--color-error-deep)';
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Send request';
+        }
+      });
+    })();
+  </script>
+</Layout>

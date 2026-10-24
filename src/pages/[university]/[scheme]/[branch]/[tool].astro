@@ -1,0 +1,64 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import Calculator from '../../../../components/Calculator.astro';
+import {
+  getUniversity,
+  getScheme,
+  getVerifiedSchemes,
+  getBranch,
+  getUniversities,
+} from '../../../../lib/data.ts';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const uni of getUniversities()) {
+    if (uni.status !== 'verified') continue;
+    for (const scheme of uni.schemes) {
+      if (scheme.status !== 'verified') continue;
+      for (const branch of scheme.branches) {
+        for (const tool of ['sgpa', 'cgpa', 'percentage']) {
+          paths.push({
+            params: { university: uni.id, scheme: scheme.id, branch: branch.id, tool },
+            props: { university: uni.id, scheme: scheme.id, branch: branch.id, tool },
+          });
+        }
+      }
+    }
+  }
+  return paths;
+}
+
+const { university: uniId, scheme: schemeId, branch: branchId, tool } = Astro.props;
+const uni = getUniversity(uniId);
+const sc = uni && getScheme(uni, schemeId);
+const br = sc && getBranch(sc, branchId);
+
+if (!sc || !br || !['sgpa', 'cgpa', 'percentage'].includes(tool)) {
+  return Astro.redirect(`/${uniId || 'vtu'}/${schemeId || '2022'}/${branchId || 'cse'}/sgpa`);
+}
+
+const branches = sc.branches.map(b => ({ id: b.id, short: b.short, name: b.name }));
+
+const title = `${br.short} ${tool.toUpperCase()} Calculator — ${uni.name} ${sc.name}`;
+const description = `Calculate ${tool.toUpperCase()} for ${br.name} (${sc.name}) at ${uni.name}. Free, accurate, real-time results.`;
+
+const semesters = br.semesters.map((s) => ({
+  semester: s.semester,
+  name: s.name,
+  subjects: s.subjects.map((sub) => ({ code: sub.code, name: sub.name, credits: sub.credits, type: sub.type })),
+}));
+---
+
+<Layout title={title} description={description} pathname={Astro.url.pathname}>
+  <a href="/" style="text-decoration: none; color: inherit;">&larr; Back to home</a>
+  <Calculator
+    schemeId={schemeId}
+    branchId={branchId}
+    branches={branches}
+    tool={tool}
+    semesters={semesters}
+    gradeTable={sc.gradeTable}
+    cgpaToPercentage={sc.cgpaToPercentage}
+    lateralEntry={sc.lateralEntry}
+  />
+</Layout>

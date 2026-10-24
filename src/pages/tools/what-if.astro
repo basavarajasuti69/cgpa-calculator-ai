@@ -1,0 +1,129 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import vtu from '../../data/universities/vtu/index.ts';
+import { getScheme, getBranch } from '../../lib/data.ts';
+
+const sc = getScheme(vtu, '2022');
+const br = getBranch(sc, 'cse');
+const gradeTableJson = JSON.stringify(sc.gradeTable);
+const semestersJson = JSON.stringify(br.semesters.map(s => ({
+  semester: s.semester,
+  name: s.name,
+  subjects: s.subjects.map(sub => ({ code: sub.code, name: sub.name, credits: sub.credits, type: sub.type })),
+})));
+---
+
+<Layout title="What-if / Backlog Simulator — CGPA Calculator AI" description="Change a grade or clear an F and see the live effect on your SGPA and CGPA." pathname="/tools/what-if">
+  <section class="section">
+    <div class="container" style="max-width: 720px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Tool • What-if / Backlog Simulator</p>
+      <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">What-if / Backlog Simulator</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 60ch;">
+        Adjust any grade and watch your SGPA and CGPA recalculate in real time. Use it to see what clearing a backlog (F → pass) does to your CGPA.
+      </p>
+
+      <div class="feature-card" style="padding: var(--spacing-lg);">
+        <div style="margin-bottom: var(--spacing-md);">
+          <label class="label-sm" style="margin-right: var(--spacing-sm);">Lateral entry (skip semesters 1–2)</label>
+          <input type="checkbox" id="lateral" style="width: auto;" />
+        </div>
+        <div id="what-if-grid" data-grade-table={gradeTableJson} data-semesters={semestersJson} style="display: grid; gap: var(--spacing-xs);"></div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-top: var(--spacing-lg);">
+        <div class="feature-card" style="padding: var(--spacing-lg);">
+          <h2 class="heading-md" style="margin: 0 0 var(--spacing-xs) 0;">SGPA (current semester)</h2>
+          <div id="what-if-sgpa" style="font-weight: 600; font-size: var(--font-size-heading-lg); color: var(--color-link);">0.00</div>
+        </div>
+        <div class="feature-card" style="padding: var(--spacing-lg);">
+          <h2 class="heading-md" style="margin: 0 0 var(--spacing-xs) 0;">CGPA (all semesters)</h2>
+          <div id="what-if-cgpa" style="font-weight: 600; font-size: var(--font-size-heading-lg); color: var(--color-link);">0.00</div>
+        </div>
+      </div>
+
+      <div class="body-sm mute" style="margin-top: var(--spacing-sm);">
+        Changing a grade here only simulates — nothing is saved unless you use the calculator pages and your browser's localStorage.
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (() => {
+      const root = document.getElementById('what-if-grid');
+      const gradeTable = JSON.parse(root.dataset.gradeTable ?? '{}');
+      const semesters = JSON.parse(root.dataset.semesters ?? '[]');
+      const grid = root;
+      const sgpaEl = document.getElementById('what-if-sgpa');
+      const cgpaEl = document.getElementById('what-if-cgpa');
+      const lateral = document.getElementById('lateral');
+
+      let lateralOn = false;
+
+      function resolveGP(input, scale) {
+        if (input === undefined || input === null || input === '') return null;
+        if (typeof input === 'number') {
+          const m = input;
+          if (m >= 90) return 10;
+          if (m >= 80) return 9;
+          if (m >= 70) return 8;
+          if (m >= 60) return 7;
+          if (m >= 50) return 6;
+          if (m >= 40) return 5;
+          return 0;
+        }
+        const key = String(input).trim();
+        if (scale[key] !== undefined) return scale[key];
+        return scale[key.toUpperCase()] ?? null;
+      }
+
+      function buildSemHTML(sem, idx) {
+        const skip = lateralOn && idx < 2;
+        const rows = sem.subjects.map(sub => {
+          const opts = Object.keys(gradeTable).sort((a,b)=>gradeTable[b]-gradeTable[a]).map(g=>`<option value="${g}">${g} (${gradeTable[g]})</option>`).join('');
+          return `<div style="border:1px solid var(--color-hairline); background: var(--color-canvas-elevated); border-radius: var(--radius-sm); padding: var(--spacing-xs) var(--spacing-sm); display: grid; grid-template-columns: 1fr 110px 130px; gap: var(--spacing-xs); align-items: center; ${skip?'opacity:0.5;':''}">
+            <div>
+              <div style="color:var(--color-mute);font-family:var(--font-family-mono);font-size:var(--font-size-code)">${sub.code}</div>
+              <div class="ink">${sub.name}</div>
+            </div>
+            <label style="color:var(--color-mute);text-align:right;margin:0;font-size:var(--font-size-body-sm)">Credits <span style="color:var(--color-ink);font-weight:600">${sub.credits}</span></label>
+            <select data-sem="${idx}" data-code="${sub.code}" data-credits="${sub.credits}" ${skip?'disabled':''}>
+              <option value="">-- grade --</option>${opts}
+            </select>
+          </div>`;
+        }).join('');
+        const title = skip ? `${sem.name} (skipped - lateral entry)` : sem.name;
+        return `<div style="margin-bottom: var(--spacing-md);"><div class="eyebrow" style="margin:0 0 var(--spacing-xs) 0;">${title}</div>${rows}</div>`;
+      }
+
+      function render() {
+        grid.innerHTML = semesters.map((s,i)=>buildSemHTML(s,i)).join('');
+        grid.querySelectorAll('select').forEach(sel => sel.addEventListener('change', compute));
+        lateral.addEventListener('change', () => { lateralOn = lateral.checked; render(); compute(); });
+        compute();
+      }
+
+      function compute() {
+        const semList = lateralOn ? semesters.slice(2) : semesters;
+        let totCr = 0, totPts = 0;
+        let curCr = 0, curPts = 0;
+        let curShown = false;
+        semList.forEach((sem, i) => {
+          let sc = 0, sp = 0;
+          sem.subjects.forEach(sub => {
+            const sel = grid.querySelector(`select[data-sem="${i}"][data-code="${sub.code}"]`);
+            const gp = sel ? resolveGP(sel.value, gradeTable) : null;
+            if (gp !== null) { sc += sub.credits; sp += sub.credits * gp; }
+          });
+          totCr += sc; totPts += sp;
+          if (!curShown && sc > 0) { curCr = sc; curPts = sp; curShown = true; }
+        });
+        const cgpa = totCr > 0 ? totPts / totCr : 0;
+        const sgpa = curCr > 0 ? curPts / curCr : 0;
+        sgpaEl.textContent = sgpa.toFixed(2);
+        cgpaEl.textContent = cgpa.toFixed(2);
+      }
+
+      render();
+    })();
+  </script>
+</Layout>

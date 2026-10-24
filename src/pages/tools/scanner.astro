@@ -1,0 +1,109 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Marks Card Scanner — CGPA Calculator AI" description="Upload a marks card photo/PDF. AI extracts subjects and grades; you confirm before calculating." pathname="/tools/scanner" noAds>
+  <section class="section">
+    <div class="container" style="max-width: 720px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">AI tool • Scanner</p>
+      <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Marks Card Scanner</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 60ch;">
+        Upload a photo or PDF of your marks card. AI extracts subjects and grades — you confirm or edit before calculating. Images are processed in memory and not stored.
+      </p>
+
+      <div class="feature-card" style="padding: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+        <div style="display: grid; gap: var(--spacing-md); grid-template-columns: 1fr;">
+          <label class="label-sm">Upload marks card (photo or PDF)</label>
+          <input type="file" id="scan-file" accept="image/*,.pdf" />
+          <button type="button" class="button-primary" id="scan-btn" disabled>Scan &amp; extract</button>
+          <p id="scan-hint" class="body-sm mute" style="margin: 0;"></p>
+        </div>
+      </div>
+
+      <div id="scan-result" style="display: none;" class="feature-card" style="padding: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Extracted subjects — confirm before calculating</h2>
+        <div id="scan-list" style="display: grid; gap: var(--spacing-xs); margin-bottom: var(--spacing-sm);"></div>
+        <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
+          <button type="button" class="button-primary" id="scan-confirm">Confirm &amp; calculate</button>
+          <button type="button" class="button-ghost-sm" id="scan-rescan">Rescan</button>
+        </div>
+        <p class="body-sm mute" style="margin-top: var(--spacing-sm);">AI-generated extraction — verify against your marks card before calculating.</p>
+      </div>
+
+      <div class="body-sm mute" style="margin-top: var(--spacing-lg);">
+        AI guidance — not an official result. No personal data is stored.
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (() => {
+      const input = document.getElementById('scan-file');
+      const btn = document.getElementById('scan-btn');
+      const hint = document.getElementById('scan-hint');
+      const result = document.getElementById('scan-result');
+      const list = document.getElementById('scan-list');
+      const confirm = document.getElementById('scan-confirm');
+      const rescan = document.getElementById('scan-rescan');
+
+      input.addEventListener('change', () => {
+        btn.disabled = !input.files || input.files.length === 0;
+        hint.textContent = input.files && input.files.length ? `Selected: ${input.files[0].name} (${input.files[0].type})` : '';
+        result.style.display = 'none';
+      });
+
+      btn.addEventListener('click', async () => {
+        const file = input.files[0];
+        if (!file) return;
+        btn.disabled = true;
+        btn.textContent = 'Scanning...';
+        hint.textContent = '';
+
+        const fd = new FormData();
+        fd.append('image', file);
+
+        try {
+          const res = await fetch('/api/ai/scan', { method: 'POST', body: fd });
+          const data = await res.json();
+          if (!res.ok || !data.ok) {
+            hint.textContent = data.error || data.message || 'Scan failed.';
+            hint.style.color = 'var(--color-error)';
+            btn.disabled = false;
+            btn.textContent = 'Scan & extract';
+            return;
+          }
+
+          const subs = data.extracted.subjects || [];
+          list.innerHTML = subs.map((s, i) => `
+            <div style="border:1px solid var(--color-hairline); background: var(--color-canvas-elevated); border-radius: var(--radius-sm); padding: var(--spacing-sm); display: grid; grid-template-columns: 1fr 120px 120px; gap: var(--spacing-xs); align-items: center;">
+              <div style="font-family:var(--font-family-mono);font-size:var(--font-size-code);color:var(--color-mute)">${s.code}</div>
+              <div class="ink">${s.name}</div>
+              <select data-idx="${i}">
+                <option value="">-- grade --</option>
+                ${['S','A','B','C','D','E','F','Absent'].map(g => `<option value="${g}" ${s.grade===g?'selected':''}>${g}</option>`).join('')}
+              </select>
+            </div>
+          `).join('');
+
+          result.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Scan & extract';
+        } catch (err) {
+          hint.textContent = 'Network error during scan.';
+          hint.style.color = 'var(--color-error)';
+          btn.disabled = false;
+          btn.textContent = 'Scan & extract';
+        }
+      });
+
+      confirm.addEventListener('click', () => {
+        alert('Confirmation wires to the SGPA calculator on your scheme page. (Backend integration complete; UI wiring next step.)');
+      });
+      rescan.addEventListener('click', () => {
+        input.value = '';
+        btn.disabled = true;
+        result.style.display = 'none';
+      });
+    })();
+  </script>
+</Layout>

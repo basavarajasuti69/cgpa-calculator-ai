@@ -1,0 +1,74 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Ask AI — CGPA Calculator AI" description="Ask in plain language about your CGPA/SGPA. AI parses your request and calls deterministic calculators." pathname="/tools/ask" noAds>
+  <section class="section">
+    <div class="container" style="max-width: 720px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">AI tool • Assistant</p>
+      <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Ask in Plain Language</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 60ch;">
+        Ask about your CGPA/SGPA in plain language. The AI parses your request and calls our exact calculator functions — the AI never does the arithmetic, so results stay exact.
+      </p>
+
+      <div class="feature-card" style="padding: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+        <label class="label-sm">Your question</label>
+        <textarea id="ask-input" class="text-input" rows="3" placeholder="e.g. 'I scored 8.1 in sem 4 and 7.6 in sem 5, what do I need in sem 6 for 8.0 overall?'"></textarea>
+        <button type="button" class="button-primary" id="ask-btn" style="margin-top: var(--spacing-sm); width: 100%;">Ask</button>
+        <p id="ask-hint" class="body-sm mute" style="margin: var(--spacing-sm) 0 0 0;"></p>
+      </div>
+
+      <div id="ask-result" style="display: none;" class="feature-card" style="padding: var(--spacing-lg);">
+        <h2 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">Answer</h2>
+        <div id="ask-answer" class="body-md" style="margin-bottom: var(--spacing-sm);"></div>
+        <p class="body-sm mute" style="margin: 0;" id="ask-guidance"></p>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (() => {
+      const input = document.getElementById('ask-input');
+      const btn = document.getElementById('ask-btn');
+      const hint = document.getElementById('ask-hint');
+      const result = document.getElementById('ask-result');
+      const answer = document.getElementById('ask-answer');
+      const guidance = document.getElementById('ask-guidance');
+
+      btn.addEventListener('click', async () => {
+        const q = input.value.trim();
+        if (!q) return;
+        btn.disabled = true;
+        btn.textContent = 'Thinking...';
+        hint.textContent = '';
+        result.style.display = 'none';
+
+        try {
+          const res = await fetch('/api/ai/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: q }),
+          });
+          const data = await res.json();
+          if (!res.ok || !data.ok) {
+            hint.textContent = data.message || 'Ask failed.';
+            hint.style.color = 'var(--color-error)';
+            btn.disabled = false;
+            btn.textContent = 'Ask';
+            return;
+          }
+
+          answer.textContent = data.answer || data.message || '';
+          guidance.textContent = data.guidance || '';
+          result.style.display = 'block';
+        } catch (err) {
+          hint.textContent = 'Network error.';
+          hint.style.color = 'var(--color-error)';
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Ask';
+        }
+      });
+    })();
+  </script>
+</Layout>

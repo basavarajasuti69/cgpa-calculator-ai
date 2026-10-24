@@ -1,0 +1,62 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Calculator from '../../../components/Calculator.astro';
+import {
+  getUniversity,
+  getScheme,
+  getBranch,
+  getUniversities,
+  DEFAULT_BRANCH,
+} from '../../../lib/data.ts';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const uni of getUniversities()) {
+    if (uni.status !== 'verified') continue;
+    for (const scheme of uni.schemes) {
+      if (scheme.status !== 'verified') continue;
+      const br = getBranch(scheme, DEFAULT_BRANCH);
+      if (!br) continue;
+      for (const tool of ['sgpa', 'cgpa', 'percentage']) {
+        paths.push({
+          params: { university: uni.id, scheme: scheme.id, tool },
+          props: { university: uni.id, scheme: scheme.id, tool },
+        });
+      }
+    }
+  }
+  return paths;
+}
+
+const { university: uniId, scheme: schemeId, tool } = Astro.props;
+const uni = getUniversity(uniId);
+const sc = uni && getScheme(uni, schemeId);
+const br = sc && getBranch(sc, DEFAULT_BRANCH);
+
+if (!sc || !br || !['sgpa', 'cgpa', 'percentage'].includes(tool)) {
+  return Astro.redirect(`/${uniId || 'vtu'}/${schemeId || '2022'}/sgpa`);
+}
+
+const title = `${tool.toUpperCase()} Calculator — ${uni.name} ${sc.name}`;
+const description = `Calculate ${tool.toUpperCase()} for ${uni.name} (${sc.name}). Free, accurate, real-time results.`;
+
+const semesters = br.semesters.map((s) => ({
+  semester: s.semester,
+  name: s.name,
+  subjects: s.subjects.map((sub) => ({ code: sub.code, name: sub.name, credits: sub.credits, type: sub.type })),
+}));
+---
+
+<Layout title={title} description={description} pathname={Astro.url.pathname}>
+  <a href="/" style="text-decoration: none; color: inherit;">&larr; Back to home</a>
+  <Calculator
+    schemeId={schemeId}
+    branchId={DEFAULT_BRANCH}
+    branches={sc.branches.map(b => ({ id: b.id, short: b.short, name: b.name }))}
+    tool={tool}
+    semesters={semesters}
+    gradeTable={sc.gradeTable}
+    cgpaToPercentage={sc.cgpaToPercentage}
+    lateralEntry={sc.lateralEntry}
+  />
+</Layout>
