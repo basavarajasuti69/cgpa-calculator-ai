@@ -8,11 +8,11 @@ const { noAds = false } = Astro.props;
       <div class="footer-brand">
         <span class="brand-mark">Σ</span>
         <div>
-          <div class="ink" style="font-family: var(--font-family-serif); font-size: 22px;">CGPA Studio</div>
-          <div class="body-sm" style="color:var(--color-muted);">Marks-card calculator for university students</div>
+          <div class="ink" style="font-family: var(--font-family-serif); font-size: 22px; color: var(--color-dark-ink);">CGPA Studio</div>
+          <div class="body-sm" style="color:var(--color-dark-muted);">Marks-card calculator for university students</div>
         </div>
       </div>
-      <p class="body-sm" style="max-width: 420px; color:var(--color-body); margin-top: 16px;">
+      <p class="body-sm" style="max-width: 420px; color:var(--color-dark-muted); margin-top: 16px;">
         SGPA, CGPA and percentage — credits pre-filled, formulas visible, nothing stored on a server. Built for VTU, Anna, KTU, SRM, VIT, IPU and Saveetha.
       </p>
       <div style="display:flex; gap:10px; margin-top: 14px;">
@@ -45,8 +45,8 @@ const { noAds = false } = Astro.props;
     </div>
   </div>
   <div class="container" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--color-hairline); display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-    <span class="body-sm" style="color:var(--color-muted);">© {new Date().getFullYear()} CGPA Calculator AI · Not affiliated with VTU.</span>
-    {!noAds && <span class="body-sm" style="color:var(--color-muted);">No ads. No login. Just grades.</span>}
+    <span class="body-sm" style="color:var(--color-dark-muted);">© {new Date().getFullYear()} CGPA Calculator AI · Not affiliated with VTU.</span>
+    {!noAds && <span class="body-sm" style="color:var(--color-dark-muted);">No ads. No login. Just grades.</span>}
   </div>
 </footer>
 
@@ -57,9 +57,9 @@ const { noAds = false } = Astro.props;
   }
   .footer-brand { display: flex; gap: 12px; align-items: center; }
   .footer-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-  .footer-head { margin: 0 0 10px; color: #f4c430; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
-  .footer-cols a { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: #f4efe4; }
-  .footer-cols a:hover { color: var(--color-link); text-decoration: underline; }
+  .footer-head { margin: 0 0 10px; color: var(--color-secondary); font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+  .footer-cols a { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: var(--color-dark-ink); }
+  .footer-cols a:hover { color: var(--color-primary); text-decoration: underline; }
   @media (max-width: 640px) {
     .footer-cols { grid-template-columns: 1fr 1fr; }
   }

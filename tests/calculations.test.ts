@@ -37,6 +37,79 @@ describe('grade table', () => {
     expect(marksToGradePoint(45, VTU_GRADE_TABLE)).toBe(5);
     expect(marksToGradePoint(30, VTU_GRADE_TABLE)).toBe(0);
   });
+
+  it('marks-to-GP handles boundary values', () => {
+    expect(marksToGradePoint(90, VTU_GRADE_TABLE)).toBe(10);
+    expect(marksToGradePoint(100, VTU_GRADE_TABLE)).toBe(10);
+    expect(marksToGradePoint(80, VTU_GRADE_TABLE)).toBe(9);
+    expect(marksToGradePoint(70, VTU_GRADE_TABLE)).toBe(8);
+    expect(marksToGradePoint(60, VTU_GRADE_TABLE)).toBe(7);
+    expect(marksToGradePoint(50, VTU_GRADE_TABLE)).toBe(6);
+    expect(marksToGradePoint(40, VTU_GRADE_TABLE)).toBe(5);
+    expect(marksToGradePoint(0, VTU_GRADE_TABLE)).toBe(0);
+    expect(marksToGradePoint(39, VTU_GRADE_TABLE)).toBe(0);
+  });
+});
+
+describe('SGPA — marks-based entry mode', () => {
+  const sem = {
+    semester: 1,
+    name: 'Semester 1',
+    subjects: [
+      { code: 'XX11', name: 'S1', credits: 3, type: 'core' as const, marks: 95 },   // 3×10=30
+      { code: 'XX12', name: 'S2', credits: 3, type: 'core' as const, marks: 85 },   // 3×9=27
+      { code: 'XX13', name: 'S3', credits: 3, type: 'core' as const, marks: 75 },   // 3×8=24
+      { code: 'XX14', name: 'S4', credits: 3, type: 'core' as const, marks: 65 },   // 3×7=21
+      { code: 'XX15', name: 'S5', credits: 3, type: 'core' as const, marks: 55 },   // 3×6=18
+      { code: 'XX16', name: 'S6', credits: 1, type: 'lab' as const, marks: 45 },    // 1×5=5
+      { code: 'XX17', name: 'S7', credits: 1, type: 'lab' as const, marks: 95 },    // 1×10=10
+      { code: 'XX18', name: 'S8', credits: 2, type: 'core' as const, marks: 30 },   // 2×0=0
+    ],
+  };
+
+  it('computes SGPA from marks using grade table bands', () => {
+    const scale = gradeTableToScale(VTU_GRADE_TABLE);
+    const r = computeSemester(sem, VTU_GRADE_TABLE, scale, 'credit-weighted', []);
+    // 3×10+3×9+3×8+3×7+3×6+1×5+1×10+2×0 = 30+27+24+21+18+5+10+0 = 135
+    // credits = 3+3+3+3+3+1+1+2 = 19
+    // SGPA = 135/19 = 7.105...
+    expect(r.totalCredits).toBe(19);
+    expect(r.totalCreditPoints).toBe(135);
+    expect(r.sgpa).toBeCloseTo(135 / 19, 4);
+  });
+
+  it('marks entry with invalid marks (out of range) gets 0 GP but counts in denominator', () => {
+    const scale = gradeTableToScale(VTU_GRADE_TABLE);
+    const semWithBad = {
+      ...sem,
+      subjects: [
+        { code: 'XX11', name: 'S1', credits: 3, type: 'core' as const, marks: 150 }, // no range matches → 0 GP
+        { code: 'XX12', name: 'S2', credits: 3, type: 'core' as const, marks: -5 },  // no range matches → 0 GP
+        { code: 'XX13', name: 'S3', credits: 3, type: 'core' as const, marks: 95 },  // valid → 10 GP
+      ],
+    };
+    const r = computeSemester(semWithBad, VTU_GRADE_TABLE, scale, 'credit-weighted', []);
+    // All 3 count: credits=9, points=0+0+30=30
+    expect(r.totalCredits).toBe(9);
+    expect(r.totalCreditPoints).toBe(30);
+    expect(r.sgpa).toBeCloseTo(30 / 9, 4);
+  });
+
+  it('marks entry with undefined marks excludes subject from denominator', () => {
+    const scale = gradeTableToScale(VTU_GRADE_TABLE);
+    const semWithEmpty = {
+      ...sem,
+      subjects: [
+        { code: 'XX11', name: 'S1', credits: 3, type: 'core' as const }, // no marks → excluded
+        { code: 'XX12', name: 'S2', credits: 3, type: 'core' as const, marks: 95 }, // 3×10=30
+      ],
+    };
+    const r = computeSemester(semWithEmpty, VTU_GRADE_TABLE, scale, 'credit-weighted', []);
+    // Only XX12: credits=3, points=30
+    expect(r.totalCredits).toBe(3);
+    expect(r.totalCreditPoints).toBe(30);
+    expect(r.sgpa).toBeCloseTo(10, 4);
+  });
 });
 
 describe('SGPA — verified example (semester I)', () => {

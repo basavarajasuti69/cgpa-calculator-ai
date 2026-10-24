@@ -45,7 +45,7 @@ export interface Scheme {
   gradeTable: GradeEntry[];
   gradeScale: GradeScale; // derived letter -> point lookup
   formulaType: FormulaType;
-  cgpaToPercentage: { multiplier: number }; // Percentage = CGPA × multiplier
+  cgpaToPercentage: { multiplier: number; formula?: string; note?: string; alternatives?: Array<{ formula: string; note: string }> }; // Percentage = CGPA × multiplier, or custom formula
   lateralEntry: { skipFirstNSemesters: number };
   sourceUrl: string;
   lastVerified: string; // ISO date

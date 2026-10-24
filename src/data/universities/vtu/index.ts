@@ -97,7 +97,8 @@ const university: University = {
       cgpaFormulaNote: 'Unverified pending primary PDF.',
     }),
     scheme('2018', 'VTU 2018 Scheme', 'verified', '18', {
-      cgpaFormulaNote: 'Percentage formula unverified for 2018: (CGPA - 0.75) × 10 is used by some schemes; CGPA × 10 is shown here as default. UI shows "check with VTU" until confirmed on vtu.ac.in.',
+      cgpaToPercentage: { multiplier: 10, formula: '(CGPA - 0.75) * 10', note: 'Percentage formula for VTU 2018 scheme: (CGPA - 0.75) × 10. Verify against official VTU 2018 regulation before relying on this conversion.' },
+      cgpaFormulaNote: 'Percentage formula unverified for 2018: (CGPA - 0.75) × 10 is the scheme-specific rule. CGPA × 10 is shown here as default pending confirmation on vtu.ac.in.',
     }),
   ],
 };
