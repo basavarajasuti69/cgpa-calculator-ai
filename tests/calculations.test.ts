@@ -204,3 +204,55 @@ describe('Anna University R2021 — U/RA grade exclusion', () => {
     expect(r.cgpa).toBeCloseTo(7.0, 4);
   });
 });
+
+describe('KTU 2024/2019 — failed courses stay in denominator', () => {
+  const KTU_GRADE_ENTRIES = [
+    { letter: 'S', gradePoint: 10 },
+    { letter: 'A+', gradePoint: 9 },
+    { letter: 'A', gradePoint: 8.5 },
+    { letter: 'B+', gradePoint: 8 },
+    { letter: 'B', gradePoint: 7.5 },
+    { letter: 'C+', gradePoint: 7 },
+    { letter: 'C', gradePoint: 6.5 },
+    { letter: 'D', gradePoint: 6 },
+    { letter: 'P', gradePoint: 5.5 },
+    { letter: 'F', gradePoint: 0 },
+    { letter: 'FE', gradePoint: 0 },
+    { letter: 'Ab', gradePoint: 0 },
+    { letter: 'I', gradePoint: 0 },
+  ];
+  const KTU_SCALE = gradeTableToScale(KTU_GRADE_ENTRIES);
+
+  const semWithFail = {
+    semester: 1,
+    name: 'Semester 1',
+    subjects: [
+      { code: 'CS101', name: 'Programming', credits: 4, type: 'core' as const, grade: 'A' },   // 4×8.5=34
+      { code: 'CS102', name: 'Data Structures', credits: 3, type: 'core' as const, grade: 'F' }, // 3×0=0, counts in denom
+      { code: 'CS103', name: 'Digital Logic', credits: 3, type: 'core' as const, grade: 'P' },   // 3×5.5=16.5
+    ],
+  };
+
+  it('counts F (0 pts) credits in SGPA denominator', () => {
+    const r = computeSemester(semWithFail, KTU_GRADE_ENTRIES, KTU_SCALE, 'credit-weighted', []);
+    // All 3 courses count: credits = 4+3+3 = 10, points = 34+0+16.5 = 50.5
+    // SGPA = 50.5/10 = 5.05
+    expect(r.totalCredits).toBe(10);
+    expect(r.totalCreditPoints).toBe(50.5);
+    expect(r.sgpa).toBeCloseTo(5.05, 4);
+  });
+
+  it('lateral entry skips first two semesters for CGPA', () => {
+    const semList = [
+      { semester: 1, name: 'Sem 1', subjects: [{ code: 'S1', name: 'S1', credits: 4, type: 'core' as const, grade: 'S' }] }, // 4×10=40
+      { semester: 2, name: 'Sem 2', subjects: [{ code: 'S2', name: 'S2', credits: 4, type: 'core' as const, grade: 'S' }] }, // 4×10=40
+      { semester: 3, name: 'Sem 3', subjects: [{ code: 'S3', name: 'S3', credits: 4, type: 'core' as const, grade: 'A' }] }, // 4×8.5=34
+    ];
+    const r = computeCGPA(semList, KTU_GRADE_ENTRIES, KTU_SCALE, 'credit-weighted', 2, []);
+    // Only Sem 3 counts: credits = 4, points = 34, CGPA = 34/4 = 8.5
+    expect(r.totalCredits).toBe(4);
+    expect(r.totalCreditPoints).toBe(34);
+    expect(r.cgpa).toBeCloseTo(8.5, 4);
+    expect(r.skipped).toBe(2);
+  });
+});

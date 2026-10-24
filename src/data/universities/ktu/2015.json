@@ -1,0 +1,38 @@
+{
+  "regulation": {
+    "id": "2015",
+    "name": "KTU 2015 Scheme",
+    "status": "draft",
+    "sources": [
+      {
+        "url": "https://ktu.edu.in/academics/scheme",
+        "clauses": ["scheme index - 2015 scheme listed"],
+        "retrievedDate": "2026-10-24",
+        "note": "2015 scheme listed on ktu.edu.in scheme page but official regulation PDF not located in this pass."
+      },
+      {
+        "url": "https://www.ktustudents.in/2023/07/apjaktu-academic-cgpa-to-percentage.html",
+        "clauses": ["U.O.No. 1867/2023/KTU"],
+        "retrievedDate": "2026-10-24",
+        "note": "Third-party mirror of U.O. 1867/2023/KTU dated 27.07.2023 recommending CGPA*10 for 2015 scheme - NOT confirmed on ktu.edu.in"
+      }
+    ],
+    "gradeTable": [],
+    "gradeScale": {},
+    "formulaType": "credit-weighted",
+    "cgpaToPercentage": { "multiplier": null, "formula": "unverified", "alternatives": [ { "formula": "CGPA * 10", "source": "U.O.No. 1867/2023/KTU recommendation (third-party mirror)", "note": "Unverified - not confirmed on ktu.edu.in" }, { "formula": "unverified", "source": "official 2015 regulation not located" } ] },
+    "lateralEntry": { "skipFirstNSemesters": "unverified" },
+    "totalCredits": { "regular": "unverified", "academic": "unverified", "activity": "unverified" },
+    "cgpaStartSemester": { "regular": "unverified", "lateral": "unverified" },
+    "backlogPolicy": { "failedCreditsRemainInDenominator": "unverified", "notes": "Official 2015 regulation not located - all rules unverified" },
+    "nonComputableCourses": [],
+    "mandatoryActivityCredits": "unverified",
+    "mandatoryActivityExcludedFromCGPA": "unverified",
+    "creditRelaxation": { "enabled": false },
+    "level5Elective": { "enabled": false },
+    "classThresholds": [],
+    "rounding": "unverified",
+    "sourceUrl": "https://ktu.edu.in/academics/scheme",
+    "lastVerified": "2026-10-24"
+  }
+}

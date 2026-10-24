@@ -1,0 +1,63 @@
+{
+  "regulation": {
+    "id": "2019",
+    "name": "KTU 2019 Scheme",
+    "status": "draft",
+    "sources": [
+      {
+        "url": "https://ktu.edu.in/academics/scheme",
+        "clauses": ["scheme index"],
+        "retrievedDate": "2026-10-24"
+      },
+      {
+        "url": "https://mbits.ac.in/wp-content/uploads/2024/10/KTU-Regulations.pdf",
+        "clauses": ["R6.16", "R6.21"],
+        "retrievedDate": "2026-10-24",
+        "note": "College-hosted copy of 2019 regulation text; cross-checked."
+      },
+      {
+        "url": "http://www.ee.cet.ac.in/downloads/ktuDocs/1584-2023-KTU_R.6.21%20CGPA%20to%20Percentage%20Conversion.pdf",
+        "clauses": ["R6.21 amendment"],
+        "retrievedDate": "2026-10-24",
+        "note": "U.O.No. 1584/2023/KTU dated 29.06.2023 amending 2019 R6.21 to CGPA * 10"
+      }
+    ],
+    "gradeTable": [
+      { "letter": "S", "gradePoint": 10, "minMarks": 90, "maxMarks": 100 },
+      { "letter": "A+", "gradePoint": 9, "minMarks": 85, "maxMarks": 89 },
+      { "letter": "A", "gradePoint": 8.5, "minMarks": 80, "maxMarks": 84 },
+      { "letter": "B+", "gradePoint": 8, "minMarks": 75, "maxMarks": 79 },
+      { "letter": "B", "gradePoint": 7.5, "minMarks": 70, "maxMarks": 74 },
+      { "letter": "C+", "gradePoint": 7, "minMarks": 65, "maxMarks": 69 },
+      { "letter": "C", "gradePoint": 6.5, "minMarks": 60, "maxMarks": 64 },
+      { "letter": "D", "gradePoint": 6, "minMarks": 55, "maxMarks": 59 },
+      { "letter": "P", "gradePoint": 5.5, "minMarks": 50, "maxMarks": 54 },
+      { "letter": "F", "gradePoint": 0, "minMarks": null, "maxMarks": 49 },
+      { "letter": "FE", "gradePoint": 0, "minMarks": null, "maxMarks": null },
+      { "letter": "I", "gradePoint": 0, "minMarks": null, "maxMarks": null }
+    ],
+    "gradeScale": { "S": 10, "A+": 9, "A": 8.5, "B+": 8, "B": 7.5, "C+": 7, "C": 6.5, "D": 6, "P": 5.5, "F": 0, "FE": 0, "I": 0 },
+    "formulaType": "credit-weighted",
+    "cgpaToPercentage": { "multiplier": 10, "formula": "CGPA * 10", "alternatives": [ { "formula": "CGPA * 10 - 2.5", "source": "Original 2019 regulation text R6.16/R6.21", "note": "Superseded by U.O.No. 1584/2023/KTU (June 2023) amendment to CGPA * 10" } ] },
+    "lateralEntry": { "skipFirstNSemesters": 2 },
+    "totalCredits": { "regular": 160, "academic": 160, "activity": 2 },
+    "cgpaStartSemester": { "regular": 1, "lateral": 3 },
+    "backlogPolicy": {
+      "failedCreditsRemainInDenominator": true,
+      "failedGradeLetters": ["F", "FE", "I"],
+      "notes": "R6.21: SGPA and CGPA include ALL courses including F, FE, I (grade point 0). Credits of failed courses STAY in the denominator. Lateral entry: first and second semester credits not counted."
+    },
+    "nonComputableCourses": ["Minor", "Honours", "Challenge examinations"],
+    "mandatoryActivityCredits": 2,
+    "mandatoryActivityExcludedFromCGPA": true,
+    "creditRelaxation": { "enabled": false },
+    "level5Elective": { "enabled": false },
+    "classThresholds": [
+      { "class": "FCD", "minCGPA": 8.0, "label": "First Class with Distinction", "conditions": "CGPA >= 8.0" },
+      { "class": "FC", "minCGPA": 6.5, "maxCGPA": 8.0, "label": "First Class", "conditions": "CGPA >= 6.5 and above" }
+    ],
+    "rounding": "two decimal places",
+    "sourceUrl": "https://ktu.edu.in/academics/scheme",
+    "lastVerified": "2026-10-24"
+  }
+}
