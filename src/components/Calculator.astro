@@ -343,7 +343,7 @@ const pathBase = branchId ? `/vtu/${schemeId}/${branchId}` : `/vtu/${schemeId}`;
         if (modeGradeBtn) modeGradeBtn.classList.toggle('is-active', currentMode === 'grade');
         if (modeMarksBtn) modeMarksBtn.classList.toggle('is-active', currentMode === 'marks');
 
-        const grades = Object.keys(gradeTable).sort((a, b) => (gradeTable[b] || 0) - (gradeTable[a] || 0));
+        const grades = gradeTable.map(e => e.letter).sort((a, b) => (gradeLookup[b] || 0) - (gradeLookup[a] || 0));
         if (!semObj.subjects || semObj.subjects.length === 0) {
           tbody.innerHTML = '<div style="padding:24px; color:var(--color-mute); text-align:center;">No subjects found for this semester.</div>';
           recompute();
