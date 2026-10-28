@@ -4,7 +4,13 @@
 <nav class="nav-bar" aria-label="Main navigation">
   <div class="nav-container">
     <a href="/" class="logo-link" aria-label="CGPA Calculator AI home">
-      <span aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:8px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-strong); font-weight:700; font-size:12px;">CG</span>
+      <span class="logo-mark" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+          <rect width="28" height="28" rx="7" fill="var(--logo-tile)"/>
+          <path d="M8 9h6l6 5-6 5H8z" fill="var(--logo-bar)"/>
+          <circle cx="14" cy="14" r="2" fill="var(--logo-hi)"/>
+        </svg>
+      </span>
       <span>
         <span class="brand-name">CGPA Calculator AI</span>
       </span>
@@ -31,9 +37,20 @@
 </nav>
 
 <style>
+  :root {
+    --logo-tile: #0f1b3d;
+    --logo-bar: #7fb0ff;
+    --logo-hi: #ffffff;
+  }
+  [data-theme="dark"] {
+    --logo-tile: #eaf1ff;
+    --logo-bar: #2f6bdb;
+    --logo-hi: #0f1b3d;
+  }
   .nav-bar { position: sticky; top: 0; z-index: 50; background: var(--color-bg); border-bottom: 1px solid var(--color-border); }
   .nav-container { max-width: 1100px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
   .logo-link { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--color-text-strong); }
+  .logo-mark { display: inline-flex; width: 28px; height: 28px; }
   .brand-name { font-weight: 700; letter-spacing: -0.01em; }
   .nav-actions { display: flex; align-items: center; gap: 8px; }
   .theme-toggle { border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text); border-radius: var(--radius-pill); padding: 6px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
@@ -41,6 +58,9 @@
   .theme-icon { display: none; }
   [data-theme="light"] .theme-icon-moon, :root:not([data-theme="dark"]) .theme-icon-moon { display: inline; }
   [data-theme="dark"] .theme-icon-sun { display: inline; }
+  @media (max-width: 640px) {
+    .logo-mark svg { width: 28px; height: 28px; }
+  }
 </style>
 
 <script is:inline>
@@ -64,19 +84,6 @@
         try { localStorage.setItem('cgpa-theme', 'dark'); } catch(e) {}
       }
       updateThemeToggle();
-      // update theme-color
-      const meta = document.querySelectorAll('meta[name="theme-color"]');
-      meta.forEach(m => m.remove());
-      const lightMeta = document.createElement('meta');
-      lightMeta.name = 'theme-color';
-      lightMeta.content = '#ffffff';
-      lightMeta.media = '(prefers-color-scheme: light)';
-      const darkMeta = document.createElement('meta');
-      darkMeta.name = 'theme-color';
-      darkMeta.content = '#0a0a0a';
-      darkMeta.media = '(prefers-color-scheme: dark)';
-      document.head.appendChild(lightMeta);
-      document.head.appendChild(darkMeta);
     });
   }
   updateThemeToggle();

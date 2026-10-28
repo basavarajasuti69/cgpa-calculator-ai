@@ -1,0 +1,46 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { usInstitutions } from '../../data/us';
+---
+
+<Layout title="US GPA Calculator | CGPA Calculator AI" description="US college GPA calculators with school-specific grading rules where verified. Generic 4.0 calculator and international student tools." pathname="/us">
+  <section class="section">
+    <div class="container" style="max-width: 48rem;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">USA</p>
+      <h1 class="heading-lg" style="margin-bottom: 12px;">US College GPA Calculators</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 64ch;">
+        Use the generic calculator or pick a school. Pages for schools marked "draft" are unverified; "no official GPA" schools are explained.
+      </p>
+      <div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-md);">
+        <a class="feature-card" href="/us/gpa-calculator" style="padding: var(--spacing-lg); text-decoration: none;">
+          <h2 style="margin: 0 0 8px 0; font-size: 1.25rem; font-weight: 700; color: var(--color-text-strong);">Generic US GPA Calculator (4.0)</h2>
+          <p class="body-sm" style="margin: 0; color: var(--color-text);">Semester GPA, cumulative GPA, what-if, repeat simulator. Your school may use different rules.</p>
+        </a>
+        <a class="feature-card" href="/us/indian-cgpa-to-4-0" style="padding: var(--spacing-lg); text-decoration: none;">
+          <h2 style="margin: 0 0 8px 0; font-size: 1.25rem; font-weight: 700; color: var(--color-text-strong);">Indian CGPA to US 4.0 GPA</h2>
+          <p class="body-sm" style="margin: 0; color: var(--color-text);">Estimate only. Link to official WES/ECE. No simple fixed ratio claimed.</p>
+        </a>
+        <a class="feature-card" href="/us/gpa-planner" style="padding: var(--spacing-lg); text-decoration: none;">
+          <h2 style="margin: 0 0 8px 0; font-size: 1.25rem; font-weight: 700; color: var(--color-text-strong);">GPA Planner</h2>
+          <p class="body-sm" style="margin: 0; color: var(--color-text);">What GPA do I need next semester to reach a target cumulative GPA?</p>
+        </a>
+      </div>
+      <h2 style="margin: var(--spacing-xl) 0 var(--spacing-md) 0; font-size: 1.5rem; font-weight: 700;">Schools</h2>
+      <div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-md);">
+        {usInstitutions.filter(u => u.id !== 'standard-4').map((inst) => (
+          <a class="feature-card" href={`/us/${inst.id}/gpa-calculator`} style="padding: var(--spacing-lg); text-decoration: none;" rel={inst.status === 'draft' || inst.status === 'no official GPA' ? 'nofollow' : undefined}>
+            <div style="display:flex; justify-content:space-between; gap:12px; align-items:start;">
+              <div>
+                <h3 style="margin: 0 0 6px 0; font-size: 1.1rem; font-weight: 700; color: var(--color-text-strong);">{inst.name}</h3>
+                <p class="body-sm" style="margin: 0; color: var(--color-text-muted);">Term: {inst.termSystem}, Credits: {inst.creditUnit}, Scale: {inst.scale}</p>
+              </div>
+              <span style="padding:2px 8px; border-radius:999px; border:1px solid var(--color-border); font-size:12px; color: var(--color-text-muted); text-transform:uppercase;">{inst.status}</span>
+            </div>
+            {inst.status !== 'verified' && <p class="body-sm" style="margin:8px 0 0 0; color: var(--color-text-muted);">{inst.notes}</p>}
+          </a>
+        ))}
+      </div>
+      <p class="body-sm" style="margin-top: var(--spacing-lg); color: var(--color-text-muted);">Not affiliated with or endorsed by any college or university; names are used only to describe grading rules.</p>
+    </div>
+  </section>
+</Layout>

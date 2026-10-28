@@ -1,0 +1,28 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Indian CGPA to US 4.0 GPA (Estimate) | CGPA Calculator AI" description="Indian CGPA to US 4.0 GPA estimate only. Not official. Links to WES/ECE." pathname="/us/indian-cgpa-to-4-0">
+  <section class="section">
+    <div class="container" style="max-width: 800px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">International Students</p>
+      <h1 class="heading-lg" style="margin-bottom: 12px;">Indian CGPA to US 4.0 GPA</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg);">This is an <strong>estimate only</strong>. Official conversions vary by evaluator (e.g. <a href="https://www.wes.org/">WES</a>, <a href="https://www.ece.org/">ECE</a>). We do not use a single universal formula as official.</p>
+      <div class="feature-card" style="padding: var(--spacing-lg);">
+        <label style="display:block; margin-bottom:8px; color:var(--color-text-strong);">Indian CGPA (10.0 scale)</label>
+        <input id="cgpa" type="number" min="0" max="10" step="0.01" style="padding:10px; border:1px solid var(--color-border); border-radius:10px; background:var(--color-surface); color:var(--color-text); width:200px;">
+        <button id="calc" class="button-primary" style="margin-left:12px;">Convert (estimate)</button>
+        <div id="result" style="margin-top:16px; color:var(--color-text-strong);"></div>
+        <p class="body-sm" style="margin-top:12px; color:var(--color-text-muted);">Method: linear scaling (CGPA/10)*4 as a rough approximation. Not endorsed or official.</p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.getElementById('calc')!.addEventListener('click', ()=>{
+    const v = parseFloat((document.getElementById('cgpa') as HTMLInputElement).value)||0;
+    const est = Math.min(4.0, Math.max(0, v/10*4));
+    (document.getElementById('result')!).innerText = `Estimated US 4.0 GPA: ${est.toFixed(2)} (ESTIMATE ONLY)`;
+  });
+</script>

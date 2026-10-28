@@ -1,0 +1,35 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="GPA Planner | CGPA Calculator AI" description="Calculate what GPA you need next semester to reach your target cumulative GPA." pathname="/us/gpa-planner">
+  <section class="section">
+    <div class="container" style="max-width: 800px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">USA • Planner</p>
+      <h1 class="heading-lg" style="margin-bottom: 12px;">GPA Planner</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg);">What GPA do I need next semester to reach X cumulative GPA?</p>
+      <div class="feature-card" style="padding: var(--spacing-lg); display:grid; gap:12px; max-width:400px;">
+        <label>Current GPA <input id="cgpa" type="number" step="0.01" style="width:100%; padding:8px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-surface); color:var(--color-text);"></label>
+        <label>Current Credits Attempted <input id="ccred" type="number" step="0.5" style="width:100%; padding:8px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-surface); color:var(--color-text);"></label>
+        <label>Target Cumulative GPA <input id="tgpa" type="number" step="0.01" style="width:100%; padding:8px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-surface); color:var(--color-text);"></label>
+        <label>Planned Credits Next Term <input id="pcred" type="number" step="0.5" style="width:100%; padding:8px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-surface); color:var(--color-text);"></label>
+        <button id="calc" class="button-primary">Calculate</button>
+        <div id="result" style="color:var(--color-text-strong);"></div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.getElementById('calc')!.addEventListener('click', ()=>{
+    const cg = parseFloat((document.getElementById('cgpa') as HTMLInputElement).value)||0;
+    const cc = parseFloat((document.getElementById('ccred') as HTMLInputElement).value)||0;
+    const tg = parseFloat((document.getElementById('tgpa') as HTMLInputElement).value)||0;
+    const pc = parseFloat((document.getElementById('pcred') as HTMLInputElement).value)||0;
+    const needed = pc>0 ? (tg*(cc+pc) - cg*cc)/pc : 0;
+    const res = document.getElementById('result')!;
+    if(needed < 0) res.innerText = 'Not possible with positive grades.';
+    else if(needed > 4.0) res.innerText = `Needed GPA: ${needed.toFixed(2)} (above 4.0, may not be possible)`;
+    else res.innerText = `Needed GPA next term: ${needed.toFixed(2)}`;
+  });
+</script>

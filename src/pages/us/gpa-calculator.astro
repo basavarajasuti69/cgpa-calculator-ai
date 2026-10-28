@@ -1,0 +1,53 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="US GPA Calculator (Generic 4.0) | CGPA Calculator AI" description="Generic US semester and cumulative GPA calculator with plus/minus. School-specific rules may differ." pathname="/us/gpa-calculator">
+  <section class="section">
+    <div class="container" style="max-width: 800px;">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">USA • Generic</p>
+      <h1 class="heading-lg" style="margin-bottom: 12px;">Generic US GPA Calculator</h1>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg);">Standard 4.0 plus/minus scale shown. Your school may use a different table. Pick your school for exact rules.</p>
+      <div class="feature-card" style="padding: var(--spacing-lg);">
+        <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:12px; margin-bottom:12px; font-weight:600; color:var(--color-text-strong);">
+          <div>Course</div>
+          <div>Credit Hours</div>
+          <div>Grade</div>
+        </div>
+        <div id="rows" style="display:grid; gap:8px;"></div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;">
+          <button id="add" class="button-secondary">Add course</button>
+          <button id="calc" class="button-primary">Calculate GPA</button>
+        </div>
+        <div id="result" style="margin-top:16px; color:var(--color-text-strong);"></div>
+        <p class="body-sm" style="margin-top:12px; color:var(--color-text-muted);">P/NP, S/U, W, I are typically excluded from GPA. Check your school's policy.</p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const grades = ['A','A-','B+','B','B-','C+','C','C-','D+','D','D-','F','P','NP','W','I'];
+  const pts: Record<string,number> = {A:4.0,'A-':3.7,'B+':3.3,B:3.0,'B-':2.7,'C+':2.3,C:2.0,'C-':1.7,'D+':1.3,D:1.0,'D-':0.7,F:0.0,P:-1,NP:-1,W:-1,I:-1};
+  const rows = document.getElementById('rows')!;
+  function addRow(){
+    const div = document.createElement('div');
+    div.style.display='grid'; div.style.gridTemplateColumns='2fr 1fr 1fr'; div.style.gap='12px';
+    div.innerHTML = `<input placeholder="Course" style="padding:8px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-surface); color:var(--color-text);"><input type="number" min="0" step="0.5" placeholder="3" style="padding:8px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-surface); color:var(--color-text);"><select style="padding:8px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-surface); color:var(--color-text);">${grades.map(g=>`<option value="${g}">${g}</option>`).join('')}</select>`;
+    rows.appendChild(div);
+  }
+  document.getElementById('add')!.addEventListener('click', addRow);
+  for(let i=0;i<4;i++) addRow();
+  document.getElementById('calc')!.addEventListener('click', ()=>{
+    let credits=0, points=0;
+    rows.querySelectorAll('div').forEach(r=>{
+      const inputs = r.querySelectorAll('input,select');
+      const c = parseFloat((inputs[1] as HTMLInputElement).value)||0;
+      const g = (inputs[2] as HTMLSelectElement).value;
+      const p = pts[g];
+      if(p >= 0 && c>0){ credits += c; points += p*c; }
+    });
+    const gpa = credits>0 ? points/credits : 0;
+    (document.getElementById('result')!).innerText = `GPA: ${gpa.toFixed(2)} (${credits} credit hours)`;
+  });
+</script>

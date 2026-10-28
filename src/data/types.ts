@@ -110,3 +110,42 @@ export function letterToGradePoint(letter: string, entries: GradeEntry[]): numbe
   const e = entries.find((x) => x.letter.toUpperCase() === String(letter).trim().toUpperCase());
   return e ? e.gradePoint : null;
 }
+
+/* US/International institutions */
+export type Region = 'IN' | 'US';
+export type TermSystem = 'semester' | 'quarter' | 'trimester';
+export type CreditUnit = 'credit hours' | 'units';
+export type RepeatPolicy = 'replace' | 'average' | 'both-count' | 'highest';
+
+export interface USGradeEntry {
+  grade: string;
+  points: number;
+  countsInGpa?: boolean;
+}
+
+export interface USInstitutionConfig {
+  id: string;
+  name: string;
+  region: Region;
+  institution: string;
+  catalogYear: string | number;
+  school?: string;
+  termSystem: TermSystem;
+  creditUnit: CreditUnit;
+  scale: number;
+  gradeTable: USGradeEntry[];
+  noPlusMinus?: boolean;
+  gpaFormula: string;
+  excludedGrades?: Array<{ grade: string; excluded: boolean; notes?: string }>;
+  repeatPolicy?: RepeatPolicy;
+  repeatPolicyNotes?: string;
+  creditRules?: string[];
+  honors?: { deansList?: string[]; latinHonors?: Array<{ level: string; gpaRange?: string; notes?: string }> };
+  majorGpa?: boolean;
+  transferCredits?: boolean;
+  sources: Array<{ title: string; url: string; retrieved: string }>;
+  status: 'verified' | 'draft' | 'no official GPA';
+  lastVerified: string;
+  notes?: string;
+  gpaPublished?: boolean;
+}

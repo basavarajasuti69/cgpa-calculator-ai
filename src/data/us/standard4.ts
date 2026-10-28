@@ -1,0 +1,45 @@
+import type { USInstitutionConfig } from '../types';
+
+const standard4: USInstitutionConfig = {
+  id: 'standard-4',
+  name: 'Standard U.S. 4.0 (General)',
+  region: 'US',
+  institution: 'Generic',
+  catalogYear: 2026,
+  termSystem: 'semester',
+  creditUnit: 'credit hours',
+  scale: 4.0,
+  gradeTable: [
+    { grade: 'A', points: 4.0 },
+    { grade: 'A-', points: 3.7 },
+    { grade: 'B+', points: 3.3 },
+    { grade: 'B', points: 3.0 },
+    { grade: 'B-', points: 2.7 },
+    { grade: 'C+', points: 2.3 },
+    { grade: 'C', points: 2.0 },
+    { grade: 'C-', points: 1.7 },
+    { grade: 'D+', points: 1.3 },
+    { grade: 'D', points: 1.0 },
+    { grade: 'D-', points: 0.7 },
+    { grade: 'F', points: 0.0 },
+  ],
+  gpaFormula: 'sum(credits x points)/sum(credits attempted)',
+  excludedGrades: [
+    { grade: 'P', excluded: true, notes: 'Pass/No Pass - excluded from GPA where policy states' },
+    { grade: 'NP', excluded: true },
+    { grade: 'S', excluded: true },
+    { grade: 'U', excluded: true },
+    { grade: 'W', excluded: true },
+    { grade: 'I', excluded: true },
+    { grade: 'IP', excluded: true },
+    { grade: 'AU', excluded: true },
+  ],
+  repeatPolicy: 'replace',
+  sources: [{ title: 'Standard common 4.0 plus/minus', url: 'https://registrar.princeton.edu/', retrieved: '2026-10-28' }],
+  status: 'draft',
+  lastVerified: '2026-10-28',
+  notes: 'Your school may use a different table. Pick your school for exact rules.',
+  gpaPublished: true,
+};
+
+export default standard4;
