@@ -9,7 +9,14 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
 	site: 'https://cgpacalculatorai.com',
 	adapter: cloudflare(),
-	integrations: [sitemap()],
+	integrations: [sitemap({
+		filter: (page) => {
+			const url = new URL(page);
+			const p = url.pathname;
+			if (p === '/404' || p === '/500' || p.startsWith('/status') || p.startsWith('/my-results') || p.startsWith('/request-college') || p.startsWith('/api/') || p === '/tools/ask' || p === '/tools/scanner' || p === '/tools/what-if') return false;
+			return true;
+		}
+	})],
 
 	vite: {
 		plugins: [tailwindcss()]
