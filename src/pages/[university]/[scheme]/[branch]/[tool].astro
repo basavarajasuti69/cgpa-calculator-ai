@@ -1,4 +1,5 @@
 ---
+import { SITE_URL } from "../../../../config/site";
 import Layout from '../../../../layouts/Layout.astro';
 import Calculator from '../../../../components/Calculator.astro';
 import {
@@ -66,7 +67,7 @@ const jsonLd = {
         "@type": "ListItem",
         "position": i + 1,
         "name": b.label,
-        "item": `https://cgpacalculatorai.com${b.href}`,
+        "item": SITE_URL + b.href,
       })),
     },
     {
@@ -75,7 +76,7 @@ const jsonLd = {
       "applicationCategory": "Education",
       "applicationSubCategory": "Calculator",
       "operatingSystem": "Web",
-      "url": `https://cgpacalculatorai.com/vtu/${schemeId}/${branchId}/${tool}/`,
+      "url": SITE_URL + "/vtu/" + schemeId + "/" + branchId + "/" + tool + "/",
       "description": description,
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
       "audience": { "@type": "Audience", "audienceType": "University students" },
@@ -83,6 +84,7 @@ const jsonLd = {
   ],
 };
 ---
+
 
 <Layout title={title} description={description} pathname={Astro.url.pathname}>
   <section class="calc-page">

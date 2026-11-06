@@ -1,0 +1,18 @@
+# Cloudflare Redirect Rule (Redirect Rules) or Worker
+# Add 301 redirect from www to non-www
+
+# Option 1: Redirect Rules (recommended)
+# If Hostname equals www.cgpacalculatorai.com -> Redirect to https://cgpacalculatorai.com/$1 with 301
+
+# Option 2: Worker snippet
+addEventListener('fetch', event => {
+  event.respondWith(handleRequest(event.request))
+})
+async function handleRequest(request) {
+  const url = new URL(request.url)
+  if (url.hostname === 'www.cgpacalculatorai.com') {
+    url.hostname = 'cgpacalculatorai.com'
+    return Response.redirect(url.toString(), 301)
+  }
+  return fetch(request)
+}

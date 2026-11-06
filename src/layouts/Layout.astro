@@ -4,10 +4,11 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { getPageSEO } from '../lib/seo.ts';
 
+import { SITE_URL } from '../config/site';
 const { title = 'CGPA Calculator AI', description = '', pathname = '/', noAds = false } = Astro.props;
 const seo = getPageSEO({ title, description, pathname });
 
-const canonical = `${new URL(Astro.request.url).origin}${pathname}`;
+const canonical = `${SITE_URL}${pathname}`;
 const jsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebApplication",
