@@ -13,7 +13,7 @@
   --color-primary: #0d2442;
   --color-primary-contrast: #ffffff;
   --color-primary-soft: #f1efed;
-  --color-link: #3898ec;
+  --color-link: #1565c0;
   --color-error: #ea384c;
   --color-success: #0f7a6b;
   --color-footer-bg: #f5f6f8;
@@ -258,7 +258,7 @@ img, picture, video, canvas, svg {
 /* ---------- Buttons ---------- */
 .button-primary {
   background: var(--color-primary);
-  color: #0a0a0a;
+  color: var(--color-primary-contrast);
   font-size: var(--font-size-button-lg);
   line-height: var(--line-height-button-lg);
   font-weight: 600;
@@ -292,7 +292,7 @@ img, picture, video, canvas, svg {
 
 .button-primary-sm {
   background: var(--color-primary);
-  color: #ffffff;
+  color: var(--color-primary-contrast);
   font-size: var(--font-size-button-md);
   line-height: var(--line-height-button-md);
   font-weight: 600;
@@ -520,6 +520,8 @@ footer a {
 
 .link-color {
   color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .sunset-bar {
@@ -695,7 +697,7 @@ footer a {
   border-radius: var(--radius-pill);
   font-size: 13px;
   font-weight: 600;
-  color: var(--color-text-muted);
+  color: var(--color-text);
 }
 
 .seg-tab.is-active {

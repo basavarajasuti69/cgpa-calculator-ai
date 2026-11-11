@@ -50,15 +50,15 @@ const pathBase = branchId ? `/${uniId}/${schemeId}/${branchId}` : `/${uniId}/${s
     )}
     {tool === 'sgpa' && (
       <div class="sem-wrap">
-        <span class="field-label">Semester</span>
+        <label class="field-label" for="semester-select">Semester</label>
         <select id="semester-select" class="sr-only">
           {semesters.map((s) => (
             <option value={s.semester}>{s.name || `Semester ${s.semester}`}</option>
           ))}
         </select>
-        <div class="sem-pills" id="sem-pills" role="tablist">
+        <div class="sem-pills" id="sem-pills" role="tablist" aria-label="Semester">
           {semesters.map((s, i) => (
-            <button type="button" class:list={['sem-pill', i === 0 && 'is-active']} data-sem={s.semester}>
+            <button type="button" role="tab" aria-selected={i === 0} tabindex={i === 0 ? 0 : -1} aria-controls="semester-content" id={`sem-tab-${i}`} class:list={['sem-pill', i === 0 && 'is-active']} data-sem={s.semester}>
               Sem {s.semester}
             </button>
           ))}
@@ -67,7 +67,7 @@ const pathBase = branchId ? `/${uniId}/${schemeId}/${branchId}` : `/${uniId}/${s
     )}
   </div>
 
-  <div class="seg-tabs" role="tablist">
+  <div class="seg-tabs">
     <a href={`${pathBase}/sgpa`} class:list={['seg-tab', tool === 'sgpa' && 'is-active']}>SGPA</a>
     <a href={`${pathBase}/cgpa`} class:list={['seg-tab', tool === 'cgpa' && 'is-active']}>CGPA</a>
     <a href={`${pathBase}/percentage`} class:list={['seg-tab', tool === 'percentage' && 'is-active']}>Percentage</a>
@@ -89,7 +89,7 @@ const pathBase = branchId ? `/${uniId}/${schemeId}/${branchId}` : `/${uniId}/${s
         </label>
       )}
 
-      <div class="marksheet">
+      <div class="marksheet" role="tabpanel" aria-labelledby="sem-tab-0" id="semester-content">
         <div class="marksheet-head">
           <div style="display:flex; align-items:center; gap:10px;">
             <strong class="ink" style="flex:1;">Tap a grade or enter marks. Credits are already filled.</strong>
@@ -133,7 +133,7 @@ const pathBase = branchId ? `/${uniId}/${schemeId}/${branchId}` : `/${uniId}/${s
 
   {tool === 'cgpa' && (
     <>
-      <div class="marksheet">
+      <div class="marksheet" role="tabpanel" aria-labelledby="sem-tab-0" id="semester-content">
         <div class="marksheet-head">
           <div>
             <strong class="ink">Enter each semester’s SGPA</strong>
