@@ -37,13 +37,13 @@ if (!sc || !br || !['sgpa', 'cgpa', 'percentage'].includes(tool)) {
 }
 
 const branches = sc.branches.map(b => ({ id: b.id, short: b.short, name: b.name }));
-const toolLabel = { sgpa: 'SGPA Calculator', cgpa: 'CGPA Calculator', percentage: 'CGPA to Percentage Calculator' }[tool];
+const toolLabel = { sgpa: 'SGPA Calculator', cgpa: 'CGPA Calculator', percentage: 'Percentage Converter' }[tool];
 
 const firstSem = br.semesters[0];
 
-const title = `${br.short} ${toolLabel} — All Semesters — VTU ${sc.name}`;
+const title = `${br.short} ${toolLabel} · ${uni.id.toUpperCase()} ${sc.id}`;
 const prefilled = uni.id === 'vtu' ? 'VTU credits are pre-filled per scheme.' : 'Add your own subjects and credits in manual mode.';
-const description = `Calculate ${toolLabel.toLowerCase()} for {br.name} all semesters (${sc.name}) at ${uni.name}. ${prefilled} Free, accurate, real-time results.`;
+const description = `${toolLabel} for ${br.name} (${sc.name}). Credits pre-filled. Free, no login.`;
 
 const semesters = br.semesters.map((s) => ({
   semester: s.semester,
@@ -86,7 +86,7 @@ const jsonLd = {
 ---
 
 
-<Layout title={title} description={description} pathname={Astro.url.pathname}>
+<Layout title={title} description={description} pathname={Astro.url.pathname} noindex={uni.id !== 'vtu'}>
   <section class="calc-page">
     <div class="container calc-shell">
       <nav class="breadcrumbs" aria-label="Breadcrumb" style="margin-bottom: 12px;">

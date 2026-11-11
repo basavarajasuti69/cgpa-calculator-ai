@@ -55,9 +55,10 @@ const semIndex = br.semesters.findIndex((s) => s.semester === semNum);
 const prevSem = semIndex > 0 ? br.semesters[semIndex - 1] : null;
 const nextSem = semIndex < br.semesters.length - 1 ? br.semesters[semIndex + 1] : null;
 
-const toolLabel = { sgpa: 'SGPA Calculator', cgpa: 'CGPA Calculator', percentage: 'CGPA to Percentage Calculator' }[tool];
-const title = `${br.short} ${toolLabel} — ${sem.name} — VTU ${sc.name}`;
-const description = `Calculate ${toolLabel.toLowerCase()} for ${br.name} ${sem.name} (${sc.name}) at ${uni.name}. Subjects and credits pre-filled from the official VTU ${sc.name} scheme. Free, accurate, real-time results.`;
+const toolLabel = { sgpa: 'SGPA Calculator', cgpa: 'CGPA Calculator', percentage: 'Percentage Converter' }[tool];
+const titleLabel = tool === 'percentage' ? 'Percentage' : toolLabel;
+const title = `${br.short} ${titleLabel} · S${semNum} · ${uni.id.toUpperCase()} ${sc.id}`;
+const description = `${toolLabel} for ${sem.name}, ${br.short}. VTU ${sc.id}. Credits pre-filled. Free.`;
 
 const breadcrumb = [
   { label: 'VTU', href: '/universities' },

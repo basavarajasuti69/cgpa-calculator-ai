@@ -5,7 +5,7 @@ import Footer from '../components/Footer.astro';
 import { getPageSEO } from '../lib/seo.ts';
 
 import { SITE_URL } from '../config/site';
-const { title = 'CGPA Calculator AI', description = '', pathname = '/', noAds = false } = Astro.props;
+const { title = 'CGPA Calculator AI', description = '', pathname = '/', noAds = false, noindex = false } = Astro.props;
 const seo = getPageSEO({ title, description, pathname });
 
 const canonical = `${SITE_URL}${pathname}`;
@@ -29,6 +29,7 @@ const jsonLd = JSON.stringify({
     <meta name="generator" content={Astro.generator} />
     <title>{seo.title}</title>
     <meta name="description" content={seo.description} />
+    {noindex && <meta name="robots" content="noindex,follow" />}
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />

@@ -8,9 +8,11 @@ export function getStaticPaths() {
 
 const { school } = Astro.params;
 const inst = getUSInstitution(school as string);
+const shortName: Record<string,string> = { penn: 'UPenn', mit: 'MIT', stanford: 'Stanford', yale: 'Yale', brown: 'Brown' };
+const displayName = shortName[school] || inst?.name || school;
 ---
 
-<Layout title={`${inst?.name || school} GPA Calculator | CGPA Calculator AI`} description={`${inst?.name} grading and GPA calculator. Rules from official sources where available.`} pathname={`/us/${school}/gpa-calculator`}>
+<Layout title={`${displayName} GPA Calculator`} description={`${inst?.name} grading and GPA calculator. Rules from official sources where available.`} pathname={`/us/${school}/gpa-calculator`}>
   <section class="section">
     <div class="container" style="max-width: 800px;">
       <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">USA • {inst?.name}</p>

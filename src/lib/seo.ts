@@ -13,8 +13,13 @@ export function getPageSEO({ title = SITE_NAME, description = DEFAULT_DESCRIPTIO
   description?: string;
   pathname?: string;
 }): PageSEO {
+  const pipeBrand = ` | ${SITE_NAME}`;
+  const dashBrand = ` — ${SITE_NAME}`;
+  let cleanTitle = title;
+  if (cleanTitle.endsWith(pipeBrand)) cleanTitle = cleanTitle.slice(0, -pipeBrand.length);
+  else if (cleanTitle.endsWith(dashBrand)) cleanTitle = cleanTitle.slice(0, -dashBrand.length);
   return {
-    title: title === SITE_NAME ? title : `${title} | ${SITE_NAME}`,
+    title: `${cleanTitle} | ${SITE_NAME}`,
     description,
   };
 }

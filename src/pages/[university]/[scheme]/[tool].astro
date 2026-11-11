@@ -35,7 +35,7 @@ if (!sc || !br || !['sgpa', 'cgpa', 'percentage'].includes(tool)) {
   return Astro.redirect(`/${uniId || 'vtu'}/${schemeId || '2022'}/sgpa`);
 }
 
-const title = `${tool.toUpperCase()} Calculator — ${uni.name} ${sc.name}`;
+const title = `${tool.toUpperCase()} Calculator — ${uni.id.toUpperCase()} ${sc.id}`;
 const description = `Calculate ${tool.toUpperCase()} for ${uni.name} (${sc.name}). Free, accurate, real-time results.`;
 
 const semesters = br.semesters.map((s) => ({
