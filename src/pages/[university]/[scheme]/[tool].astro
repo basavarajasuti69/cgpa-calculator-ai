@@ -36,7 +36,8 @@ if (!sc || !br || !['sgpa', 'cgpa', 'percentage'].includes(tool)) {
 }
 
 const title = `${tool.toUpperCase()} Calculator — ${uni.id.toUpperCase()} ${sc.id}`;
-const description = `Calculate ${tool.toUpperCase()} for ${uni.name} (${sc.name}). Free, accurate, real-time results.`;
+const toolLabel = tool === 'sgpa' ? 'semester grade point average' : tool === 'cgpa' ? 'cumulative grade point average' : 'percentage equivalent';
+const description = `Calculate ${toolLabel} for ${uni.name} (${sc.name}). See the formula and results instantly. Check the scheme notes and confirm official rules with your university.`;
 
 const semesters = br.semesters.map((s) => ({
   semester: s.semester,

@@ -8,7 +8,9 @@ import { SITE_URL } from '../config/site';
 const { title = 'CGPA Calculator AI', description = '', pathname = '/', noAds = false, noindex = false } = Astro.props;
 const seo = getPageSEO({ title, description, pathname });
 
-const canonical = `${SITE_URL}${pathname}`;
+const normalizedPath = pathname === '/' ? '/' : `/${pathname.replace(/^\/+|\/+$/g, '')}`;
+const canonical = new URL(normalizedPath, SITE_URL).toString();
+const socialImage = new URL('/og-image.png', SITE_URL).toString();
 const jsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebApplication",
@@ -29,7 +31,7 @@ const jsonLd = JSON.stringify({
     <meta name="generator" content={Astro.generator} />
     <title>{seo.title}</title>
     <meta name="description" content={seo.description} />
-    {noindex && <meta name="robots" content="noindex,follow" />}
+    <meta name="robots" content={noindex ? 'noindex,follow' : 'index,follow,max-image-preview:large'} />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
@@ -63,16 +65,24 @@ const jsonLd = JSON.stringify({
     <meta property="og:title" content={seo.title} />
     <meta property="og:description" content={seo.description} />
     <meta property="og:site_name" content="CGPA Calculator AI" />
-    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:alt" content="CGPA Calculator AI — SGPA, CGPA and percentage calculators" />
+    <meta property="og:locale" content="en_IN" />
 
     {/* Twitter */}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={canonical} />
     <meta name="twitter:title" content={seo.title} />
     <meta name="twitter:description" content={seo.description} />
-    <meta name="twitter:image" content="/og-image.png" />
+    <meta name="twitter:image" content={socialImage} />
 
     <script type="application/ld+json" set:html={jsonLd}></script>
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "CGPA Calculator AI",
+      "url": SITE_URL
+    })}></script>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LQYX0BC4Z6"></script>
@@ -102,20 +112,3 @@ const jsonLd = JSON.stringify({
     </style>
   </body>
 </html>
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "CGPA Calculator AI",
-      "url": "https://cgpacalculatorai.com"
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "CGPA Calculator AI",
-      "url": "https://cgpacalculatorai.com"
-    }
-    </script>

@@ -6,7 +6,7 @@ export type PageSEO = {
 export const SITE_NAME = 'CGPA Calculator AI';
 
 const DEFAULT_DESCRIPTION =
-  'Accurate, transparent SGPA • CGPA • Percentage calculators for VTU students. No personal data stored on a server.';
+  'Calculate SGPA, CGPA and percentage with transparent formulas. Compare supported university schemes and verify rules against your official regulations.';
 
 export function getPageSEO({ title = SITE_NAME, description = DEFAULT_DESCRIPTION, pathname = '/' }: {
   title?: string;
