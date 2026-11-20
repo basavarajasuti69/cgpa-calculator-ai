@@ -11,15 +11,13 @@ const seo = getPageSEO({ title, description, pathname });
 const normalizedPath = pathname === '/' ? '/' : `/${pathname.replace(/^\/+|\/+$/g, '')}`;
 const canonical = new URL(normalizedPath, SITE_URL).toString();
 const socialImage = new URL('/og-image.png', SITE_URL).toString();
-const jsonLd = JSON.stringify({
+const pageJsonLd = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "CGPA Calculator AI",
+  "@type": "WebPage",
+  "name": seo.title,
   "url": canonical,
   "description": seo.description,
-  "applicationCategory": "Education",
-  "operatingSystem": "Web",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  "isPartOf": { "@type": "WebSite", "name": "CGPA Calculator AI", "url": SITE_URL },
 });
 ---
 
@@ -76,13 +74,7 @@ const jsonLd = JSON.stringify({
     <meta name="twitter:description" content={seo.description} />
     <meta name="twitter:image" content={socialImage} />
 
-    <script type="application/ld+json" set:html={jsonLd}></script>
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "CGPA Calculator AI",
-      "url": SITE_URL
-    })}></script>
+    <script type="application/ld+json" set:html={pageJsonLd}></script>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LQYX0BC4Z6"></script>

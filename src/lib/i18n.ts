@@ -62,9 +62,9 @@ export const messages: Record<Locale, Record<string, string>> = {
     disclaimerTitle: 'Disclaimer',
     disclaimerBody: 'CGPA Calculator AI is not affiliated with Visvesvaraya Technological University (VTU). All grading rules, credits, and formulas are provided for guidance only and may not reflect official VTU circulars. Always verify with your college and the official VTU website.',
     privacyTitle: 'Privacy Policy',
-    privacyBody: 'No personal data is stored on a server. Calculator inputs and results stay in your browser only.',
+    privacyBody: 'Standard calculator inputs and results stay in your browser. Google Analytics and optional AI features use third-party services; see the full Privacy Policy for details.',
     aboutTitle: 'About',
-    aboutBody: 'CGPA Calculator AI helps VTU students calculate SGPA, CGPA, and percentage transparently, in real time, with no data stored on a server.',
+    aboutBody: 'CGPA Calculator AI helps VTU students calculate SGPA, CGPA, and percentage transparently, in real time. Standard calculations run in your browser.',
   },
 };
 

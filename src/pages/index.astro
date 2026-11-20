@@ -66,6 +66,20 @@ const homeDescription = 'Free SGPA, CGPA and percentage calculators for VTU, Ann
     </div>
   </section>
 
+  <section class="section" style="padding-top: 8px;">
+    <div class="container">
+      <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Guides and tools</p>
+      <h2 class="heading-lg" style="margin-bottom: 8px;">Understand your grades and plan your next semester</h2>
+      <p class="body-md" style="margin-bottom: var(--spacing-lg); max-width: 64ch;">Read how grade points and credit-weighted averages work, check worked examples, or plan the SGPA you need to reach a target CGPA.</p>
+      <div style="display:grid; gap: var(--spacing-md); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+        <a class="feature-card" href="/grading"><h3 class="heading-md" style="margin:0 0 8px;">VTU grading system</h3><p class="body-sm" style="margin:0;">Grade points, SGPA and CGPA formulas, with scheme notes.</p></a>
+        <a class="feature-card" href="/examples"><h3 class="heading-md" style="margin:0 0 8px;">Worked CGPA examples</h3><p class="body-sm" style="margin:0;">Follow the arithmetic for SGPA, CGPA and lateral entry.</p></a>
+        <a class="feature-card" href="/tools/converter"><h3 class="heading-md" style="margin:0 0 8px;">Grade and CGPA converters</h3><p class="body-sm" style="margin:0;">Convert marks, CGPA, percentage and approximate 4.0 GPA.</p></a>
+        <a class="feature-card" href="/tools/planner"><h3 class="heading-md" style="margin:0 0 8px;">Target CGPA planner</h3><p class="body-sm" style="margin:0;">Estimate the SGPA needed in remaining semesters.</p></a>
+      </div>
+    </div>
+  </section>
+
   <section class="section" style="padding-top: 24px;">
     <div class="container">
       <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Supported universities</p>
@@ -141,7 +155,7 @@ const homeDescription = 'Free SGPA, CGPA and percentage calculators for VTU, Ann
           <li><strong>Multi-semester support:</strong> Including lateral entry (skip semesters 1–2 with the correct credit total).</li>
           <li><strong>Print and save:</strong> Print or save your result for your records; results are saved to your browser only.</li>
           <li><strong>Formula transparency:</strong> Every result shows the formula and a subject-wise breakdown.</li>
-          <li><strong>Privacy:</strong> No personal data stored on a server. Calculations happen in your browser.</li>
+          <li><strong>Privacy:</strong> Standard calculations happen in your browser. See the Privacy Policy for analytics and optional AI services.</li>
           <li><strong>Target planner:</strong> "What SGPA do I need in remaining semesters to reach X CGPA?"</li>
           <li><strong>Converters:</strong> Marks to grade point, CGPA to percentage, approximate 4.0 GPA, class/division.</li>
         </ul>
@@ -172,7 +186,7 @@ const homeDescription = 'Free SGPA, CGPA and percentage calculators for VTU, Ann
           </div>
           <div>
             <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs) 0; font-size: var(--font-size-body-md);">Is this CGPA calculator free?</h3>
-            <p class="body-sm" style="margin: 0;">Yes, completely free. No account, no signup, no data stored on a server. Unlimited use.</p>
+            <p class="body-sm" style="margin: 0;">Yes, completely free. No account or signup is required. Calculations run in your browser.</p>
           </div>
           <div>
             <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs) 0; font-size: var(--font-size-body-md);">Which universities and schemes are supported?</h3>
@@ -203,7 +217,7 @@ const homeDescription = 'Free SGPA, CGPA and percentage calculators for VTU, Ann
       {"@type":"Question","name":"What is the CGPA full form?","acceptedAnswer":{"@type":"Answer","text":"CGPA stands for Cumulative Grade Point Average — the credit-weighted average of all your semester grade points across a degree program."}},
       {"@type":"Question","name":"How do I convert CGPA to percentage?","acceptedAnswer":{"@type":"Answer","text":"It depends on your university and scheme. VTU 2022 and 2025 use Percentage = CGPA × 10 (so CGPA 8.0 = 80%). VTU 2018 uses (CGPA − 0.75) × 10. Confirm your scheme’s rule with your college."}},
       {"@type":"Question","name":"How do I convert SGPA to CGPA?","acceptedAnswer":{"@type":"Answer","text":"CGPA = (sum of all semester credit points) ÷ (sum of all credits). Use our SGPA to CGPA calculator for an exact, credit-weighted result."}},
-      {"@type":"Question","name":"Is this CGPA calculator free?","acceptedAnswer":{"@type":"Answer","text":"Yes, completely free. No account, no signup, no data stored on a server. Unlimited use."}},
+      {"@type":"Question","name":"Is this CGPA calculator free?","acceptedAnswer":{"@type":"Answer","text":"Yes, completely free. No account or signup is required. Standard calculations run in your browser."}},
       {"@type":"Question","name":"Which universities and schemes are supported?","acceptedAnswer":{"@type":"Answer","text":"VTU (2025, 2022, 2021, 2018) is fully supported with pre-filled credits. Anna University (R2021, R2017, R2013), KTU (2024, 2019, 2015), SRM (2021, 2018), VIT (FFCS), IPU (Ordinance 11) and Saveetha are supported via the generic credit-weighted calculator in manual mode."}},
       {"@type":"Question","name":"Does this store my grades or personal data?","acceptedAnswer":{"@type":"Answer","text":"No. Calculations happen in your browser. If you save a result, it is kept only in your browser’s localStorage on your device — we cannot access it."}},
       {"@type":"Question","name":"Is this affiliated with VTU or any university?","acceptedAnswer":{"@type":"Answer","text":"No. CGPA Calculator AI is not affiliated with VTU, Anna University, KTU, SRM, VIT, IPU or Saveetha. University names are used only to describe the supported grading systems. Always verify results with your college and official sources."}},
@@ -216,7 +230,7 @@ const homeDescription = 'Free SGPA, CGPA and percentage calculators for VTU, Ann
     <div class="container" style="max-width: 800px;">
       <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">About</p>
       <h2 class="heading-lg" style="margin-bottom: var(--spacing-lg);">About CGPA Calculator AI</h2>
-      <p class="body-md" style="margin-bottom: var(--spacing-md);">CGPA Calculator AI helps university students calculate SGPA, CGPA and percentage transparently, in real time, with no personal data stored on a server. VTU credits are pre-filled for every subject, semester and branch — you only enter grades. Other universities work in manual mode (type your own subjects and credits).</p>
+      <p class="body-md" style="margin-bottom: var(--spacing-md);">CGPA Calculator AI helps university students calculate SGPA, CGPA and percentage transparently, in real time. Standard calculations run in your browser; saved results stay in localStorage on your device. Optional AI tools and site analytics use third-party services as described in our <a href="/privacy">Privacy Policy</a>. VTU credits are pre-filled for every subject, semester and branch — you only enter grades. Other universities work in manual mode (type your own subjects and credits).</p>
       <div class="feature-card" style="margin-bottom: var(--spacing-md);">
         <h3 class="heading-md" style="margin: 0 0 var(--spacing-sm) 0;">How data is verified</h3>
         <p class="body-sm" style="margin: 0;">Grading rules, percentage formulas and class thresholds are taken from each university’s published regulations where available. Rules that have not been confirmed in a primary source are marked "Draft — verify with your official regulation" and should not be treated as official. Each scheme page lists its sources and a "last verified" date.</p>
@@ -226,7 +240,7 @@ const homeDescription = 'Free SGPA, CGPA and percentage calculators for VTU, Ann
         <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-text);">
           <li style="margin-bottom: var(--spacing-xs);"><strong>Accuracy:</strong> Subject-wise calculation with no rounding of grade points before the formula.</li>
           <li style="margin-bottom: var(--spacing-xs);"><strong>Transparency:</strong> Every result shows the formula and a subject-wise breakdown.</li>
-          <li style="margin-bottom: var(--spacing-xs);"><strong>Privacy:</strong> No personal data stored on a server. Calculations happen in your browser.</li>
+          <li style="margin-bottom: var(--spacing-xs);"><strong>Privacy:</strong> Standard calculations happen in your browser. Analytics and optional AI features are explained in our Privacy Policy.</li>
           <li style="margin-bottom: var(--spacing-xs);"><strong>Free &amp; open:</strong> Unlimited use, no account required.</li>
         </ul>
       </div>
@@ -251,11 +265,8 @@ const homeDescription = 'Free SGPA, CGPA and percentage calculators for VTU, Ann
     <div class="container" style="max-width: 800px;">
       <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Privacy</p>
       <h2 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Privacy Policy</h2>
-      <p class="body-md" style="margin-bottom: var(--spacing-md);">CGPA Calculator AI does not collect, store, or transmit any personal data. Your grades, credits and calculation results never leave your browser.</p>
-      <p class="body-sm" style="margin-bottom: var(--spacing-sm);"><strong>What we collect:</strong> Nothing. No name, email, roll number, or academic record is collected.</p>
-      <p class="body-sm" style="margin-bottom: var(--spacing-sm);"><strong>Local storage:</strong> If you save progress, it is stored only in your browser's localStorage, on your device. We cannot access it.</p>
-      <p class="body-sm" style="margin-bottom: var(--spacing-sm);"><strong>Ads and analytics:</strong> No advertising or analytics scripts run on the core calculators. If ads or analytics are added in the future, they will be clearly disclosed and a consent banner will be shown for EU/UK visitors before any personal data is processed.</p>
-      <p class="body-sm" style="margin: 0;"><strong>No data is sold:</strong> We do not sell, rent, or share any personal data with third parties.</p>
+      <p class="body-md" style="margin-bottom: var(--spacing-md);">Standard calculations happen in your browser and saved results remain in localStorage on your device. Google Analytics runs across the site. Optional AI tools send submitted text or marks-card images to Groq for processing.</p>
+      <p class="body-sm" style="margin: 0;"><a href="/privacy">Read the full Privacy Policy</a> for details about analytics, AI features and voluntary college requests.</p>
     </div>
   </section>
 

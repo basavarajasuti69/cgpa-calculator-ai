@@ -2,22 +2,27 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Privacy Policy — CGPA Calculator AI" description="Privacy Policy for CGPA Calculator AI. No personal data is stored on a server." pathname="/privacy" noAds>
+<Layout title="Privacy Policy — CGPA Calculator AI" description="How CGPA Calculator AI handles browser calculations, Google Analytics, optional AI tools and college requests." pathname="/privacy" noAds>
   <section class="section">
     <div class="container" style="max-width: 720px;">
       <p class="eyebrow" style="margin: 0 0 var(--spacing-xs) 0;">Privacy</p>
       <h1 class="heading-lg" style="margin-bottom: var(--spacing-lg);">Privacy Policy</h1>
+      <p class="body-sm" style="margin-bottom: var(--spacing-lg);">Last updated: November 20, 2026</p>
       <p class="body-md" style="margin-bottom: var(--spacing-lg);">
-        CGPA Calculator AI does not collect, store, or transmit any personal data. Your grades, credits and calculation results never leave your browser.
+        Standard SGPA, CGPA and percentage calculations run in your browser. Optional services on the site use Google Analytics for site usage measurement, send AI requests to Groq, and accept voluntary college requests. Details are below.
       </p>
-      <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">What we collect</h2>
-      <p class="body-sm" style="margin-bottom: var(--spacing-sm);">Nothing. No name, email, roll number, or academic record is collected.</p>
+      <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Calculations and saved results</h2>
+      <p class="body-sm" style="margin-bottom: var(--spacing-sm);">Core calculator inputs and results are calculated in your browser. If you save a result, it is stored in localStorage on your device. It is not sent to our calculation service.</p>
+      <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Analytics</h2>
+      <p class="body-sm" style="margin-bottom: var(--spacing-sm);">Google Analytics is loaded across the site, including calculator pages. It receives usage information such as page views and interactions and may use cookies or similar identifiers. See <a href="https://policies.google.com/privacy" rel="noopener noreferrer">Google's Privacy Policy</a> for how Google processes information.</p>
       <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Local storage</h2>
-      <p class="body-sm" style="margin-bottom: var(--spacing-sm);">If you save progress, it is stored only in your browser's localStorage, on your device. We cannot access it.</p>
+      <p class="body-sm" style="margin-bottom: var(--spacing-sm);">The site uses localStorage to keep saved calculator results on your device. Clearing browser storage removes them.</p>
       <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">AI features</h2>
-      <p class="body-sm" style="margin-bottom: var(--spacing-sm);">Optional AI features (marks-card scanner, assistant) process input temporarily to generate a response. No personal data is logged or retained.</p>
-      <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Third parties</h2>
-      <p class="body-sm" style="margin-bottom: var(--spacing-sm);">No analytics, no tracking, no third-party scripts on the core calculators.</p>
+      <p class="body-sm" style="margin-bottom: var(--spacing-sm);">If you use an AI feature, the text or marks-card image you submit is sent from our server to Groq's API to generate a response. Do not submit sensitive information. Review <a href="https://console.groq.com/docs/your-data" rel="noopener noreferrer">Groq's data handling documentation</a>. The standard calculator does not require these AI features.</p>
+      <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">College requests and contact</h2>
+      <p class="body-sm" style="margin-bottom: var(--spacing-sm);">If you submit the college request form, the site receives the college, university, country and any optional details you provide. The current endpoint logs the college, university, country and scheme fields for request operations and does not save requests to an application database. You can contact us at <a href="mailto:support@cgpacalculatorai.com">support@cgpacalculatorai.com</a>.</p>
+      <h2 class="heading-md" style="margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Service providers</h2>
+      <p class="body-sm" style="margin-bottom: 0;">Google Analytics, Groq and our hosting provider may process technical information when you use the site. Their handling of that information is governed by their own terms and privacy policies.</p>
     </div>
   </section>
 </Layout>
