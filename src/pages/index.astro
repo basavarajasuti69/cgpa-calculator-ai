@@ -7,42 +7,71 @@ const homeDescription = 'Free SGPA, CGPA and percentage calculators for VTU, Ann
 ---
 
 <Layout title={homeTitle} description={homeDescription} pathname="/">
-  <section class="hero-band">
-    <div class="container">
-      <div class="hero-copy">
-        <p class="eyebrow" style="margin: 0;">No ads · No login · Results live in your browser</p>
-        <h1 class="display-xl" style="margin: 10px 0 16px;">Your marks card, without the panic.</h1>
-        <p class="body-lg" style="margin: 0 0 20px; max-width: 58ch;">Tap grades. Watch SGPA, CGPA and percentage update live. Built for VTU first — and for Anna University, KTU, SRM, VIT, IPU and Saveetha too.</p>
-        <div class="trust-row" style="margin-bottom: 22px;">
-          <span class="trust-chip">Tap-to-grade, not dropdown hell</span>
-          <span class="trust-chip">Formulas shown, not hidden</span>
-          <span class="trust-chip">Lives only in your browser</span>
-        </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <a href="/vtu/2022/cse/sgpa" class="button-primary">Start VTU SGPA</a>
-          <a href="/universities" class="button-secondary">Pick university</a>
-        </div>
+  <section class="home-wizard-wrap">
+    <div class="home-wizard container">
+      <div class="wizard-intro">
+        <p class="eyebrow">FREE · NO SIGNUP · PRIVATE BY DEFAULT</p>
+        <h1 class="display-xl">Your CGPA, one step at a time.</h1>
+        <p class="body-lg">Choose your university and course details. We’ll open the right calculator for you.</p>
+        <div class="wizard-trust"><span>✓ Works on your phone</span><span>✓ Results update instantly</span><span>✓ Grades stay in your browser</span></div>
       </div>
-
-      <div class="grid-tools" style="margin-top: 36px;">
-        <a href="/vtu/2022/cse/sgpa" class="tool-tile">
-          <span class="kicker">Semester</span>
-          <h2 class="heading-md" style="margin:0;">SGPA calculator</h2>
-          <p class="body-sm" style="margin:0;">Tap S / A / B on each subject. VTU credits are pre-filled for your branch.</p>
-        </a>
-        <a href="/vtu/2022/cse/cgpa" class="tool-tile">
-          <span class="kicker">Whole degree</span>
-          <h2 class="heading-md" style="margin:0;">CGPA calculator</h2>
-          <p class="body-sm" style="margin:0;">Drop in each semester’s SGPA. Lateral entry skips semesters 1–2 automatically.</p>
-        </a>
-        <a href="/vtu/2022/cse/percentage" class="tool-tile">
-          <span class="kicker">Convert</span>
-          <h2 class="heading-md" style="margin:0;">Percentage</h2>
-          <p class="body-sm" style="margin:0;">CGPA × 10 for VTU 2022 / 2025 — plus class/division as you type.</p>
-        </a>
+      <div class="wizard-card" id="home-wizard" data-universities={JSON.stringify(getUniversities().map((u) => ({id:u.id,name:u.name,schemes:u.schemes.map((s)=>({id:s.id,name:s.name,branches:s.branches.map((b)=>({id:b.id,name:b.name,short:b.short}))}))})))}>
+        <div class="wizard-progress"><span id="wizard-step-label">STEP 1 OF 4</span><span id="wizard-step-title">Choose your university</span><div class="wizard-progress-track"><i id="wizard-progress-fill"></i></div></div>
+        <div id="wizard-options" class="wizard-options" role="group" aria-label="Choose your university"></div>
+        <div class="wizard-footer"><button type="button" id="wizard-back" class="button-secondary" hidden>← Back</button><span id="wizard-selection" class="body-sm mute">Select an option to continue</span><button type="button" id="wizard-next" class="button-primary" disabled>Continue →</button></div>
       </div>
+      <p class="wizard-caption">Supported: VTU · Anna University · KTU · SRM · VIT · IPU · Saveetha</p>
     </div>
   </section>
+  <script is:inline>
+    (() => {
+      const root = document.getElementById('home-wizard'); if (!root) return;
+      const universities = JSON.parse(root.dataset.universities || '[]');
+      const state = { university: null, scheme: null, branch: null, tool: null };
+      const labels = ['Choose your university','Choose your scheme','Choose your branch','What do you want to calculate?'];
+      const optionsEl = document.getElementById('wizard-options'), next = document.getElementById('wizard-next'), back = document.getElementById('wizard-back');
+      let step = 0, selected = '';
+      function options() {
+        if (step===0) return universities.map(x=>[x.id,x.name]);
+        if (step===1) return state.university.schemes.map(x=>[x.id,x.name]);
+        if (step===2) return state.scheme.branches.map(x=>[x.id,`${x.short} — ${x.name}`]);
+        return [['sgpa','Semester SGPA'],['cgpa','Overall CGPA'],['percentage','Convert CGPA to percentage']];
+      }
+      function draw(){
+        const items=options(); selected='';
+        document.getElementById('wizard-step-label').textContent=`STEP ${step+1} OF 4`;
+        document.getElementById('wizard-step-title').textContent=labels[step];
+        document.getElementById('wizard-progress-fill').style.width=`${(step+1)*25}%`;
+        optionsEl.setAttribute('aria-label',labels[step]);
+        optionsEl.innerHTML=items.map(([id,name])=>`<button type="button" class="wizard-option" data-value="${id}" aria-pressed="false"><span>${name}</span><b>→</b></button>`).join('');
+        optionsEl.querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>{
+          selected=btn.dataset.value; optionsEl.querySelectorAll('button').forEach(b=>{b.classList.toggle('selected',b===btn);b.setAttribute('aria-pressed',b===btn?'true':'false')});
+          document.getElementById('wizard-selection').textContent=`Selected: ${btn.querySelector('span').textContent}`; next.disabled=false;
+        }));
+        next.disabled=true; back.hidden=step===0; document.getElementById('wizard-selection').textContent='Select an option to continue';
+        next.textContent=step===3?'Open calculator →':'Continue →';
+      }
+      next.addEventListener('click',()=>{if(!selected)return;
+        if(step===0) state.university=universities.find(x=>x.id===selected);
+        else if(step===1) state.scheme=state.university.schemes.find(x=>x.id===selected);
+        else if(step===2) state.branch=state.scheme.branches.find(x=>x.id===selected);
+        else {window.location.href=`/${state.university.id}/${state.scheme.id}/${state.branch.id}/${selected}`;return;}
+        step++; draw();
+      });
+      back.addEventListener('click',()=>{if(step>0){step--;draw()}}); draw();
+    })();
+  </script>
+  <style>
+    .home-wizard-wrap{background:radial-gradient(ellipse at 20% 0%,#eaf1ff 0,transparent 55%),var(--color-bg-elevated);padding:64px 0 44px}
+    .home-wizard{display:grid;grid-template-columns:1fr 1.02fr;align-items:center;gap:48px;max-width:1060px}
+    .wizard-intro .eyebrow{font-weight:800;letter-spacing:.12em;color:#315fc2}.wizard-intro h1{max-width:12ch;line-height:1.05;margin:14px 0}.wizard-intro .body-lg{max-width:42ch;color:var(--color-text-muted)}
+    .wizard-trust{display:grid;gap:10px;margin-top:28px;font-size:14px;color:var(--color-text-muted)}.wizard-trust span:first-letter{color:#16845b}
+    .wizard-card{background:var(--color-bg);border:1px solid var(--color-border);border-radius:22px;padding:24px;box-shadow:0 18px 55px #243d6814}
+    .wizard-progress{display:grid;grid-template-columns:1fr auto;gap:7px 12px;font-size:12px;color:var(--color-text-muted);font-weight:700}.wizard-progress span:nth-child(2){font-size:14px;color:var(--color-text-strong)}.wizard-progress-track{grid-column:1/-1;height:5px;border-radius:9px;background:var(--color-surface);overflow:hidden;margin:7px 0 9px}.wizard-progress-track i{display:block;height:100%;background:#4775df;border-radius:9px;transition:width .2s}
+    .wizard-options{display:grid;gap:9px;max-height:320px;overflow:auto;padding:2px}.wizard-option{display:flex;align-items:center;justify-content:space-between;text-align:left;width:100%;min-height:52px;padding:12px 14px;border:1px solid var(--color-border);border-radius:12px;background:var(--color-bg);color:var(--color-text);font:inherit;font-weight:650;cursor:pointer}.wizard-option:hover,.wizard-option.selected{border-color:#4775df;background:#f1f5ff;color:#244fae}.wizard-option b{font-size:18px;color:#4775df}
+    .wizard-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px}.wizard-footer .body-sm{flex:1;text-align:center}.wizard-footer button:disabled{opacity:.45;cursor:not-allowed}.wizard-caption{text-align:center;color:var(--color-text-muted);font-size:13px;margin:18px 0 0;grid-column:1/-1}
+    @media(max-width:760px){.home-wizard-wrap{padding:38px 0 30px}.home-wizard{grid-template-columns:1fr;gap:26px}.wizard-intro h1{font-size:clamp(38px,10vw,54px)}.wizard-card{padding:18px}.wizard-options{max-height:280px}}
+  </style>
 
   <section class="section" style="padding-top: 24px;">
     <div class="container">
