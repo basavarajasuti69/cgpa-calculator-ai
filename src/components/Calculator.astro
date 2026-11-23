@@ -138,6 +138,7 @@ const pathBase = branchId ? `/${uniId}/${schemeId}/${branchId}` : `/${uniId}/${s
           <div>
             <strong class="ink">Enter each semester’s SGPA</strong>
             <div class="body-sm mute">Credits come from your scheme. Leave a row blank to skip it.</div>
+            <div class="body-sm mute" style="margin-top:4px;">Your entries save automatically on this device.</div>
           </div>
           <div style="display:flex; gap:8px; align-items:center;">
             <button type="button" id="save-cgpa-btn" class="button-primary-sm" style="padding:6px 12px; font-size:12px;">Save result</button>
@@ -645,6 +646,30 @@ const pathBase = branchId ? `/${uniId}/${schemeId}/${branchId}` : `/${uniId}/${s
       const cgpaCredits = document.getElementById('cgpa-credits');
       const cgpaPoints = document.getElementById('cgpa-points');
       const lateral = document.getElementById('cgpa-lateral');
+      const cgpaDraftKey = `cgpa-calc-${schemeId}-${branchId || 'na'}-all`;
+
+      function saveCgpaDraft() {
+        const values = {};
+        inputs.forEach((inp) => { if (inp.value !== '') values[inp.dataset.sem] = inp.value; });
+        try {
+          if (Object.keys(values).length || lateral?.checked) {
+            localStorage.setItem(cgpaDraftKey, JSON.stringify({ values, lateral: Boolean(lateral?.checked) }));
+          } else {
+            localStorage.removeItem(cgpaDraftKey);
+          }
+        } catch {}
+      }
+
+      try {
+        const draft = JSON.parse(localStorage.getItem(cgpaDraftKey) || 'null');
+        if (draft && typeof draft === 'object') {
+          inputs.forEach((inp) => {
+            const value = draft.values?.[inp.dataset.sem];
+            if (typeof value === 'string' && Number(value) >= 0 && Number(value) <= 10) inp.value = value;
+          });
+          if (lateral) lateral.checked = Boolean(draft.lateral);
+        }
+      } catch {}
 
       function recomputeCgpa() {
         let totalCredits = 0, totalPoints = 0;
@@ -666,8 +691,8 @@ const pathBase = branchId ? `/${uniId}/${schemeId}/${branchId}` : `/${uniId}/${s
         cgpaPoints.textContent = totalPoints.toFixed(2);
       }
 
-      inputs.forEach(inp => inp.addEventListener('input', recomputeCgpa));
-      lateral?.addEventListener('change', recomputeCgpa);
+      inputs.forEach(inp => inp.addEventListener('input', () => { recomputeCgpa(); saveCgpaDraft(); }));
+      lateral?.addEventListener('change', () => { recomputeCgpa(); saveCgpaDraft(); });
       recomputeCgpa();
 
       saveCgpaBtn?.addEventListener('click', () => {
@@ -688,6 +713,7 @@ const pathBase = branchId ? `/${uniId}/${schemeId}/${branchId}` : `/${uniId}/${s
       clearCgpaBtn?.addEventListener('click', () => {
         document.querySelectorAll('.cgpa-sgpa-input').forEach(i => { i.value = ''; });
         document.getElementById('cgpa-lateral').checked = false;
+        try { localStorage.removeItem(cgpaDraftKey); } catch {}
         document.querySelectorAll('.cgpa-sgpa-input')[0]?.dispatchEvent(new Event('input'));
       });
     }
@@ -754,6 +780,7 @@ const pathBase = branchId ? `/${uniId}/${schemeId}/${branchId}` : `/${uniId}/${s
       if (tool === 'cgpa') {
         document.querySelectorAll('.cgpa-sgpa-input').forEach(i => { i.value = ''; });
         document.getElementById('cgpa-lateral').checked = false;
+        try { localStorage.removeItem(`cgpa-calc-${schemeId}-${branchId || 'na'}-all`); } catch {}
         document.querySelectorAll('.cgpa-sgpa-input')[0]?.dispatchEvent(new Event('input'));
       }
       if (tool === 'percentage') {
